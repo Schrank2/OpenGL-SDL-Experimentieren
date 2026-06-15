@@ -13,6 +13,9 @@ int width = 0;
 int height = 0;
 int bpp = 0;
 int flags = 0;
+SDL_Window* window;
+SDL_Renderer* renderer;
+
 
 void init()
 {
@@ -43,4 +46,6 @@ void init()
 
 void open_window() {
 	if (debug == true) { cout << "[DEBUG] function open_window from init.cpp" << endl; }
+	window = SDL_CreateWindow("OPENGL-TEST", width, height, SDL_WINDOW_OPENGL);
+	renderer = SDL_CreateRenderer(window, nullptr);;
 }

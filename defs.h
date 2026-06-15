@@ -11,3 +11,6 @@ extern int bpp;
 /* Flags we will pass into SDL_SetVideoMode. */
 extern int flags;
 extern bool debug;
+extern SDL_Window* window;
+extern SDL_Renderer* renderer;
+
