@@ -4,8 +4,8 @@ using namespace std;
 /* Information about the current video settings. */
 /* extern const SDL_VideoInfo; */
 /* Dimensions of our window. */
-extern int width;
-extern int height;
+extern int ScreenWidth;
+extern int ScreenHeight;
 /* Color depth in bits of our window. */
 extern int bpp;
 /* Flags we will pass into SDL_SetVideoMode. */

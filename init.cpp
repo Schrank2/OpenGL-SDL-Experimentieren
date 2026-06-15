@@ -33,8 +33,8 @@ void init()
 		cout << "Video query failed: " << SDL_GetError() << endl;
 		exit(1);
 	}
-	width = info->w;
-	height = info->h;
+	ScreenWidth = info->w;
+	ScreenHeight = info->h;
 	bpp = SDL_BITSPERPIXEL(info->format);
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
@@ -46,6 +46,6 @@ void init()
 
 void open_window() {
 	if (debug == true) { cout << "[DEBUG] function open_window from init.cpp" << endl; }
-	window = SDL_CreateWindow("OPENGL-TEST", width, height, SDL_WINDOW_OPENGL);
+	window = SDL_CreateWindow("OPENGL-TEST", ScreenWidth, ScreenHeight, SDL_WINDOW_OPENGL);
 	renderer = SDL_CreateRenderer(window, nullptr);;
 }
