@@ -5,12 +5,12 @@
 #include "defs.h"
 #include <vector>
 
-void GameLogic::init() {
+void WORLD::init() {
 	if (debug == true) { cout << "[DEBUG] function game.init() from game.cpp" << endl; }
 }
 
-void GameLogic::tick() {
+void WORLD::tick() {
 	if (debug == true) { cout << "[DEBUG] function game.tick() from game.cpp" << endl; }
 }
 
-GameLogic game;
+WORLD world;
