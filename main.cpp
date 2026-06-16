@@ -12,5 +12,6 @@ int main(int argc, char* argv[])
 	open_window();
 	//TEST
 	while (true) {	
+		R1.render();
 	}
 }

@@ -5,3 +5,4 @@ using namespace std;
 #include "defs.h"
 void init();
 void open_window();
+void render();

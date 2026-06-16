@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClCompile Include="init.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RastSdlRender.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="defs.h" />

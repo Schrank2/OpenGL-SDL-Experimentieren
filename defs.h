@@ -16,3 +16,11 @@ extern SDL_Window* window;
 extern SDL_Renderer* renderer;
 extern SDL_GLContext OpenglContext;
 
+// declare R1 so rastSdlRender.cpp can use it
+class R1 {
+	public:
+		void render();
+};
+
+// idk
+extern R1 r1;
