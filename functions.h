@@ -3,6 +3,5 @@ using namespace std;
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_opengl.h>
 #include "defs.h"
-void init();
+void InitSdl();
 void open_window();
-void render();

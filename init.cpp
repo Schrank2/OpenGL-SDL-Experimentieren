@@ -3,10 +3,7 @@
 #include <SDL3/SDL_opengl.h>
 #include "functions.h"
 #include "defs.h"
-#include <thread>
-#include <vector>
 #include <string>
-#include <functional>
 using namespace std;
 
 const SDL_DisplayMode* info = NULL;
@@ -20,9 +17,9 @@ SDL_GLContext OpenglContext;
 string WindowTitle;
 
 
-void init()
+void InitSdl()
 {
-	if (debug == true) { cout << "[DEBUG] function init from init.cpp" << endl; }
+	if (debug == true) { cout << "[DEBUG] function InitSdl() from init.cpp" << endl; }
 	// Initialize SDL's video subsystem and check for errors.
 	if (SDL_Init(SDL_INIT_VIDEO) == 0)
 	{
@@ -39,7 +36,7 @@ void init()
 }
 
 void open_window() {
-	if (debug == true) { cout << "[DEBUG] function open_window from init.cpp" << endl; }
+	if (debug == true) { cout << "[DEBUG] function open_window() from init.cpp" << endl; }
 	// Set desired GL attributes before creating window/context.
 	// Adjust version/profile as needed for your GPU/drivers.
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
