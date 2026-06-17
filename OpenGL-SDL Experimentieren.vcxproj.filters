@@ -21,7 +21,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RastSdlRender.cpp">
+    <ClCompile Include="SimpleRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="world.cpp">
@@ -33,6 +33,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="defs.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="class.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

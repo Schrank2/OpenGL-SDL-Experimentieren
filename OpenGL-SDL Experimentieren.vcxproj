@@ -138,9 +138,10 @@
     <ClCompile Include="world.cpp" />
     <ClCompile Include="init.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="RastSdlRender.cpp" />
+    <ClCompile Include="SimpleRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="class.h" />
     <ClInclude Include="defs.h" />
     <ClInclude Include="functions.h" />
   </ItemGroup>

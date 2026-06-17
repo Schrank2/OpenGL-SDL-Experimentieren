@@ -20,23 +20,6 @@ extern SDL_Window* window;
 extern SDL_Renderer* renderer;
 extern SDL_GLContext OpenglContext;
 
-// declare R1 so rastSdlRender.cpp can use it
-class R1 {
-public:
-	void render();
-};
-// declare r1 so the R1 functions can be called elsewhere
-extern R1 r1;
-
-// declare game so game.cpp can use it
-class WORLD {
-public:
-	void init();
-	void tick();
-};
-// declare r1 so the R1 functions can be called elsewhere
-extern WORLD world;
-
 // declare the game objects
 struct Pos {
 	float x, y, z;

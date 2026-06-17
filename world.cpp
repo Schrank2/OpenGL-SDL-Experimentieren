@@ -3,10 +3,31 @@
 #include <SDL3/SDL_opengl.h>
 #include "functions.h"
 #include "defs.h"
+#include "class.h"
 #include <vector>
 
+vector<Point> Points;
+vector<Line> Lines;
+vector<Triangle> Triangles;
+vector<Plane> Planes;
+Color_RGB bright_red(1.0f, 0.0f, 0.0f);
+Color_RGB bright_blue(0.0f, 0.0f, 1.0f);
+Color_RGB bright_green(0.0f, 1.0f, 0.0f);
+Color_RGB black(0.0f, 0.0f, 0.0f);
+
 void WORLD::init() {
-	if (debug == true) { cout << "[DEBUG] function game.init() from game.cpp" << endl; }
+	if (debug == true) { cout << "[DEBUG] function world.init() from world.cpp" << endl; }
+	// add Points to World
+	Points.push_back(Point('O', Pos(0.0f, 0.0f, 0.0f), black));
+	Points.push_back(Point('A', Pos(2.0f, 2.0f, 2.0f), black));
+	Points.push_back(Point('B', Pos(4.0f, 4.0f, 2.0f), black));
+	Points.push_back(Point('C', Pos(3.0f, 3.0f, 4.0f), black));
+
+	// add Triangles to World
+	Triangles.push_back(Triangle(Points[0], Points[1], Points[2], bright_red));
+
+	// add Planes to World
+	Planes.push_back(Plane(Triangles[0], bright_blue));
 }
 
 void WORLD::tick() {
