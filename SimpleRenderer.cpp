@@ -42,7 +42,7 @@ void SimpleRenderer::open_window() {
 		cout << "Renderer creation failed: " << SDL_GetError() << endl;
 		exit(1);
 	}
-	simple.RenderScale = 10.0f;
+	simple.RenderScale = (min(ScreenWidthF, ScreenHeightF)) / 10.0f;
 }
 
 void SimpleRenderer::render() {
@@ -78,11 +78,11 @@ float SimpleRenderer::GetScreenDepth(float z) {
 
 float SimpleRenderer::GetScreenCoordX(float x, float Depth) {
 	x = x - CameraX;
-	return (x / Depth) * (ScreenWidthF / simple.RenderScale);
+	return (x / Depth) * simple.RenderScale;
 }
 float SimpleRenderer::GetScreenCoordY(float y, float Depth) {
 	y = y - CameraY;
-	return (y / Depth) * (ScreenHeightF / simple.RenderScale);
+	return (y / Depth) * simple.RenderScale;
 }
 void SimpleRenderer::DrawCircle(float x, float y, float r, RGBA_int c) {
 	cout << "Drawing Circle at (" << x << ", " << y << ") with radius " << r << endl;
