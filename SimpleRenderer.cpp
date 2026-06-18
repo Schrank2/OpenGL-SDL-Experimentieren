@@ -78,18 +78,18 @@ void SimpleRenderer::draw() {
 	}
 }
 
-float SimpleRenderer::GetScreenDepth(float z) {
-	return 1 + 0.1f * (Camera.z - z); // adjusting Depth for perspective
+float SimpleRenderer::GetScreenDepth(Pos Position) {
+	return 1.0f - 0.03f * (Camera.z - Position.z);
 }
 
 float SimpleRenderer::GetScreenCoordX(float x, float Depth) {
 	x = x - Camera.x;
-	return (x / Depth) * simple.RenderScale;
+	return (x / Depth) * simple.RenderScale + ScreenWidthF / 2;
 }
 
 float SimpleRenderer::GetScreenCoordY(float y, float Depth) {
-	y = y - Camera.y;
-	return (y / Depth) * simple.RenderScale;
+	y = -(y - Camera.y);
+	return (y / Depth) * simple.RenderScale + ScreenHeightF / 2;
 }
 
 void SimpleRenderer::DrawCircle(float x, float y, float r, RGBA_int c) {
@@ -155,10 +155,10 @@ void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) 
 }
 
 void SimpleRenderer::DrawLine(Pos A, Pos B, RGBA_int c) {
-	float DepthA = GetScreenDepth(A.z);
-	float DepthB = GetScreenDepth(B.z);
+	float DepthA = GetScreenDepth(A);
+	float DepthB = GetScreenDepth(B);
 	SDL_SetRenderDrawColor(simple.renderer,c.r,c.g,c.b,c.a);
-	SDL_RenderLine(simple.renderer, GetScreenCoordX(A.x, DepthA), GetScreenCoordY(A.y, DepthA), GetScreenCoordX(B.x, DepthB), GetScreenCoordX(B.y, DepthB));
+	SDL_RenderLine(simple.renderer, GetScreenCoordX(A.x, DepthA), GetScreenCoordY(A.y, DepthA), GetScreenCoordX(B.x, DepthB), GetScreenCoordY(B.y, DepthB));
 }
 
 float SimpleRenderer::DistBetweenPoints(Pos a, Pos b) {
@@ -172,7 +172,7 @@ void SimpleRenderer::DrawPosition(Pos pos, RGBA_int c) {
 	float y = pos.y;
 	float z = pos.z;
 	// calculating the screen coordinates for the point
-	float Depth = GetScreenDepth(z);
+	float Depth = GetScreenDepth(pos);
 	float screenx = GetScreenCoordX(x, Depth);
 	float screeny = GetScreenCoordY(y, Depth);
 	// drawing the point on the screen
@@ -185,7 +185,7 @@ void SimpleRenderer::DrawPoint(Point point) {
 	float y = point.position.y;
 	float z = point.position.z;
 	// calculating the screen coordinates for the point
-	float Depth = GetScreenDepth(z);
+	float Depth = GetScreenDepth(point.position);
 	float screenx = GetScreenCoordX(x, Depth);
 	float screeny = GetScreenCoordY(y, Depth);
 	RGBA_int Color = FloatToIntColor(point.color);

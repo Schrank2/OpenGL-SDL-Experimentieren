@@ -20,7 +20,7 @@ public:
 	void DrawPosition(Pos pos, RGBA_int c);
 	float GetScreenCoordX(float x, float Depth);
 	float GetScreenCoordY(float y, float Depth);
-	float GetScreenDepth(float z);
+	float GetScreenDepth(Pos Position);
 	void DrawPoint(Point point);
 	void DrawLine(Pos A, Pos B, RGBA_int c);
 	float DistBetweenPoints(Pos a, Pos b);
