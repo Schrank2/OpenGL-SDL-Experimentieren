@@ -5,7 +5,7 @@
 #include <vector>
 #include <cmath>
 
-Pos Camera = Pos(0.0f, 0.0f, -1.0f);
+Pos Camera = Pos(0.0f, 0.0f, -5.0f);
 
 void SimpleRenderer::open_window() {
 	if (debug == true) { cout << "[DEBUG] function simple.open_window() from SimpleRenderer.cpp" << endl; }
@@ -40,7 +40,7 @@ void SimpleRenderer::open_window() {
 		cout << "Renderer creation failed: " << SDL_GetError() << endl;
 		exit(1);
 	}
-	simple.RenderScale = (min(ScreenWidthF, ScreenHeightF)) * 0.1;
+	simple.RenderScale = (min(ScreenWidthF, ScreenHeightF)) * 1.0f;
 }
 
 void SimpleRenderer::render() {
@@ -79,17 +79,17 @@ void SimpleRenderer::draw() {
 }
 
 float SimpleRenderer::GetScreenDepth(Pos Position) {
-	return 1.0f - 0.03f * (Camera.z - Position.z);
+	return Position.z - Camera.z;
 }
 
 float SimpleRenderer::GetScreenCoordX(float x, float Depth) {
 	x = x - Camera.x;
-	return (x / Depth) * simple.RenderScale + ScreenWidthF / 2;
+	return (x / Depth) * simple.RenderScale + ScreenWidthF / 2.0f;
 }
 
 float SimpleRenderer::GetScreenCoordY(float y, float Depth) {
 	y = -(y - Camera.y);
-	return (y / Depth) * simple.RenderScale + ScreenHeightF / 2;
+	return (y / Depth) * simple.RenderScale + ScreenHeightF / 2.0f;
 }
 
 void SimpleRenderer::DrawCircle(float x, float y, float r, RGBA_int c) {
@@ -183,7 +183,7 @@ void SimpleRenderer::DrawPoint(Point point) {
 	cout << "Drawing Point: " << point.letter << " on Canvas at (" << screenx << ", " << screeny << ")" << endl;
 	SDL_RenderPoint(simple.renderer, screenx, screeny);
 	//simple.DrawCircle(screenx, screeny, 10.0f, Color);
-	simple.DrawSphere(x, y, z, 0.3f, Color);
+	simple.DrawSphere(x, y, z, 0.3, Color);
 }
 
 SimpleRenderer simple;
