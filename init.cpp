@@ -78,3 +78,19 @@ void open_window() {
 		exit(1);
 	}
 }
+
+RGBA_int FloatToIntColor(RGBA_float color) {
+	return RGBA_int(static_cast<int>(color.r), static_cast<int>(color.g), static_cast<int>(color.b), static_cast<int>(color.a));
+}
+
+float CapColor_float(float color) {
+	if (color < 0.0f) { return 0.0f; }
+	if (color > 255.0f) { return 255.0f; }
+	return color;
+}
+
+int CapColor_int(int color) {
+	if (color < 0) { return 0; }
+	if (color > 255) { return 255; }
+	return static_cast<int>(color);
+}

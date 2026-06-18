@@ -19,10 +19,11 @@ void SimpleRenderer::open_window() {
 		exit(1);
 	}
 	// Get Screen Information
-	ScreenWidth = info->w * 0.75;
-	ScreenHeight = info->h * 0.75;
-	ScreenWidthF = static_cast<float>(ScreenWidth);
-	ScreenHeightF = static_cast<float>(ScreenHeight);
+	ScreenWidthF = static_cast<float>(info->w * 0.75);
+	ScreenHeightF = static_cast<float>(info->h * 0.75);
+	ScreenWidth = static_cast<int>(ScreenWidthF);
+	ScreenHeight = static_cast<int>(ScreenHeightF);
+	
 	flags = SDL_WINDOW_RESIZABLE;
 	// creating the title for the application window
 	WindowTitle = "Simple Renderer " + to_string(ScreenWidth) + "x" + to_string(ScreenHeight);
@@ -127,7 +128,7 @@ void SimpleRenderer::DrawSphere(float x, float y, float z, float r) {
 
 	}
 }
-void SimpleRenderer::DrawPosition(Pos pos, Color_RGB color) {
+void SimpleRenderer::DrawPosition(Pos pos, RGBA_float color) {
 	float x = pos.x;
 	float y = pos.y;
 	float z = pos.z;
@@ -147,7 +148,8 @@ void SimpleRenderer::DrawPoint(Point point) {
 	float Depth = GetScreenDepth(z);
 	float screenx = GetScreenCoordX(x, z, Depth);
 	float screeny = GetScreenCoordY(y, z, Depth);
-	SDL_SetRenderDrawColor(simple.renderer, point.color.r,point.color.g,point.color.b, 255);
+	RGBA_int Color = FloatToIntColor(point.color);
+	SDL_SetRenderDrawColor(simple.renderer, Color.r,Color.g,Color.b, Color.a);
 	cout << "Drawing Point: " << point.letter << " on Canvas at (" << screenx << ", " << screeny << ")" << endl;
 	SDL_RenderPoint(simple.renderer, screenx, screeny);
 	simple.DrawCircle(screenx, screeny, 10.0f);

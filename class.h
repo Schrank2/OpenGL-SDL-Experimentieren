@@ -17,7 +17,7 @@ public:
 	void draw();
 	void DrawCircle(float x, float y, float r);
 	void DrawSphere(float x, float y, float z, float r);
-	void DrawPosition(Pos pos, Color_RGB color);
+	void DrawPosition(Pos pos, RGBA_float color);
 	float GetScreenCoordX(float x, float z, float Depth);
 	float GetScreenCoordY(float y, float z, float Depth);
 	float GetScreenDepth(float z);

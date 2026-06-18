@@ -33,29 +33,38 @@ struct Vector {
 	Vector(float x, float y, float z) : x(x), y(y), z(z) {}
 };
 
-struct Color_RGB {
-	float r, g, b;
-	Color_RGB(float r, float g, float b) : r(r), g(g), b(b) {}
+float CapColor_float(float color);
+
+int CapColor_int(int color);
+
+struct RGBA_float {
+	float r, g, b, a;
+	RGBA_float(float r, float g, float b, float a) : r(CapColor_float(r)), g(CapColor_float(g)), b(CapColor_float(b)), a(CapColor_float(a)) {}
+};
+
+struct RGBA_int {
+	int r, g, b, a;
+	RGBA_int(int r, int g, int b, int a) : r(CapColor_int(r)), g(CapColor_int(g)), b(CapColor_int(b)), a(CapColor_int(a)) {}
 };
 
 struct Point {
 	char letter;
 	Pos position;
-	Color_RGB color;
-	Point(char letter, Pos position, Color_RGB color) : letter(letter), position(position), color(color) {}
+	RGBA_float color;
+	Point(char letter, Pos position, RGBA_float color) : letter(letter), position(position), color(color) {}
 };
 
 struct Line {
 	char letter;
 	Point p1, p2;
-	Color_RGB color;
-	Line(Point p1, Point p2, char letter, Color_RGB color) : p1(p1), p2(p2), letter(letter), color(color) {}
+	RGBA_float color;
+	Line(Point p1, Point p2, char letter, RGBA_float color) : p1(p1), p2(p2), letter(letter), color(color) {}
 };
 
 struct Triangle {
 	Point p1, p2, p3;
 	string name;
-	Color_RGB color;
+	RGBA_float color;
 	const string triangle_getname() {
 		string name = "Triangle ";
 		name += p1.letter;
@@ -63,13 +72,13 @@ struct Triangle {
 		name += p3.letter;
 		return name;
 	}
-	Triangle(Point p1, Point p2, Point p3, Color_RGB color) : p1(p1), p2(p2), p3(p3), name(triangle_getname()), color(color) {}
+	Triangle(Point p1, Point p2, Point p3, RGBA_float color) : p1(p1), p2(p2), p3(p3), name(triangle_getname()), color(color) {}
 };
 
 struct Plane {
 	Triangle triangle;
 	string name;
-	Color_RGB color;
+	RGBA_float color;
 	Vector SupportV;
 	Vector Span1V;
 	Vector Span2V;
@@ -86,7 +95,7 @@ struct Plane {
 		return name;
 	}
 	// constructor
-	Plane(Triangle triangle, Color_RGB color) : SupportV(GetVector(Pos(0,0,0), triangle.p1.position)), Span1V(GetVector(triangle.p1.position, triangle.p2.position)), Span2V(GetVector(triangle.p1.position, triangle.p3.position)), triangle(triangle), name(plane_getname()), color(color) {}
+	Plane(Triangle triangle, RGBA_float color) : SupportV(GetVector(Pos(0,0,0), triangle.p1.position)), Span1V(GetVector(triangle.p1.position, triangle.p2.position)), Span2V(GetVector(triangle.p1.position, triangle.p3.position)), triangle(triangle), name(plane_getname()), color(color) {}
 };
 
 
