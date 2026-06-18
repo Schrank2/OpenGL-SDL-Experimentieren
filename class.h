@@ -18,8 +18,8 @@ public:
 	void DrawCircle(float x, float y, float r, RGBA_int c);
 	void DrawSphere(float x, float y, float z, float r, RGBA_int c);
 	void DrawPosition(Pos pos, RGBA_int c);
-	float GetScreenCoordX(float x, float z, float Depth);
-	float GetScreenCoordY(float y, float z, float Depth);
+	float GetScreenCoordX(float x, float Depth);
+	float GetScreenCoordY(float y, float Depth);
 	float GetScreenDepth(float z);
 	void DrawPoint(Point point);
 	float RenderScale;

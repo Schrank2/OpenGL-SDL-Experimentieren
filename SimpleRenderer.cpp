@@ -76,14 +76,12 @@ float SimpleRenderer::GetScreenDepth(float z) {
 	return 1 + 0.03f * (CameraZ - z); // adjusting Depth for perspective
 }
 
-float SimpleRenderer::GetScreenCoordX(float x, float z, float Depth) {
+float SimpleRenderer::GetScreenCoordX(float x, float Depth) {
 	x = x - CameraX;
-	z = z - CameraZ;
 	return (x / Depth) * (ScreenWidthF / simple.RenderScale);
 }
-float SimpleRenderer::GetScreenCoordY(float y, float z, float Depth) {
+float SimpleRenderer::GetScreenCoordY(float y, float Depth) {
 	y = y - CameraY;
-	z = z - CameraZ;
 	return (y / Depth) * (ScreenHeightF / simple.RenderScale);
 }
 void SimpleRenderer::DrawCircle(float x, float y, float r, RGBA_int c) {
@@ -109,14 +107,17 @@ void SimpleRenderer::DrawCircle(float x, float y, float r, RGBA_int c) {
 	}
 }
 void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) {
+	// initialising variables
 	float maxY;
 	float maxZ;
 	RGBA_int cr = c;
+	// loop
 	for (float i = -r; i <= r; i += 0.01f) {
 		maxY = sqrt(r * r - i * i);
 		for (float j = -maxY; j <= maxY; j += 0.01f) {
 			maxZ = sqrt(r * r - i * i - j * j);
 			for (float k = -maxZ; k <= maxZ; k += 0.01f) {
+				// adjusting the color
 				cr.r = static_cast<UINT8>(cr.r - (i + j + k) / 255);
 				cr.g = static_cast<UINT8>(cr.g - (i + j + k) / 255);
 				cr.b = static_cast<UINT8>(cr.b - (i + j + k) / 255);
@@ -137,8 +138,8 @@ void SimpleRenderer::DrawPosition(Pos pos, RGBA_int c) {
 	float z = pos.z;
 	// calculating the screen coordinates for the point
 	float Depth = GetScreenDepth(z);
-	float screenx = GetScreenCoordX(x, z, Depth);
-	float screeny = GetScreenCoordY(y, z, Depth);
+	float screenx = GetScreenCoordX(x, Depth);
+	float screeny = GetScreenCoordY(y, Depth);
 	// drawing the point on the screen
 	SDL_RenderPoint(simple.renderer, screenx, screeny);
 	//simple.DrawCircle(screenx, screeny, 1.0f, c);
@@ -150,8 +151,8 @@ void SimpleRenderer::DrawPoint(Point point) {
 	float z = point.position.z;
 	// calculating the screen coordinates for the point
 	float Depth = GetScreenDepth(z);
-	float screenx = GetScreenCoordX(x, z, Depth);
-	float screeny = GetScreenCoordY(y, z, Depth);
+	float screenx = GetScreenCoordX(x, Depth);
+	float screeny = GetScreenCoordY(y, Depth);
 	RGBA_int Color = FloatToIntColor(point.color);
 	SDL_SetRenderDrawColor(simple.renderer, Color.r,Color.g,Color.b, Color.a);
 	cout << "Drawing Point: " << point.letter << " on Canvas at (" << screenx << ", " << screeny << ")" << endl;
