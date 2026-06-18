@@ -11,6 +11,8 @@ using namespace std;
 /* Dimensions of our window. */
 extern int ScreenWidth;
 extern int ScreenHeight;
+extern float ScreenWidthF;
+extern float ScreenHeightF;
 /* Color depth in bits of our window. */
 extern int bpp;
 /* Flags we will pass into SDL_SetVideoMode. */
@@ -54,11 +56,14 @@ struct Triangle {
 	Point p1, p2, p3;
 	string name;
 	Color_RGB color;
-	string getname() {
-		name = "triangle_" + to_string(p1.letter) + to_string(p2.letter) + to_string(p3.letter);
+	const string triangle_getname() {
+		string name = "Triangle ";
+		name += p1.letter;
+		name += p2.letter;
+		name += p3.letter;
 		return name;
 	}
-	Triangle(Point p1, Point p2, Point p3, Color_RGB color) : p1(p1), p2(p2), p3(p3), name(getname()), color(color) {}
+	Triangle(Point p1, Point p2, Point p3, Color_RGB color) : p1(p1), p2(p2), p3(p3), name(triangle_getname()), color(color) {}
 };
 
 struct Plane {
@@ -73,12 +78,15 @@ struct Plane {
 		return Vector(end.x - start.x, end.y - start.y, end.z - start.z);
 	}
 	// get name of the plane
-	string getname() {
-		name = "plane_" + to_string(triangle.p1.letter) + to_string(triangle.p2.letter) + to_string(triangle.p3.letter);
+	const string plane_getname() {
+		string name = "Plane ";
+		name += triangle.p1.letter;
+		name += triangle.p2.letter;
+		name += triangle.p3.letter;
 		return name;
 	}
 	// constructor
-	Plane(Triangle triangle, Color_RGB color) : SupportV(GetVector(Pos(0,0,0), triangle.p1.position)), Span1V(GetVector(triangle.p1.position, triangle.p2.position)), Span2V(GetVector(triangle.p1.position, triangle.p3.position)), triangle(triangle), name(getname()), color(color) {}
+	Plane(Triangle triangle, Color_RGB color) : SupportV(GetVector(Pos(0,0,0), triangle.p1.position)), Span1V(GetVector(triangle.p1.position, triangle.p2.position)), Span2V(GetVector(triangle.p1.position, triangle.p3.position)), triangle(triangle), name(plane_getname()), color(color) {}
 };
 
 

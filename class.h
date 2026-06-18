@@ -15,6 +15,14 @@ public:
 	void render();
 	void open_window();
 	void draw();
+	void DrawCircle(float x, float y, float r);
+	void DrawSphere(float x, float y, float z, float r);
+	void DrawPosition(Pos pos, Color_RGB color);
+	float GetScreenCoordX(float x, float z, float Depth);
+	float GetScreenCoordY(float y, float z, float Depth);
+	float GetScreenDepth(float z);
+	void DrawPoint(Point point);
+	float RenderScale;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 };

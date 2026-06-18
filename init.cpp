@@ -10,6 +10,8 @@ using namespace std;
 const SDL_DisplayMode* info = NULL;
 int ScreenWidth = 0;
 int ScreenHeight = 0;
+float ScreenWidthF = 0.0f;
+float ScreenHeightF = 0.0f;
 int bpp = 0;
 int flags = 0;
 SDL_Window* window;
@@ -47,6 +49,8 @@ void open_window() {
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	ScreenWidth = info->w / 2;
 	ScreenHeight = info->h / 2;
+	ScreenWidthF = static_cast<float>(ScreenWidth);
+	ScreenHeightF = static_cast<float>(ScreenHeight);
 	bpp = SDL_BITSPERPIXEL(info->format);
 	flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL;
 	// creating the title for the application window
