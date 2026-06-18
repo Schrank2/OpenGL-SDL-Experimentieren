@@ -5,7 +5,7 @@
 #include <vector>
 #include <cmath>
 
-Pos Camera = Pos(0.0f, 0.0f, -3.0f);
+Pos Camera = Pos(0.0f, 0.0f, -1.0f);
 
 void SimpleRenderer::open_window() {
 	if (debug == true) { cout << "[DEBUG] function simple.open_window() from SimpleRenderer.cpp" << endl; }
@@ -40,7 +40,7 @@ void SimpleRenderer::open_window() {
 		cout << "Renderer creation failed: " << SDL_GetError() << endl;
 		exit(1);
 	}
-	simple.RenderScale = (min(ScreenWidthF, ScreenHeightF)) / 10.0f;
+	simple.RenderScale = (min(ScreenWidthF, ScreenHeightF)) * 0.1;
 }
 
 void SimpleRenderer::render() {
@@ -120,12 +120,8 @@ void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) 
 	float maxY;
 	float maxZ;
 	RGBA_int cr = c;
-	float d; // distance between current point and camera
-	float rd; // distance relative to min/max distance of the sphere
-	float cd = DistBetweenPoints(Pos(x, y, z), Camera); // distance between center of sphere and the camera
-	float mind = cd - r;
-	float maxd = cd + r;
-	if (debug = true) { cout << "x: " << x << " y: " << y << " z: " << z << " cd: " << cd << endl; }
+	float shade;
+	//if (debug = true) { cout << "x: " << x << " y: " << y << " z: " << z << " cd: " << cd << endl; }
 	// loop
 	for (float i = -r; i <= r; i += 0.01f) {
 		maxY = sqrt(r * r - i * i);
@@ -133,18 +129,12 @@ void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) 
 			maxZ = sqrt(r * r - i * i - j * j);
 			for (float k = -maxZ; k <= maxZ; k += 0.01f) {
 				Pos P = Pos(x + i, y + j, z + k);
-				d = DistBetweenPoints(P, Camera);
-				rd = (d-mind) / (2*r);
-				//if (debug == true and cd != 3) { cout << "rd: " << rd << " d: " << d << " cd: " << cd << " r: " << r << endl; }
-				if (rd <= 0.5) {
-					// adjusting the color Depending on Distance from Camera
-					d = d / 255.0f;
-					cr.r = static_cast<UINT8>(c.r * rd);
-					cr.g = static_cast<UINT8>(c.g * rd);
-					cr.b = static_cast<UINT8>(c.b * rd);
-					// Drawing the Point
-					simple.DrawPosition({ P.x, P.y, P.z }, cr);
-				}
+				shade = k / (2 * r);
+				cr.r = static_cast<UINT8>(c.r * shade);
+				cr.g = static_cast<UINT8>(c.g * shade);
+				cr.b = static_cast<UINT8>(c.b * shade);
+				// Drawing the Point
+				simple.DrawPosition({ P.x, P.y, P.z }, cr);
 			}
 		}
 	}

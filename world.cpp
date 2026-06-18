@@ -18,7 +18,7 @@ RGBA_float bright_green(0.0f, 255.0f, 0.0f, 255.0f);
 RGBA_float dark_red(128.0f, 0.0f, 0.0f, 255.0f);
 RGBA_float dark_green(0.0f, 128.0f, 0.0f, 255.0f);
 RGBA_float dark_blue(0.0f, 0.0f, 128.0f, 255.0f);
-RGBA_float black(0.0f, 0.0f, 0.0f, 255.0f);
+RGBA_float black(50.0f, 50.0f, 50.0f, 255.0f);
 
 void WORLD::init() {
 	if (debug == true) { cout << "[DEBUG] function world.init() from world.cpp" << endl; }
