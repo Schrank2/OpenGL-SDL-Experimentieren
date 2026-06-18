@@ -65,11 +65,19 @@ void SimpleRenderer::draw() {
 	// Magenta line from bottom left to bottom right
 	SDL_SetRenderDrawColor(simple.renderer, 255, 0, 255, 255);
 	SDL_RenderLine(simple.renderer, 0, ScreenHeightF, ScreenWidthF, ScreenHeightF);
+	// Draw coordinate system lines
+	float temp = 1000.0f;
+	simple.DrawLine(Pos(0.0f, 0.0f, 0.0f), Pos(temp, 0.0f, 0.0f), RGBA_int(128,0,0,255));
+	simple.DrawLine(Pos(0.0f, 0.0f, 0.0f), Pos(0.0f, temp, 0.0f), RGBA_int(0,128,0,255));
+	simple.DrawLine(Pos(0.0f, 0.0f, 0.0f), Pos(0.0f, 0.0f, temp), RGBA_int(0,0,128,255));
+	
+
 	// Draw all points from world
 	for (int i = 0; i < static_cast<int>(world.Points.size()); i++) {
 		simple.DrawPoint(world.Points[i]);
 	}
 }
+
 float SimpleRenderer::GetScreenDepth(float z) {
 	return 1 + 0.1f * (Camera.z - z); // adjusting Depth for perspective
 }
@@ -78,10 +86,12 @@ float SimpleRenderer::GetScreenCoordX(float x, float Depth) {
 	x = x - Camera.x;
 	return (x / Depth) * simple.RenderScale;
 }
+
 float SimpleRenderer::GetScreenCoordY(float y, float Depth) {
 	y = y - Camera.y;
 	return (y / Depth) * simple.RenderScale;
 }
+
 void SimpleRenderer::DrawCircle(float x, float y, float r, RGBA_int c) {
 	cout << "Drawing Circle at (" << x << ", " << y << ") with radius " << r << endl;
 	float X;
@@ -104,6 +114,7 @@ void SimpleRenderer::DrawCircle(float x, float y, float r, RGBA_int c) {
 			SDL_RenderPoint(simple.renderer, X, BotY);
 	}
 }
+
 void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) {
 	// initialising variables
 	float maxY;
@@ -112,24 +123,28 @@ void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) 
 	float d; // distance between current point and camera
 	float rd; // distance relative to min/max distance of the sphere
 	float cd = DistBetweenPoints(Pos(x, y, z), Camera); // distance between center of sphere and the camera
-	float maxd = cd + 1.0f; // max distance to camera
-	float mind = cd - 1.0f; // min distance to camera
+	float mind = cd - r;
+	float maxd = cd + r;
+	if (debug = true) { cout << "x: " << x << " y: " << y << " z: " << z << " cd: " << cd << endl; }
 	// loop
 	for (float i = -r; i <= r; i += 0.01f) {
 		maxY = sqrt(r * r - i * i);
 		for (float j = -maxY; j <= maxY; j += 0.01f) {
 			maxZ = sqrt(r * r - i * i - j * j);
 			for (float k = -maxZ; k <= maxZ; k += 0.01f) {
-				Pos Position = Pos(x + i, y + j, z + k);
-				float d = DistBetweenPoints(Position, Camera);
-				rd = (d - mind) / (cd - mind);
-				// adjusting the color Depending on Distance from Camera
-				d = d / 255.0f;
-				cr.r = static_cast<UINT8>(c.r * rd);
-				cr.g = static_cast<UINT8>(c.g * rd);
-				cr.b = static_cast<UINT8>(c.b * rd);
-				
-				simple.DrawPosition({x + i, y + j, z + k}, cr);
+				Pos P = Pos(x + i, y + j, z + k);
+				d = DistBetweenPoints(P, Camera);
+				rd = (d-mind) / (2*r);
+				//if (debug == true and cd != 3) { cout << "rd: " << rd << " d: " << d << " cd: " << cd << " r: " << r << endl; }
+				if (rd <= 0.5) {
+					// adjusting the color Depending on Distance from Camera
+					d = d / 255.0f;
+					cr.r = static_cast<UINT8>(c.r * rd);
+					cr.g = static_cast<UINT8>(c.g * rd);
+					cr.b = static_cast<UINT8>(c.b * rd);
+					// Drawing the Point
+					simple.DrawPosition({ P.x, P.y, P.z }, cr);
+				}
 			}
 		}
 	}
@@ -137,13 +152,20 @@ void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) 
 	// z = r - x - y
 	// x = r - y - z
 	// y = r - x - z
-	// 
-	
 }
+
+void SimpleRenderer::DrawLine(Pos A, Pos B, RGBA_int c) {
+	float DepthA = GetScreenDepth(A.z);
+	float DepthB = GetScreenDepth(B.z);
+	SDL_SetRenderDrawColor(simple.renderer,c.r,c.g,c.b,c.a);
+	SDL_RenderLine(simple.renderer, GetScreenCoordX(A.x, DepthA), GetScreenCoordY(A.y, DepthA), GetScreenCoordX(B.x, DepthB), GetScreenCoordX(B.y, DepthB));
+}
+
 float SimpleRenderer::DistBetweenPoints(Pos a, Pos b) {
 	Pos v = Pos(a.x - b.x, a.y - b.y, a.z - b.z);
 	return sqrt(v.x*v.x + v.y * v.y + v.z * v.z);
 }
+
 void SimpleRenderer::DrawPosition(Pos pos, RGBA_int c) {
 	SDL_SetRenderDrawColor(simple.renderer,c.r,c.g,c.b,c.a);
 	float x = pos.x;
