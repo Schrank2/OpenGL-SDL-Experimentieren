@@ -5,9 +5,7 @@
 #include <vector>
 #include <cmath>
 
-float CameraX = 0.0f;
-float CameraY = 0.0f;
-float CameraZ = -5.0f;
+Pos Camera = Pos(0.0f, 0.0f, -3.0f);
 
 void SimpleRenderer::open_window() {
 	if (debug == true) { cout << "[DEBUG] function simple.open_window() from SimpleRenderer.cpp" << endl; }
@@ -73,15 +71,15 @@ void SimpleRenderer::draw() {
 	}
 }
 float SimpleRenderer::GetScreenDepth(float z) {
-	return 1 + 0.03f * (CameraZ - z); // adjusting Depth for perspective
+	return 1 + 0.1f * (Camera.z - z); // adjusting Depth for perspective
 }
 
 float SimpleRenderer::GetScreenCoordX(float x, float Depth) {
-	x = x - CameraX;
+	x = x - Camera.x;
 	return (x / Depth) * simple.RenderScale;
 }
 float SimpleRenderer::GetScreenCoordY(float y, float Depth) {
-	y = y - CameraY;
+	y = y - Camera.y;
 	return (y / Depth) * simple.RenderScale;
 }
 void SimpleRenderer::DrawCircle(float x, float y, float r, RGBA_int c) {
@@ -111,16 +109,26 @@ void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) 
 	float maxY;
 	float maxZ;
 	RGBA_int cr = c;
+	float d; // distance between current point and camera
+	float rd; // distance relative to min/max distance of the sphere
+	float cd = DistBetweenPoints(Pos(x, y, z), Camera); // distance between center of sphere and the camera
+	float maxd = cd + 1.0f; // max distance to camera
+	float mind = cd - 1.0f; // min distance to camera
 	// loop
 	for (float i = -r; i <= r; i += 0.01f) {
 		maxY = sqrt(r * r - i * i);
 		for (float j = -maxY; j <= maxY; j += 0.01f) {
 			maxZ = sqrt(r * r - i * i - j * j);
 			for (float k = -maxZ; k <= maxZ; k += 0.01f) {
-				// adjusting the color
-				cr.r = static_cast<UINT8>(cr.r - (i + j + k) / 255);
-				cr.g = static_cast<UINT8>(cr.g - (i + j + k) / 255);
-				cr.b = static_cast<UINT8>(cr.b - (i + j + k) / 255);
+				Pos Position = Pos(x + i, y + j, z + k);
+				float d = DistBetweenPoints(Position, Camera);
+				rd = (d - mind) / (cd - mind);
+				// adjusting the color Depending on Distance from Camera
+				d = d / 255.0f;
+				cr.r = static_cast<UINT8>(c.r * rd);
+				cr.g = static_cast<UINT8>(c.g * rd);
+				cr.b = static_cast<UINT8>(c.b * rd);
+				
 				simple.DrawPosition({x + i, y + j, z + k}, cr);
 			}
 		}
@@ -129,7 +137,12 @@ void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) 
 	// z = r - x - y
 	// x = r - y - z
 	// y = r - x - z
+	// 
 	
+}
+float SimpleRenderer::DistBetweenPoints(Pos a, Pos b) {
+	Pos v = Pos(a.x - b.x, a.y - b.y, a.z - b.z);
+	return sqrt(v.x*v.x + v.y * v.y + v.z * v.z);
 }
 void SimpleRenderer::DrawPosition(Pos pos, RGBA_int c) {
 	SDL_SetRenderDrawColor(simple.renderer,c.r,c.g,c.b,c.a);

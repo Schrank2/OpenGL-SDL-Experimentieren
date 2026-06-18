@@ -22,6 +22,7 @@ public:
 	float GetScreenCoordY(float y, float Depth);
 	float GetScreenDepth(float z);
 	void DrawPoint(Point point);
+	float DistBetweenPoints(Pos a, Pos b);
 	float RenderScale;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
