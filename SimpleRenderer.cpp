@@ -86,7 +86,7 @@ float SimpleRenderer::GetScreenCoordY(float y, float z, float Depth) {
 	z = z - CameraZ;
 	return (y / Depth) * (ScreenHeightF / simple.RenderScale);
 }
-void SimpleRenderer::DrawCircle(float x, float y, float r) {
+void SimpleRenderer::DrawCircle(float x, float y, float r, RGBA_int c) {
 	cout << "Drawing Circle at (" << x << ", " << y << ") with radius " << r << endl;
 	float X;
 	float TopY;
@@ -108,27 +108,30 @@ void SimpleRenderer::DrawCircle(float x, float y, float r) {
 			SDL_RenderPoint(simple.renderer, X, BotY);
 	}
 }
-void SimpleRenderer::DrawSphere(float x, float y, float z, float r) {
-	float X;
-	float TopY;
-	float BotY;
-	bool fill = true;
-	for (float i = -r; i <= r; i++) {
-		// get where the circle begins and ends
-		X = x + i;
-		TopY = y + sqrt(r * r - i * i);
-		BotY = y - sqrt(r * r - i * i);
-		// Fill the circle
-		if (fill == true) {
-			for (float j = BotY; j <= TopY; j++) {
-				SDL_RenderPoint(simple.renderer, X, j);
+void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) {
+	float maxY;
+	float maxZ;
+	RGBA_int cr = c;
+	for (float i = -r; i <= r; i += 0.01f) {
+		maxY = sqrt(r * r - i * i);
+		for (float j = -maxY; j <= maxY; j += 0.01f) {
+			maxZ = sqrt(r * r - i * i - j * j);
+			for (float k = -maxZ; k <= maxZ; k += 0.01f) {
+				cr.r = static_cast<UINT8>(cr.r - (i + j + k) / 255);
+				cr.g = static_cast<UINT8>(cr.g - (i + j + k) / 255);
+				cr.b = static_cast<UINT8>(cr.b - (i + j + k) / 255);
+				simple.DrawPosition({x + i, y + j, z + k}, cr);
 			}
 		}
-		// Draw the outline of the circle
-
 	}
+	// x + y + z = r
+	// z = r - x - y
+	// x = r - y - z
+	// y = r - x - z
+	
 }
-void SimpleRenderer::DrawPosition(Pos pos, RGBA_float color) {
+void SimpleRenderer::DrawPosition(Pos pos, RGBA_int c) {
+	SDL_SetRenderDrawColor(simple.renderer,c.r,c.g,c.b,c.a);
 	float x = pos.x;
 	float y = pos.y;
 	float z = pos.z;
@@ -138,6 +141,7 @@ void SimpleRenderer::DrawPosition(Pos pos, RGBA_float color) {
 	float screeny = GetScreenCoordY(y, z, Depth);
 	// drawing the point on the screen
 	SDL_RenderPoint(simple.renderer, screenx, screeny);
+	//simple.DrawCircle(screenx, screeny, 1.0f, c);
 }
 
 void SimpleRenderer::DrawPoint(Point point) {
@@ -152,7 +156,8 @@ void SimpleRenderer::DrawPoint(Point point) {
 	SDL_SetRenderDrawColor(simple.renderer, Color.r,Color.g,Color.b, Color.a);
 	cout << "Drawing Point: " << point.letter << " on Canvas at (" << screenx << ", " << screeny << ")" << endl;
 	SDL_RenderPoint(simple.renderer, screenx, screeny);
-	simple.DrawCircle(screenx, screeny, 10.0f);
+	//simple.DrawCircle(screenx, screeny, 10.0f, Color);
+	simple.DrawSphere(x, y, z, 0.3f, Color);
 }
 
 SimpleRenderer simple;
