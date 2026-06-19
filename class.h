@@ -17,12 +17,11 @@ public:
 	void draw();
 	void DrawCircle(float x, float y, float r, RGBA_int c);
 	void DrawSphere(float x, float y, float z, float r, RGBA_int c);
-	void DrawPosition(Pos pos, RGBA_int c);
-	float GetScreenCoordX(float x, float Depth);
-	float GetScreenCoordY(float y, float Depth);
-	float GetScreenDepth(Pos Position);
+	void DrawPosition(Pos A, RGBA_int c);
+	ScreenPos Projection(Pos A);
 	void DrawPoint(Point point);
 	void DrawLine(Pos A, Pos B, RGBA_int c);
+	void DrawTriangle(Triangle A);
 	float DistBetweenPoints(Pos a, Pos b);
 	float RenderScale;
 	SDL_Window* window;
@@ -35,6 +34,9 @@ extern SimpleRenderer simple;
 class WORLD {
 public:
 	vector<Point> Points;
+	vector<Line> Lines;
+	vector<Triangle> Triangles;
+	vector<Plane> Planes;
 	void init();
 	void tick();
 };

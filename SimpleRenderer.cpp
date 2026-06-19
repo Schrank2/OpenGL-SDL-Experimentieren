@@ -76,20 +76,10 @@ void SimpleRenderer::draw() {
 	for (int i = 0; i < static_cast<int>(world.Points.size()); i++) {
 		simple.DrawPoint(world.Points[i]);
 	}
-}
-
-float SimpleRenderer::GetScreenDepth(Pos Position) {
-	return Position.z - Camera.z;
-}
-
-float SimpleRenderer::GetScreenCoordX(float x, float Depth) {
-	x = x - Camera.x;
-	return (x / Depth) * simple.RenderScale + ScreenWidthF / 2.0f;
-}
-
-float SimpleRenderer::GetScreenCoordY(float y, float Depth) {
-	y = -(y - Camera.y);
-	return (y / Depth) * simple.RenderScale + ScreenHeightF / 2.0f;
+	// Draw all triangles from world
+	for (int j = 0; j < static_cast<int>(world.Triangles.size()); j++) {
+		simple.DrawTriangle(world.Triangles[j]);
+	}
 }
 
 void SimpleRenderer::DrawCircle(float x, float y, float r, RGBA_int c) {
@@ -145,10 +135,36 @@ void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) 
 }
 
 void SimpleRenderer::DrawLine(Pos A, Pos B, RGBA_int c) {
-	float DepthA = GetScreenDepth(A);
-	float DepthB = GetScreenDepth(B);
+	ScreenPos ScreenA = Projection(A);
+	ScreenPos ScreenB = Projection(B);
 	SDL_SetRenderDrawColor(simple.renderer,c.r,c.g,c.b,c.a);
-	SDL_RenderLine(simple.renderer, GetScreenCoordX(A.x, DepthA), GetScreenCoordY(A.y, DepthA), GetScreenCoordX(B.x, DepthB), GetScreenCoordY(B.y, DepthB));
+	SDL_RenderLine(simple.renderer, ScreenA.x, ScreenA.y, ScreenB.x, ScreenB.y);
+}
+
+ScreenPos SimpleRenderer::Projection(Pos A) {
+	float x = A.x - Camera.x;
+	float y = A.y - Camera.y;
+	float z = A.z - Camera.z;
+	float screenx = (x / z) * simple.RenderScale + ScreenWidthF / 2.0f;
+	float screeny = (-y / z) * simple.RenderScale + ScreenHeightF / 2.0f;
+	return ScreenPos(screenx, screeny);
+}
+
+
+void SimpleRenderer::DrawTriangle(Triangle T) {
+	SDL_SetRenderDrawColor(simple.renderer, T.color.r, T.color.g, T.color.b, T.color.a);
+	ScreenPos ScreenA = Projection(T.p1.position);
+	ScreenPos ScreenB = Projection(T.p2.position);
+	ScreenPos ScreenC = Projection(T.p3.position);
+
+	SDL_FPoint position = SDL_FPoint(ScreenA.x, ScreenA.y);        /**< Vertex position, in SDL_Renderer coordinates  */
+	SDL_FColor color;           /**< Vertex color */
+	SDL_FPoint tex_coord;
+	SDL_Vertex Triangle = SDL_Vertex()
+	SDL_RenderGeometry
+	SDL_RenderLine(simple.renderer, ScreenA.x, ScreenA.y, ScreenB.x, ScreenB.y);
+	SDL_RenderLine(simple.renderer, ScreenB.x, ScreenB.y, ScreenC.x, ScreenC.y);
+	SDL_RenderLine(simple.renderer, ScreenC.x, ScreenC.y, ScreenA.x, ScreenA.y);
 }
 
 float SimpleRenderer::DistBetweenPoints(Pos a, Pos b) {
@@ -156,34 +172,23 @@ float SimpleRenderer::DistBetweenPoints(Pos a, Pos b) {
 	return sqrt(v.x*v.x + v.y * v.y + v.z * v.z);
 }
 
-void SimpleRenderer::DrawPosition(Pos pos, RGBA_int c) {
+void SimpleRenderer::DrawPosition(Pos A, RGBA_int c) {
 	SDL_SetRenderDrawColor(simple.renderer,c.r,c.g,c.b,c.a);
-	float x = pos.x;
-	float y = pos.y;
-	float z = pos.z;
 	// calculating the screen coordinates for the point
-	float Depth = GetScreenDepth(pos);
-	float screenx = GetScreenCoordX(x, Depth);
-	float screeny = GetScreenCoordY(y, Depth);
+	ScreenPos ScreenA = Projection(A);
 	// drawing the point on the screen
-	SDL_RenderPoint(simple.renderer, screenx, screeny);
-	//simple.DrawCircle(screenx, screeny, 1.0f, c);
+	SDL_RenderPoint(simple.renderer, ScreenA.x, ScreenA.y);
 }
 
-void SimpleRenderer::DrawPoint(Point point) {
-	float x = point.position.x;
-	float y = point.position.y;
-	float z = point.position.z;
+void SimpleRenderer::DrawPoint(Point A) {
 	// calculating the screen coordinates for the point
-	float Depth = GetScreenDepth(point.position);
-	float screenx = GetScreenCoordX(x, Depth);
-	float screeny = GetScreenCoordY(y, Depth);
-	RGBA_int Color = FloatToIntColor(point.color);
+	ScreenPos ScreenA = Projection(A.position);
+	RGBA_int Color = FloatToIntColor(A.color);
 	SDL_SetRenderDrawColor(simple.renderer, Color.r,Color.g,Color.b, Color.a);
-	cout << "Drawing Point: " << point.letter << " on Canvas at (" << screenx << ", " << screeny << ")" << endl;
-	SDL_RenderPoint(simple.renderer, screenx, screeny);
+	cout << "Drawing Point: " << A.letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl;
+	SDL_RenderPoint(simple.renderer, ScreenA.x, ScreenA.y);
 	//simple.DrawCircle(screenx, screeny, 10.0f, Color);
-	simple.DrawSphere(x, y, z, 0.3, Color);
+	simple.DrawSphere(A.position.x, A.position.y, A.position.z, 0.1, Color);
 }
 
 SimpleRenderer simple;
