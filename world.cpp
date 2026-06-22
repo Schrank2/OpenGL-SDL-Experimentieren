@@ -30,7 +30,7 @@ void WORLD::init() {
 	Points.push_back(Point('D', Pos(4.0f, 4.0f, -3.0f), dark_red));
 
 	// add Triangles to World
-	Triangles.push_back(Triangle(Points[0], Points[1], Points[2], bright_red));
+	Triangles.push_back(Triangle(Points[1], Points[2], Points[3], bright_red));
 
 	// add Planes to World
 	Planes.push_back(Plane(Triangles[0], bright_blue));

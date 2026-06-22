@@ -5,7 +5,7 @@
 #include <vector>
 #include <cmath>
 
-Pos Camera = Pos(0.0f, 0.0f, -5.0f);
+Pos Camera = Pos(0.0f, 0.0f, -3.0f);
 
 void SimpleRenderer::open_window() {
 	if (debug == true) { cout << "[DEBUG] function simple.open_window() from SimpleRenderer.cpp" << endl; }
@@ -145,8 +145,9 @@ ScreenPos SimpleRenderer::Projection(Pos A) {
 	float x = A.x - Camera.x;
 	float y = A.y - Camera.y;
 	float z = A.z - Camera.z;
-	float screenx = (x / z) * simple.RenderScale + ScreenWidthF / 2.0f;
-	float screeny = (-y / z) * simple.RenderScale + ScreenHeightF / 2.0f;
+	y = -y;
+	float screenx = (x / z) + ScreenWidthF / 2.0f;
+	float screeny = (y / z) + ScreenHeightF / 2.0f;
 	return ScreenPos(screenx, screeny);
 }
 
@@ -163,7 +164,7 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	SDL_FPoint SDLPOSB = { ScreenB.x, ScreenB.y };
 	SDL_FPoint SDLPOSC = { ScreenC.x, ScreenC.y };
 	// Get Color
-	SDL_FColor color = { T.color.r, T.color.g, T.color.b, T.color.a };
+	SDL_FColor color = { T.color.r / 255.0f, T.color.g / 255.0f, T.color.b / 255.0f, T.color.a / 255.0f };
 	//SDL_FColor colorB = { T.color.r, T.color.g, T.color.b, T.color.a };
 	//SDL_FColor colorC = { T.color.r, T.color.g, T.color.b, T.color.a };
 	//SDL_FPoint tex_coord;
