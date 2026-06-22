@@ -152,16 +152,24 @@ ScreenPos SimpleRenderer::Projection(Pos A) {
 
 
 void SimpleRenderer::DrawTriangle(Triangle T) {
-	SDL_SetRenderDrawColor(simple.renderer, T.color.r, T.color.g, T.color.b, T.color.a);
+	RGBA_int ColorInt = FloatToIntColor(T.color);
+	SDL_SetRenderDrawColor(simple.renderer, ColorInt.r, ColorInt.g, ColorInt.b, ColorInt.a);
+	// Get Screen Coordinates
 	ScreenPos ScreenA = Projection(T.p1.position);
 	ScreenPos ScreenB = Projection(T.p2.position);
 	ScreenPos ScreenC = Projection(T.p3.position);
-
-	SDL_FPoint position = SDL_FPoint(ScreenA.x, ScreenA.y);        /**< Vertex position, in SDL_Renderer coordinates  */
-	SDL_FColor color;           /**< Vertex color */
-	SDL_FPoint tex_coord;
-	SDL_Vertex Triangle = SDL_Vertex()
-	SDL_RenderGeometry
+	// Convert to SDL_FPoint
+	SDL_FPoint SDLPOSA = { ScreenA.x, ScreenA.y };
+	SDL_FPoint SDLPOSB = { ScreenB.x, ScreenB.y };
+	SDL_FPoint SDLPOSC = { ScreenC.x, ScreenC.y };
+	// Get Color
+	SDL_FColor color = { T.color.r, T.color.g, T.color.b, T.color.a };
+	//SDL_FColor colorB = { T.color.r, T.color.g, T.color.b, T.color.a };
+	//SDL_FColor colorC = { T.color.r, T.color.g, T.color.b, T.color.a };
+	//SDL_FPoint tex_coord;
+	cout << "A " << ScreenA.x << " " << ScreenA.y << " B " << ScreenB.x << " " << ScreenB.y << " C " << ScreenC.x << " " << ScreenC.y << endl;
+	SDL_Vertex TriangleVertex[3] = { {SDLPOSA, color, NULL }, { SDLPOSB, color, NULL }, { SDLPOSC, color, NULL } };
+	SDL_RenderGeometry(simple.renderer, nullptr, TriangleVertex, 3, nullptr, 0);
 	SDL_RenderLine(simple.renderer, ScreenA.x, ScreenA.y, ScreenB.x, ScreenB.y);
 	SDL_RenderLine(simple.renderer, ScreenB.x, ScreenB.y, ScreenC.x, ScreenC.y);
 	SDL_RenderLine(simple.renderer, ScreenC.x, ScreenC.y, ScreenA.x, ScreenA.y);
