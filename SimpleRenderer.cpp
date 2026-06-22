@@ -5,7 +5,7 @@
 #include <vector>
 #include <cmath>
 
-Pos Camera = Pos(0.0f, 0.0f, -3.0f);
+Pos Camera = Pos(0.0f, 0.0f, -5.0f);
 
 void SimpleRenderer::open_window() {
 	if (debug == true) { cout << "[DEBUG] function simple.open_window() from SimpleRenderer.cpp" << endl; }
@@ -113,7 +113,7 @@ void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) 
 	float shade;
 	//if (debug = true) { cout << "x: " << x << " y: " << y << " z: " << z << " cd: " << cd << endl; }
 	// loop
-	float step = simple.RenderScale / 300;
+	float step = 0.003;
 	for (float i = -r; i <= r; i += step) {
 		maxY = sqrt(r * r - i * i);
 		for (float j = -maxY; j <= maxY; j += step) {
