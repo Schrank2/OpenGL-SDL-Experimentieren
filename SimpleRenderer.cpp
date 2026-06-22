@@ -40,7 +40,7 @@ void SimpleRenderer::open_window() {
 		cout << "Renderer creation failed: " << SDL_GetError() << endl;
 		exit(1);
 	}
-	simple.RenderScale = (min(ScreenWidthF, ScreenHeightF)) * 1.0f;
+	simple.RenderScale = (min(ScreenWidthF,ScreenHeightF)) * 1.0f;
 }
 
 void SimpleRenderer::render() {
@@ -113,11 +113,12 @@ void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) 
 	float shade;
 	//if (debug = true) { cout << "x: " << x << " y: " << y << " z: " << z << " cd: " << cd << endl; }
 	// loop
-	for (float i = -r; i <= r; i += 0.01f) {
+	float step = simple.RenderScale / 300;
+	for (float i = -r; i <= r; i += step) {
 		maxY = sqrt(r * r - i * i);
-		for (float j = -maxY; j <= maxY; j += 0.01f) {
+		for (float j = -maxY; j <= maxY; j += step) {
 			maxZ = sqrt(r * r - i * i - j * j);
-			for (float k = -maxZ; k <= maxZ; k += 0.01f) {
+			for (float k = -maxZ; k <= maxZ; k += step) {
 				Pos P = Pos(x + i, y + j, z + k);
 				shade = k / (2 * r);
 				cr.r = static_cast<UINT8>(c.r * shade);
@@ -146,8 +147,8 @@ ScreenPos SimpleRenderer::Projection(Pos A) {
 	float y = A.y - Camera.y;
 	float z = A.z - Camera.z;
 	y = -y;
-	float screenx = (x / z) + ScreenWidthF / 2.0f;
-	float screeny = (y / z) + ScreenHeightF / 2.0f;
+	float screenx = (x / z) * simple.RenderScale + ScreenWidthF / 2.0f;
+	float screeny = (y / z) * simple.RenderScale + ScreenHeightF / 2.0f;
 	return ScreenPos(screenx, screeny);
 }
 
@@ -187,6 +188,7 @@ float SimpleRenderer::DistBetweenPoints(Pos a, Pos b) {
 }
 
 void SimpleRenderer::DrawPosition(Pos A, RGBA_int c) {
+	if (A.z <= 0) { return; }
 	SDL_SetRenderDrawColor(simple.renderer,c.r,c.g,c.b,c.a);
 	// calculating the screen coordinates for the point
 	ScreenPos ScreenA = Projection(A);
