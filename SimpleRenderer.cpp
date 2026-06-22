@@ -169,10 +169,15 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	//SDL_FPoint tex_coord;
 	cout << "A " << ScreenA.x << " " << ScreenA.y << " B " << ScreenB.x << " " << ScreenB.y << " C " << ScreenC.x << " " << ScreenC.y << endl;
 	SDL_Vertex TriangleVertex[3] = { {SDLPOSA, color, NULL }, { SDLPOSB, color, NULL }, { SDLPOSC, color, NULL } };
-	SDL_RenderGeometry(simple.renderer, nullptr, TriangleVertex, 3, nullptr, 0);
-	SDL_RenderLine(simple.renderer, ScreenA.x, ScreenA.y, ScreenB.x, ScreenB.y);
-	SDL_RenderLine(simple.renderer, ScreenB.x, ScreenB.y, ScreenC.x, ScreenC.y);
-	SDL_RenderLine(simple.renderer, ScreenC.x, ScreenC.y, ScreenA.x, ScreenA.y);
+	SDL_RenderGeometry(simple.renderer, NULL, TriangleVertex, 3, NULL, 0);
+	simple.DrawScreenLine(ScreenA, ScreenB, ColorInt);
+	simple.DrawScreenLine(ScreenB, ScreenC, ColorInt);
+	simple.DrawScreenLine(ScreenC, ScreenA, ColorInt);
+}
+
+void SimpleRenderer::DrawScreenLine(ScreenPos A, ScreenPos B, RGBA_int c) {
+	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
+	SDL_RenderLine(simple.renderer, A.x, A.y, B.x, B.y);
 }
 
 float SimpleRenderer::DistBetweenPoints(Pos a, Pos b) {
