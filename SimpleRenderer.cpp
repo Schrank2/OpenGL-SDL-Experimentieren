@@ -108,8 +108,8 @@ void SimpleRenderer::DrawCircle(float x, float y, float r, RGBA_int c) {
 void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 	ScreenPos As = Projection(A);
 	// weirdly adjusting the radius for depth of A
-	ScreenPos Temp = Projection({ 0.0f, r, A.z });
-	float R = Temp.x;
+	ScreenPos Temp = Projection({ A.y, r + A.x, A.z });
+	float R = As.x - Temp.x;
 
 	float X;
 	float TopY;
@@ -117,13 +117,14 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 	bool fill = true;
 
 	int i;
-	for (i = As.x - R; i <= As.x + R; i++) {
+	for (i = - R; i <= R; i++) {
 		X = As.x + i;
 		TopY = As.y + sqrt(R * R - i * i);
 		BotY = As.y - sqrt(R * R - i * i);
 		// Fill the circle
 		if (fill == true) {
 			for (float j = BotY; j <= TopY; j++) {
+				SDL_SetRenderDrawColor(simple.renderer, c.r,c.g,c.b,c.a);
 				SDL_RenderPoint(simple.renderer, X, j);
 			}
 		}
