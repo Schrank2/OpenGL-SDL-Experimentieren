@@ -108,8 +108,8 @@ void SimpleRenderer::DrawCircle(float x, float y, float r, RGBA_int c) {
 void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 	ScreenPos As = Projection(A);
 	// weirdly adjusting the radius for depth of A
-	ScreenPos Temp = Projection({ A.y, r + A.x, A.z });
-	float R = As.x - Temp.x;
+	ScreenPos Temp = Projection({ A.y, r + A.y, A.z });
+	float R = As.y - Temp.y;
 
 	float X;
 	float TopY;
