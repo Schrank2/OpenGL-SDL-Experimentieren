@@ -105,6 +105,34 @@ void SimpleRenderer::DrawCircle(float x, float y, float r, RGBA_int c) {
 	}
 }
 
+void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
+	ScreenPos As = Projection(A);
+	// weirdly adjusting the radius for depth of A
+	ScreenPos Temp = Projection({ 0.0f, r, A.z });
+	float R = Temp.x;
+
+	float X;
+	float TopY;
+	float BotY;
+	bool fill = true;
+
+	int i;
+	for (i = As.x - R; i <= As.x + R; i++) {
+		X = As.x + i;
+		TopY = As.y + sqrt(R * R - i * i);
+		BotY = As.y - sqrt(R * R - i * i);
+		// Fill the circle
+		if (fill == true) {
+			for (float j = BotY; j <= TopY; j++) {
+				SDL_RenderPoint(simple.renderer, X, j);
+			}
+		}
+		// Draw the outline of the circle
+		SDL_RenderPoint(simple.renderer, X, TopY);
+		SDL_RenderPoint(simple.renderer, X, BotY);
+	}
+}
+
 void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) {
 	// initialising variables
 	float maxY;
@@ -204,7 +232,8 @@ void SimpleRenderer::DrawPoint(Point A) {
 	cout << "Drawing Point: " << A.letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl;
 	SDL_RenderPoint(simple.renderer, ScreenA.x, ScreenA.y);
 	//simple.DrawCircle(screenx, screeny, 10.0f, Color);
-	simple.DrawSphere(A.position.x, A.position.y, A.position.z, 0.1, Color);
+	//simple.DrawSphere(A.position.x, A.position.y, A.position.z, 0.1, Color);
+	simple.DrawSphere2(A.position, 0.1f, Color);
 }
 
 SimpleRenderer simple;
