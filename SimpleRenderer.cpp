@@ -5,7 +5,7 @@
 #include <vector>
 #include <cmath>
 
-Pos Camera = Pos(0.0f, 0.0f, -5.0f);
+Pos Camera = Pos(0.0f, 0.0f, -1.0f);
 
 void SimpleRenderer::open_window() {
 	if (debug == true) { cout << "[DEBUG] function simple.open_window() from SimpleRenderer.cpp" << endl; }
@@ -110,11 +110,15 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 	// weirdly adjusting the radius for depth of A
 	ScreenPos Temp = Projection({ A.y, r + A.y, A.z });
 	float R = As.y - Temp.y;
+	// where the sphere is lit most brightly (temporary, will later be replaced)
+	ScreenPos Light = ScreenPos(As.x - (R/2), As.y - (R/2));
 
 	float X;
 	float TopY;
 	float BotY;
 	bool fill = true;
+
+	float lshade;	
 
 	int i;
 	for (i = - R; i <= R; i++) {
@@ -124,14 +128,37 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 		// Fill the circle
 		if (fill == true) {
 			for (float j = BotY; j <= TopY; j++) {
-				SDL_SetRenderDrawColor(simple.renderer, c.r,c.g,c.b,c.a);
-				SDL_RenderPoint(simple.renderer, X, j);
+				ScreenPos L = {X,j};
+				// shading the point
+				float d = ScreenDist(Light, L);
+				lshade = 1.0f - (d / R);
+				//lshade = lshade * lshade;
+				//cout << lshade << endl;
+				RGBA_int Localc = ModifyColor(lshade, 0.5f, c);
+				// drawing the point
+				SDL_SetRenderDrawColor(simple.renderer, Localc.r,Localc.g,Localc.b,Localc.a);
+				SDL_RenderPoint(simple.renderer, L.x, L.y);
 			}
 		}
 		// Draw the outline of the circle
 		SDL_RenderPoint(simple.renderer, X, TopY);
 		SDL_RenderPoint(simple.renderer, X, BotY);
 	}
+}
+
+RGBA_int SimpleRenderer::ModifyColor(float modifier, float strength, RGBA_int c) {
+	float strengthO = 1.0f - strength;
+	int r = static_cast<int>(c.r * strengthO + c.r * strength * modifier);
+	int g = static_cast<int>(c.g * strengthO + c.g * strength * modifier);
+	int b = static_cast<int>(c.b * strengthO + c.b * strength * modifier);
+	int a = static_cast<int>(c.a * strengthO + c.a * strength * modifier);
+	return RGBA_int(r, g, b, a);
+}
+
+float SimpleRenderer::ScreenDist(ScreenPos A, ScreenPos B) {
+	float LineX = A.x - B.x;
+	float LineY = A.y - B.y;
+	return abs(sqrt(LineX * LineX + LineY * LineY));
 }
 
 void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) {

@@ -25,7 +25,9 @@ public:
 	void DrawTriangle(Triangle A);
 	float DistBetweenPoints(Pos a, Pos b);
 	float RenderScale;
+	float ScreenDist(ScreenPos A, ScreenPos B);
 	void DrawScreenLine(ScreenPos A, ScreenPos B, RGBA_int c);
+	RGBA_int ModifyColor(float modifier, float strength, RGBA_int c);
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 };
