@@ -13,6 +13,8 @@ using namespace std;
 class SimpleRenderer {
 public:
 	void render();
+	vector<vector<RGBA_float>> CreateDepthBuffer();
+	vector<vector<RGBA_float>> DepthBuffer;
 	void open_window();
 	void draw();
 	void DrawCircle(float x, float y, float r, RGBA_int c);

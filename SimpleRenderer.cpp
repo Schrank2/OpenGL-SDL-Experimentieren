@@ -6,6 +6,13 @@
 #include <cmath>
 
 Pos Camera = Pos(0.0f, 0.0f, -1.0f);
+vector<vector<RGBA_float>> DepthBuffer;
+
+vector<vector<RGBA_float>> SimpleRenderer::CreateDepthBuffer() {
+	vector<vector<RGBA_float>> DepthBuffer;
+	DepthBuffer.resize(ScreenWidth, vector<RGBA_float>(ScreenHeight));
+	return DepthBuffer;
+	}
 
 void SimpleRenderer::open_window() {
 	if (debug == true) { cout << "[DEBUG] function simple.open_window() from SimpleRenderer.cpp" << endl; }
@@ -47,6 +54,7 @@ void SimpleRenderer::render() {
 	if (debug == true) { cout << "[DEBUG] function simple.render() from SimpleRenderer.cpp" << endl; }
 	SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
 	SDL_RenderClear(simple.renderer);
+	//SDL_Surface* DepthBuffer = simple.CreateDepthBuffer();
 	simple.draw();
 	SDL_RenderPresent(simple.renderer);
 }
@@ -133,8 +141,9 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 				float d = ScreenDist(Light, L);
 				lshade = 1.0f - (d / R);
 				//lshade = lshade * lshade;
-				//cout << lshade << endl;
+				//cout << lshade << endl;ss
 				RGBA_int Localc = ModifyColor(lshade, 0.5f, c);
+				// checking the Depth Buffer
 				// drawing the point
 				SDL_SetRenderDrawColor(simple.renderer, Localc.r,Localc.g,Localc.b,Localc.a);
 				SDL_RenderPoint(simple.renderer, L.x, L.y);
@@ -207,7 +216,6 @@ ScreenPos SimpleRenderer::Projection(Pos A) {
 	float screeny = (y / z) * simple.RenderScale + ScreenHeightF / 2.0f;
 	return ScreenPos(screenx, screeny);
 }
-
 
 void SimpleRenderer::DrawTriangle(Triangle T) {
 	RGBA_int ColorInt = FloatToIntColor(T.color);
