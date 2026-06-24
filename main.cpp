@@ -13,9 +13,8 @@ int main(int argc, char* argv[])
 	world.init();
 	// Rendering
 	InitSdl();
-	simple.open_window();
 	simple.render();
-	//TEST
+	//TEST 3002016
 	while (true) {	
 
 	}
