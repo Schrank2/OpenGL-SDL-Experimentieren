@@ -49,7 +49,7 @@ SDL_Renderer* SimpleRenderer::Create_Renderer(SDL_Window* window){
 	if (debug == true) { cout << "[DEBUG] function simple.Create_Renderer() from SimpleRenderer.cpp" << endl; }
 	// creating the renderer
 	SDL_Renderer* renderer = SDL_CreateRenderer(window,NULL);
-	if (!simple.renderer)
+	if (!renderer)
 	{
 		cout << "Renderer creation failed: " << SDL_GetError() << endl;
 		exit(1);
