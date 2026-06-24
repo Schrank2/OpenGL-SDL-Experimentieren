@@ -4,6 +4,7 @@
 #include "class.h"
 #include <vector>
 #include <cmath>
+#include <iomanip> // basically settings for cout
 
 Pos Camera = Pos(0.0f, 0.0f, -1.0f);
 
@@ -71,11 +72,34 @@ void SimpleRenderer::init() {
 
 void SimpleRenderer::render() {
 	if (debug == true) { cout << "[DEBUG] function simple.render() from SimpleRenderer.cpp" << endl; }
+	// Clear the Main Window
 	SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
 	SDL_RenderClear(simple.renderer);
-	//SDL_Surface* DepthBuffer = simple.CreateDepthBuffer();
+	// Clear the Depth Buffer
+	SDL_SetRenderDrawColor(simple.DepthBufferRenderer, 255, 255, 255, 255);
+	SDL_RenderClear(simple.DepthBufferRenderer);
+	for (auto& row : DepthBuffer)
+		fill(row.begin(), row.end(), NULL);
+	DepthBufferMax = 0.0f;
+	// Draw the Main Window
 	simple.draw();
+	// Render the Depth Buffer
+	int i, j;
+	float a;
+	cout << DepthBuffer.size() << endl;
+	for (i = 0; i < DepthBuffer.size(); i++) {
+		for (j = 0; j < DepthBuffer[0].size(); j++) {
+			a = DepthBuffer[i][j] / DepthBufferMax;
+			//cout << fixed << setprecision(3) << a << " " << DepthBuffer[i][j] << endl;
+			if (a < 0.0f) { a = 0.0f; }
+			if (a > 1.0f) { a = 1.0f; }
+			//cout << fixed << setprecision(2) << a << endl;
+			SDL_SetRenderDrawColorFloat(simple.DepthBufferRenderer, a, a, a, 1.0f);
+			SDL_RenderPoint(simple.DepthBufferRenderer, i, j);
+		}
+	}
 	SDL_RenderPresent(simple.renderer);
+	SDL_RenderPresent(simple.DepthBufferRenderer);
 }
 
 void SimpleRenderer::draw() {
@@ -145,7 +169,8 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 	float BotY;
 	bool fill = true;
 
-	float lshade;	
+	float lshade;
+	float BufferDepth;
 
 	int i;
 	for (i = - R; i <= R; i++) {
@@ -158,7 +183,8 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 				ScreenPos L = {X,j};
 				if (L.x >= 0 and L.x <= DepthBuffer.size() and L.y >= 0 and L.y <= DepthBuffer[0].size()) {
 					//cout << L.x << " " << L.y << " " << DepthBuffer.size() << " " << DepthBuffer[0].size() << endl;
-					if (DepthBuffer[L.x][L.y] == NULL or DepthBuffer[L.x][L.y] > (A.z - Camera.z)) { // checking if the point is in front in the depth Buffer
+					BufferDepth = A.z - Camera.z;
+					if (DepthBuffer[L.x][L.y] == NULL or DepthBuffer[L.x][L.y] > BufferDepth) { // checking if the point is in front in the depth Buffer
 						// shading the point
 						float d = ScreenDist(Light, L);
 						lshade = 1.0f - (d / R);
@@ -166,7 +192,9 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 						//cout << lshade << endl;ss
 						RGBA_int Localc = ModifyColor(lshade, 0.5f, c);
 						// changing the Depth Buffer
-						DepthBuffer[L.x][L.y] = (A.z - Camera.z);
+						if (BufferDepth > DepthBufferMax)
+							DepthBufferMax = BufferDepth;
+						DepthBuffer[L.x][L.y] = BufferDepth;
 						// drawing the point
 						SDL_SetRenderDrawColor(simple.renderer, Localc.r, Localc.g, Localc.b, Localc.a);
 						SDL_RenderPoint(simple.renderer, L.x, L.y);
@@ -203,7 +231,7 @@ void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) 
 	float shade;
 	//if (debug = true) { cout << "x: " << x << " y: " << y << " z: " << z << " cd: " << cd << endl; }
 	// loop
-	float step = 0.003;
+	float step = 0.003f;
 	for (float i = -r; i <= r; i += step) {
 		maxY = sqrt(r * r - i * i);
 		for (float j = -maxY; j <= maxY; j += step) {
