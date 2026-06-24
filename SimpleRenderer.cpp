@@ -6,12 +6,11 @@
 #include <cmath>
 
 Pos Camera = Pos(0.0f, 0.0f, -1.0f);
-vector<vector<float>> DepthBuffer;
 
 vector<vector<float>> SimpleRenderer::CreateDepthBuffer() {
 	vector<vector<float>> D;
 	D.resize(ScreenWidth, vector<float>(ScreenHeight));
-	return DepthBuffer;
+	return D;
 	}
 
 void SimpleRenderer::GetScreenData() {
@@ -58,8 +57,7 @@ SDL_Renderer* SimpleRenderer::Create_Renderer(SDL_Window* window){
 	return renderer;
 }
 
-void SimpleRenderer::render() {
-	if (debug == true) { cout << "[DEBUG] function simple.render() from SimpleRenderer.cpp" << endl; }
+void SimpleRenderer::init() {
 	// Get Screen Data for Window creation
 	simple.GetScreenData();
 	// Creating the Main Window
@@ -68,6 +66,11 @@ void SimpleRenderer::render() {
 	// Creating the Depth Buffer Window
 	simple.DepthBufferWindow = Create_Window("Simple Render Depth Buffer");
 	simple.DepthBufferRenderer = Create_Renderer(simple.DepthBufferWindow);
+	simple.DepthBuffer = simple.CreateDepthBuffer();
+}
+
+void SimpleRenderer::render() {
+	if (debug == true) { cout << "[DEBUG] function simple.render() from SimpleRenderer.cpp" << endl; }
 	SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
 	SDL_RenderClear(simple.renderer);
 	//SDL_Surface* DepthBuffer = simple.CreateDepthBuffer();
@@ -153,16 +156,22 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 		if (fill == true) {
 			for (float j = BotY; j <= TopY; j++) {
 				ScreenPos L = {X,j};
-				// shading the point
-				float d = ScreenDist(Light, L);
-				lshade = 1.0f - (d / R);
-				//lshade = lshade * lshade;
-				//cout << lshade << endl;ss
-				RGBA_int Localc = ModifyColor(lshade, 0.5f, c);
-				// checking the Depth Buffer
-				// drawing the point
-				SDL_SetRenderDrawColor(simple.renderer, Localc.r,Localc.g,Localc.b,Localc.a);
-				SDL_RenderPoint(simple.renderer, L.x, L.y);
+				if (L.x >= 0 and L.x <= DepthBuffer.size() and L.y >= 0 and L.y <= DepthBuffer[0].size()) {
+					//cout << L.x << " " << L.y << " " << DepthBuffer.size() << " " << DepthBuffer[0].size() << endl;
+					if (DepthBuffer[L.x][L.y] == NULL or DepthBuffer[L.x][L.y] > (A.z - Camera.z)) { // checking if the point is in front in the depth Buffer
+						// shading the point
+						float d = ScreenDist(Light, L);
+						lshade = 1.0f - (d / R);
+						//lshade = lshade * lshade;
+						//cout << lshade << endl;ss
+						RGBA_int Localc = ModifyColor(lshade, 0.5f, c);
+						// changing the Depth Buffer
+						DepthBuffer[L.x][L.y] = (A.z - Camera.z);
+						// drawing the point
+						SDL_SetRenderDrawColor(simple.renderer, Localc.r, Localc.g, Localc.b, Localc.a);
+						SDL_RenderPoint(simple.renderer, L.x, L.y);
+					}
+				}
 			}
 		}
 		// Draw the outline of the circle

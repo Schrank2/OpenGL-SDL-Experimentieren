@@ -12,6 +12,7 @@ using namespace std;
 // declare R1 so rastSdlRender.cpp can use it
 class SimpleRenderer {
 public:
+	void init();
 	void render();
 	vector<vector<float>> CreateDepthBuffer();
 	vector<vector<float>> DepthBuffer;
