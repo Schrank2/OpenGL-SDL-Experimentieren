@@ -202,7 +202,7 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 						x = 1.0f;
 					float z = sqrt(1.0f - x * x) * r; // Tiefenunterschied zwischen Punkt und Zentrum
 					BufferDepth = FrontDepth - z;
-					cout << BufferDepth << " " << fixed << setprecision(5) << A.z << endl;
+					//cout << BufferDepth << " " << fixed << setprecision(5) << A.z << endl;
 					if (DepthBuffer[L.x][L.y] == NULL or DepthBuffer[L.x][L.y] > BufferDepth) { // checking if the point is in front in the depth Buffer
 						// changing the Depth Buffer
 						if (BufferDepth > DepthBufferMax)
@@ -332,7 +332,7 @@ void SimpleRenderer::DrawPoint(Point A) {
 	SDL_RenderPoint(simple.renderer, ScreenA.x, ScreenA.y);
 	//simple.DrawCircle(screenx, screeny, 10.0f, Color);
 	//simple.DrawSphere(A.position.x, A.position.y, A.position.z, 0.1, Color);
-	simple.DrawSphere2(A.position, 0.1f, Color);
+	simple.DrawSphere2(A.position, 0.01f, Color);
 }
 
 SimpleRenderer simple;
