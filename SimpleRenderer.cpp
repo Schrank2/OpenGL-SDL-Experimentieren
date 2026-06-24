@@ -159,6 +159,7 @@ void SimpleRenderer::DrawCircle(float x, float y, float r, RGBA_int c) {
 
 void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 	ScreenPos As = Projection(A);
+	float FrontDepth = A.z - Camera.z - r;
 	// weirdly adjusting the radius for depth of A
 	ScreenPos Temp = Projection({ A.y, r + A.y, A.z });
 	float R = As.y - Temp.y;
@@ -185,20 +186,23 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 				if (L.x >= 0 and L.x <= DepthBuffer.size() and L.y >= 0 and L.y <= DepthBuffer[0].size()) {
 					//cout << L.x << " " << L.y << " " << DepthBuffer.size() << " " << DepthBuffer[0].size() << endl;
 					// shading the point
-					float d = ScreenDist(Light, L); // Distance Between Center and Point
+					float d = ScreenDist(Light, L); // Distance Between Lightspot and Point
+					float center = ScreenDist(As, L); // Distance Between Lightspot and Point
 					lshade = 1.0f - (d / R);
 					//lshade = lshade * lshade;
 					//cout << lshade << endl;ss
 					RGBA_int Localc = ModifyColor(lshade, 0.5f, c);
 					// Estimating the distance of the point from the camera
 					// mithilfe von Kugel Rotationskörper Funktion (f(x) = sqrt(1-(x*x))
-					float x = d / R; // Distance Between Center and Point displayed between 0.0f and 1.0f.
+					float x = center / R; // Distance Between Center and Point displayed between 0.0f and 1.0f.
+					//cout << "x: " << x << " center: " << center << " R: " << R << endl;
 					if (x < 0.0f)
 						x = 0.0f;
 					if (x > 1.0f)
 						x = 1.0f;
-					float z = sqrt(1.0f - (x * x)); // Kugel Rotationskörperfunktion
-					BufferDepth = A.z - Camera.z + R - (z * R);
+					float z = sqrt(1.0f - x * x) * r; // Tiefenunterschied zwischen Punkt und Zentrum
+					BufferDepth = FrontDepth - z;
+					cout << BufferDepth << " " << fixed << setprecision(5) << A.z << endl;
 					if (DepthBuffer[L.x][L.y] == NULL or DepthBuffer[L.x][L.y] > BufferDepth) { // checking if the point is in front in the depth Buffer
 						// changing the Depth Buffer
 						if (BufferDepth > DepthBufferMax)
