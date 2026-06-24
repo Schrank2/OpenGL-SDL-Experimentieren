@@ -5,6 +5,7 @@
 #include <vector>
 #include <cmath>
 #include <iomanip> // basically settings for cout
+#include <algorithm> // for clamp()
 
 Pos Camera = Pos(0.0f, 0.0f, -1.0f);
 
@@ -183,14 +184,22 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 				ScreenPos L = {X,j};
 				if (L.x >= 0 and L.x <= DepthBuffer.size() and L.y >= 0 and L.y <= DepthBuffer[0].size()) {
 					//cout << L.x << " " << L.y << " " << DepthBuffer.size() << " " << DepthBuffer[0].size() << endl;
-					BufferDepth = A.z - Camera.z;
+					// shading the point
+					float d = ScreenDist(Light, L); // Distance Between Center and Point
+					lshade = 1.0f - (d / R);
+					//lshade = lshade * lshade;
+					//cout << lshade << endl;ss
+					RGBA_int Localc = ModifyColor(lshade, 0.5f, c);
+					// Estimating the distance of the point from the camera
+					// mithilfe von Kugel Rotationskörper Funktion (f(x) = sqrt(1-(x*x))
+					float x = d / R; // Distance Between Center and Point displayed between 0.0f and 1.0f.
+					if (x < 0.0f)
+						x = 0.0f;
+					if (x > 1.0f)
+						x = 1.0f;
+					float z = sqrt(1.0f - (x * x)); // Kugel Rotationskörperfunktion
+					BufferDepth = A.z - Camera.z + R - (z * R);
 					if (DepthBuffer[L.x][L.y] == NULL or DepthBuffer[L.x][L.y] > BufferDepth) { // checking if the point is in front in the depth Buffer
-						// shading the point
-						float d = ScreenDist(Light, L);
-						lshade = 1.0f - (d / R);
-						//lshade = lshade * lshade;
-						//cout << lshade << endl;ss
-						RGBA_int Localc = ModifyColor(lshade, 0.5f, c);
 						// changing the Depth Buffer
 						if (BufferDepth > DepthBufferMax)
 							DepthBufferMax = BufferDepth;
