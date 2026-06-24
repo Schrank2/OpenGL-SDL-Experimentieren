@@ -18,7 +18,7 @@ RGBA_float bright_green(0.0f, 255.0f, 0.0f, 255.0f);
 RGBA_float dark_red(128.0f, 0.0f, 0.0f, 255.0f);
 RGBA_float dark_green(0.0f, 128.0f, 0.0f, 255.0f);
 RGBA_float dark_blue(0.0f, 0.0f, 128.0f, 255.0f);
-RGBA_float black(50.0f, 50.0f, 50.0f, 255.0f);
+RGBA_float black(100.0f, 100.0f, 100.0f, 255.0f);
 
 void WORLD::init() {
 	if (debug == true) { cout << "[DEBUG] function world.init() from world.cpp" << endl; }
@@ -28,6 +28,7 @@ void WORLD::init() {
 	Points.push_back(Point('B', Pos(2.0f, 1.0f, 2.0f), bright_green));
 	Points.push_back(Point('C', Pos(1.5f, 2.0f, 2.0f), bright_blue));
 	Points.push_back(Point('D', Pos(4.0f, 4.0f, -3.0f), dark_red));
+	Points.push_back(Point('E', Pos(0.0f, 0.2f, 1.0f), dark_green));
 
 	// add Triangles to World
 	Triangles.push_back(Triangle(Points[1], Points[2], Points[3], bright_red));

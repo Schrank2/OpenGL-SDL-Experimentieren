@@ -202,9 +202,6 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 				}
 			}
 		}
-		// Draw the outline of the circle
-		SDL_RenderPoint(simple.renderer, X, TopY);
-		SDL_RenderPoint(simple.renderer, X, BotY);
 	}
 }
 
