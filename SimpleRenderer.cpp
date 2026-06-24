@@ -7,8 +7,6 @@
 #include <iomanip> // basically settings for cout
 #include <algorithm> // for clamp()
 
-Pos Camera = Pos(0.0f, 0.0f, -1.0f);
-
 vector<vector<float>> SimpleRenderer::CreateDepthBuffer() {
 	vector<vector<float>> D;
 	D.resize(ScreenWidth, vector<float>(ScreenHeight));
@@ -62,6 +60,8 @@ SDL_Renderer* SimpleRenderer::Create_Renderer(SDL_Window* window){
 void SimpleRenderer::init() {
 	// Get Screen Data for Window creation
 	simple.GetScreenData();
+	// Creating the Camera
+	Pos Camera = Pos(0.0f, 0.0f, -1.0f);
 	// Creating the Main Window
 	simple.window = Create_Window("Simple Render Main");
 	simple.renderer = Create_Renderer(simple.window);
@@ -159,7 +159,7 @@ void SimpleRenderer::DrawCircle(float x, float y, float r, RGBA_int c) {
 
 void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 	ScreenPos As = Projection(A);
-	float FrontDepth = A.z - Camera.z - r;
+	float FrontDepth = A.z - simple.Camera.z - r;
 	// weirdly adjusting the radius for depth of A
 	ScreenPos Temp = Projection({ A.y, r + A.y, A.z });
 	float R = As.y - Temp.y;
@@ -271,9 +271,9 @@ void SimpleRenderer::DrawLine(Pos A, Pos B, RGBA_int c) {
 }
 
 ScreenPos SimpleRenderer::Projection(Pos A) {
-	float x = A.x - Camera.x;
-	float y = A.y - Camera.y;
-	float z = A.z - Camera.z;
+	float x = A.x - simple.Camera.x;
+	float y = A.y - simple.Camera.y;
+	float z = A.z - simple.Camera.z;
 	y = -y;
 	float screenx = (x / z) * simple.RenderScale + ScreenWidthF / 2.0f;
 	float screeny = (y / z) * simple.RenderScale + ScreenHeightF / 2.0f;
