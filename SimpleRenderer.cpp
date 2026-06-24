@@ -6,17 +6,15 @@
 #include <cmath>
 
 Pos Camera = Pos(0.0f, 0.0f, -1.0f);
-vector<vector<RGBA_float>> DepthBuffer;
+vector<vector<float>> DepthBuffer;
 
-vector<vector<RGBA_float>> SimpleRenderer::CreateDepthBuffer() {
-	vector<vector<RGBA_float>> DepthBuffer;
-	DepthBuffer.resize(ScreenWidth, vector<RGBA_float>(ScreenHeight));
+vector<vector<float>> SimpleRenderer::CreateDepthBuffer() {
+	vector<vector<float>> D;
+	D.resize(ScreenWidth, vector<float>(ScreenHeight));
 	return DepthBuffer;
 	}
 
-void SimpleRenderer::open_window() {
-	if (debug == true) { cout << "[DEBUG] function simple.open_window() from SimpleRenderer.cpp" << endl; }
-	string WindowTitle;
+void SimpleRenderer::GetScreenData() {
 	const SDL_DisplayMode* info = SDL_GetDesktopDisplayMode(1);
 	if (!info)
 	{
@@ -28,30 +26,48 @@ void SimpleRenderer::open_window() {
 	ScreenHeightF = static_cast<float>(info->h * 0.75);
 	ScreenWidth = static_cast<int>(ScreenWidthF);
 	ScreenHeight = static_cast<int>(ScreenHeightF);
-	
+}
+
+SDL_Window* SimpleRenderer::Create_Window(string title) {
+	if (debug == true) { cout << "[DEBUG] function simple.Create_Window() from SimpleRenderer.cpp" << endl; }
+	string WindowTitle;
 	flags = SDL_WINDOW_RESIZABLE;
 	// creating the title for the application window
-	WindowTitle = "Simple Renderer " + to_string(ScreenWidth) + "x" + to_string(ScreenHeight);
+	WindowTitle = title + " " + to_string(ScreenWidth) + "x" + to_string(ScreenHeight);
 	const char* WindowTitleChar = WindowTitle.c_str();
 	// creating the window
-	simple.window = SDL_CreateWindow(WindowTitleChar,ScreenWidth, ScreenHeight, static_cast<Uint32>(flags));
-	if (!simple.window)
+	SDL_Window* window = SDL_CreateWindow(WindowTitleChar, ScreenWidth, ScreenHeight, static_cast<Uint32>(flags));
+	if (!window)
 	{
 		cout << "Window creation failed: " << SDL_GetError() << endl;
 		exit(1);
 	}
+	return window;
+}
+
+SDL_Renderer* SimpleRenderer::Create_Renderer(SDL_Window* window){
+	if (debug == true) { cout << "[DEBUG] function simple.Create_Renderer() from SimpleRenderer.cpp" << endl; }
 	// creating the renderer
-	simple.renderer = SDL_CreateRenderer(simple.window,NULL);
+	SDL_Renderer* renderer = SDL_CreateRenderer(window,NULL);
 	if (!simple.renderer)
 	{
 		cout << "Renderer creation failed: " << SDL_GetError() << endl;
 		exit(1);
 	}
 	simple.RenderScale = (min(ScreenWidthF,ScreenHeightF)) * 1.0f;
+	return renderer;
 }
 
 void SimpleRenderer::render() {
 	if (debug == true) { cout << "[DEBUG] function simple.render() from SimpleRenderer.cpp" << endl; }
+	// Get Screen Data for Window creation
+	simple.GetScreenData();
+	// Creating the Main Window
+	simple.window = Create_Window("Simple Render Main");
+	simple.renderer = Create_Renderer(simple.window);
+	// Creating the Depth Buffer Window
+	simple.DepthBufferWindow = Create_Window("Simple Render Depth Buffer");
+	simple.DepthBufferRenderer = Create_Renderer(simple.DepthBufferWindow);
 	SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
 	SDL_RenderClear(simple.renderer);
 	//SDL_Surface* DepthBuffer = simple.CreateDepthBuffer();

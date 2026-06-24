@@ -13,9 +13,11 @@ using namespace std;
 class SimpleRenderer {
 public:
 	void render();
-	vector<vector<RGBA_float>> CreateDepthBuffer();
-	vector<vector<RGBA_float>> DepthBuffer;
-	void open_window();
+	vector<vector<float>> CreateDepthBuffer();
+	vector<vector<float>> DepthBuffer;
+	SDL_Renderer* Create_Renderer(SDL_Window* window);
+	SDL_Window* Create_Window(string title);
+	void GetScreenData();
 	void draw();
 	void DrawCircle(float x, float y, float r, RGBA_int c);
 	void DrawSphere(float x, float y, float z, float r, RGBA_int c);
@@ -32,6 +34,8 @@ public:
 	RGBA_int ModifyColor(float modifier, float strength, RGBA_int c);
 	SDL_Window* window;
 	SDL_Renderer* renderer;
+	SDL_Window* DepthBufferWindow;
+	SDL_Renderer* DepthBufferRenderer;
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;
