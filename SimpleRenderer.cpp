@@ -61,7 +61,6 @@ void SimpleRenderer::init() {
 	// Get Screen Data for Window creation
 	simple.GetScreenData();
 	// Creating the Camera
-	Pos Camera = Pos(0.0f, 0.0f, -1.0f);
 	// Creating the Main Window
 	simple.window = Create_Window("Simple Render Main");
 	simple.renderer = Create_Renderer(simple.window);
@@ -332,7 +331,7 @@ void SimpleRenderer::DrawPoint(Point A) {
 	SDL_RenderPoint(simple.renderer, ScreenA.x, ScreenA.y);
 	//simple.DrawCircle(screenx, screeny, 10.0f, Color);
 	//simple.DrawSphere(A.position.x, A.position.y, A.position.z, 0.1, Color);
-	simple.DrawSphere2(A.position, 0.01f, Color);
+	simple.DrawSphere2(A.position, 0.1f, Color);
 }
 
 SimpleRenderer simple;
