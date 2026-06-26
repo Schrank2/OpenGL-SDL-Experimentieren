@@ -37,23 +37,23 @@ int main(int argc, char* argv[])
 		// Checking for Key inputs
 		if (SDL_PollEvent(&event) && event.type == SDL_EVENT_KEY_DOWN) {
 			if (event.key.key == SDLK_W) {
-				simple.Camera.z += 0.1f;
+				simple.Camera.z += 0.5f;
 				cout << "W" << endl;
 			}
 			if (event.key.key == SDLK_A) {
-				simple.Camera.x -= 0.1f;
+				simple.Camera.x -= 0.5f;
 			}
 			if (event.key.key == SDLK_S) {
-				simple.Camera.z -= 0.1f;
+				simple.Camera.z -= 0.5f;
 			}
 			if (event.key.key == SDLK_D) {
-				simple.Camera.x += 0.1f;
+				simple.Camera.x += 0.5f;
 			}
 			if (event.key.key == SDLK_SPACE) {
-				simple.Camera.y += 0.1f;
+				simple.Camera.y += 0.5f;
 			}
 			if (event.key.key == SDLK_LSHIFT) {
-				simple.Camera.y -= 0.1f;
+				simple.Camera.y -= 0.5f;
 			}
 			if (event.key.key == SDLK_P) {
 				running = false;
