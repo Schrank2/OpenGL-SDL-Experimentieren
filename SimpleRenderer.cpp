@@ -293,13 +293,16 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 }
 void SimpleRenderer::DrawScreenLineInterpolation(ScreenPos A, ScreenPos B, RGBA_int c) {
 	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
-	int i, j, y;
-	float progress;
-	for (i = A.x; i <= B.x; i++) {
-		j = A.y - B.y; // y-axis change from A to B
-		progress = static_cast<float>(i - A.x) / static_cast<float>(B.x - A.x);
-		y = A.y + static_cast<int>(progress * j);
-		SDL_RenderPoint(simple.renderer, i, y);
+	if (A.x > B.x) { ScreenPos Swap = A; A = B; B = Swap;} // Swap A and B so that A is always to the left of B
+	// interpolation using a linear function like y = m * x + b
+	int m = (A.y - B.y) / (A.x - B.x); // slope of function
+	int b = A.y; // y-intersection of function
+	int steps = abs(B.x - A.x); // used to get x coordinates to be checked
+	int x, y;
+	for (int i = 0; i <= steps; i++) {
+		x = A.x + i;
+		y = m * x + b;
+		SDL_RenderPoint(simple.renderer, x, y);
 	}
 }
 
