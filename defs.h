@@ -54,9 +54,9 @@ struct RGBA_int {
 
 struct Point {
 	char letter;
-	Pos position;
+	Pos pos;
 	RGBA_float color;
-	Point(char letter, Pos position, RGBA_float color) : letter(letter), position(position), color(color) {}
+	Point(char letter, Pos pos, RGBA_float color) : letter(letter), pos(pos), color(color) {}
 };
 
 struct Line {
@@ -100,7 +100,7 @@ struct Plane {
 		return name;
 	}
 	// constructor
-	Plane(Triangle triangle, RGBA_float color) : SupportV(GetVector(Pos(0,0,0), triangle.p1.position)), Span1V(GetVector(triangle.p1.position, triangle.p2.position)), Span2V(GetVector(triangle.p1.position, triangle.p3.position)), triangle(triangle), name(plane_getname()), color(color) {}
+	Plane(Triangle triangle, RGBA_float color) : SupportV(GetVector(Pos(0,0,0), triangle.p1.pos)), Span1V(GetVector(triangle.p1.pos, triangle.p2.pos)), Span2V(GetVector(triangle.p1.pos, triangle.p3.pos)), triangle(triangle), name(plane_getname()), color(color) {}
 };
 
 

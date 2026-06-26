@@ -283,24 +283,15 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	RGBA_int ColorInt = FloatToIntColor(T.color);
 	SDL_SetRenderDrawColor(simple.renderer, ColorInt.r, ColorInt.g, ColorInt.b, ColorInt.a);
 	// Get Screen Coordinates
-	ScreenPos ScreenA = Projection(T.p1.position);
-	ScreenPos ScreenB = Projection(T.p2.position);
-	ScreenPos ScreenC = Projection(T.p3.position);
-	// Convert to SDL_FPoint
-	SDL_FPoint SDLPOSA = { ScreenA.x, ScreenA.y };
-	SDL_FPoint SDLPOSB = { ScreenB.x, ScreenB.y };
-	SDL_FPoint SDLPOSC = { ScreenC.x, ScreenC.y };
-	// Get Color
-	SDL_FColor color = { T.color.r / 255.0f, T.color.g / 255.0f, T.color.b / 255.0f, T.color.a / 255.0f };
-	//SDL_FColor colorB = { T.color.r, T.color.g, T.color.b, T.color.a };
-	//SDL_FColor colorC = { T.color.r, T.color.g, T.color.b, T.color.a };
-	//SDL_FPoint tex_coord;
-	cout << "A " << ScreenA.x << " " << ScreenA.y << " B " << ScreenB.x << " " << ScreenB.y << " C " << ScreenC.x << " " << ScreenC.y << endl;
-	SDL_Vertex TriangleVertex[3] = { {SDLPOSA, color, NULL }, { SDLPOSB, color, NULL }, { SDLPOSC, color, NULL } };
-	SDL_RenderGeometry(simple.renderer, NULL, TriangleVertex, 3, NULL, 0);
-	simple.DrawScreenLine(ScreenA, ScreenB, ColorInt);
-	simple.DrawScreenLine(ScreenB, ScreenC, ColorInt);
-	simple.DrawScreenLine(ScreenC, ScreenA, ColorInt);
+	ScreenPos ScreenA = Projection(T.p1.pos);
+	ScreenPos ScreenB = Projection(T.p2.pos);
+	ScreenPos ScreenC = Projection(T.p3.pos);
+	// Drawing the WireFrame
+	int i;
+	// from p1 to p2
+	//for (i = )
+	
+	
 }
 
 void SimpleRenderer::DrawScreenLine(ScreenPos A, ScreenPos B, RGBA_int c) {
@@ -324,14 +315,14 @@ void SimpleRenderer::DrawPosition(Pos A, RGBA_int c) {
 
 void SimpleRenderer::DrawPoint(Point A) {
 	// calculating the screen coordinates for the point
-	ScreenPos ScreenA = Projection(A.position);
+	ScreenPos ScreenA = Projection(A.pos);
 	RGBA_int Color = FloatToIntColor(A.color);
 	SDL_SetRenderDrawColor(simple.renderer, Color.r,Color.g,Color.b, Color.a);
 	if (debug == true) { cout << "[DEBUG] Drawing Point: " << A.letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl; }
 	SDL_RenderPoint(simple.renderer, ScreenA.x, ScreenA.y);
 	//simple.DrawCircle(screenx, screeny, 10.0f, Color);
 	//simple.DrawSphere(A.position.x, A.position.y, A.position.z, 0.1, Color);
-	simple.DrawSphere2(A.position, 0.1f, Color);
+	simple.DrawSphere2(A.pos, 0.1f, Color);
 }
 
 SimpleRenderer simple;
