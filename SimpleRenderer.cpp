@@ -327,7 +327,7 @@ void SimpleRenderer::DrawPoint(Point A) {
 	ScreenPos ScreenA = Projection(A.position);
 	RGBA_int Color = FloatToIntColor(A.color);
 	SDL_SetRenderDrawColor(simple.renderer, Color.r,Color.g,Color.b, Color.a);
-	cout << "Drawing Point: " << A.letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl;
+	if (debug == true) { cout << "[DEBUG] Drawing Point: " << A.letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl; }
 	SDL_RenderPoint(simple.renderer, ScreenA.x, ScreenA.y);
 	//simple.DrawCircle(screenx, screeny, 10.0f, Color);
 	//simple.DrawSphere(A.position.x, A.position.y, A.position.z, 0.1, Color);
