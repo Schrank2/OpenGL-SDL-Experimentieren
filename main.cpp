@@ -20,12 +20,16 @@ int main(int argc, char* argv[])
 	SDL_Event event;
 	bool running = true;
 	int FrameStartTime, FrameEndTime, FrameTime;
+	int LastFrameTime = -1000;
 	int LastFrameRateReportTime = SDL_GetTicks();
 	float Framerate;
 	while (running) {
 		// Rendering and Showing a Plane
 		FrameStartTime = SDL_GetTicks();
-		simple.render();
+		if (FrameStartTime >= LastFrameTime + 1000) {
+			simple.render();
+			LastFrameTime = FrameStartTime;
+		}
 		FrameEndTime = SDL_GetTicks();
 		if (FrameEndTime >= LastFrameRateReportTime + 1000) {
 			LastFrameRateReportTime = FrameEndTime;
