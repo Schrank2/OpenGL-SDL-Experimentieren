@@ -165,7 +165,7 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 	// where the sphere is lit most brightly (temporary, will later be replaced)
 	ScreenPos Light = ScreenPos(As.x - (R/2), As.y - (R/2));
 
-	float X;
+	int X;
 	float TopY;
 	float BotY;
 	bool fill = true;
@@ -180,7 +180,7 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 		BotY = As.y - sqrt(R * R - i * i);
 		// Fill the circle
 		if (fill == true) {
-			for (float j = BotY; j <= TopY; j++) {
+			for (int j = BotY; j <= TopY; j++) {
 				ScreenPos L = {X,j};
 				if (L.x >= 0 and L.x <= DepthBuffer.size() and L.y >= 0 and L.y <= DepthBuffer[0].size()) {
 					//cout << L.x << " " << L.y << " " << DepthBuffer.size() << " " << DepthBuffer[0].size() << endl;
@@ -283,15 +283,24 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	RGBA_int ColorInt = FloatToIntColor(T.color);
 	SDL_SetRenderDrawColor(simple.renderer, ColorInt.r, ColorInt.g, ColorInt.b, ColorInt.a);
 	// Get Screen Coordinates
-	ScreenPos ScreenA = Projection(T.p1.pos);
-	ScreenPos ScreenB = Projection(T.p2.pos);
-	ScreenPos ScreenC = Projection(T.p3.pos);
+	ScreenPos ScA = Projection(T.p1.pos);
+	ScreenPos ScB = Projection(T.p2.pos);
+	ScreenPos ScC = Projection(T.p3.pos);
 	// Drawing the WireFrame
-	int i;
-	// from p1 to p2
-	//for (i = )
-	
-	
+	DrawScreenLineInterpolation(ScA, ScB, ColorInt);
+	DrawScreenLineInterpolation(ScB, ScC, ColorInt);
+	DrawScreenLineInterpolation(ScC, ScA, ColorInt);	
+}
+void SimpleRenderer::DrawScreenLineInterpolation(ScreenPos A, ScreenPos B, RGBA_int c) {
+	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
+	int i, j, y;
+	float progress;
+	for (i = A.x; i <= B.x; i++) {
+		j = A.y - B.y; // y-axis change from A to B
+		progress = static_cast<float>(i - A.x) / static_cast<float>(B.x - A.x);
+		y = A.y + static_cast<int>(progress * j);
+		SDL_RenderPoint(simple.renderer, i, y);
+	}
 }
 
 void SimpleRenderer::DrawScreenLine(ScreenPos A, ScreenPos B, RGBA_int c) {

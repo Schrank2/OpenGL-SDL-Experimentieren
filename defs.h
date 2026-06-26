@@ -29,8 +29,8 @@ struct Pos {
 };
 
 struct ScreenPos {
-	float x, y;
-	ScreenPos(float x, float y) : x(x), y(y) {}
+	int x, y;
+	ScreenPos(int x, int y) : x(x), y(y) {}
 };
 
 struct Vector {

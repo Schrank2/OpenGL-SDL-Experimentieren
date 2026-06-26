@@ -16,7 +16,7 @@ public:
 	void render();
 	vector<vector<float>> CreateDepthBuffer();
 	vector<vector<float>> DepthBuffer;
-	Pos Camera = Pos(0.0f, 0.0f, -1.0f);
+	Pos Camera = Pos(0.0f, 0.0f, -3.0f);
 	float DepthBufferMax;
 	SDL_Renderer* Create_Renderer(SDL_Window* window);
 	SDL_Window* Create_Window(string title);
@@ -34,6 +34,7 @@ public:
 	float RenderScale;
 	float ScreenDist(ScreenPos A, ScreenPos B);
 	void DrawScreenLine(ScreenPos A, ScreenPos B, RGBA_int c);
+	void DrawScreenLineInterpolation(ScreenPos A, ScreenPos B, RGBA_int c);
 	RGBA_int ModifyColor(float modifier, float strength, RGBA_int c);
 	SDL_Window* window;
 	SDL_Renderer* renderer;
