@@ -12,7 +12,7 @@ vector<Triangle> Triangles;
 vector<Plane> Planes;
 // bright RGB colors
 RGBA_float bright_red(255.0f, 0.0f, 0.0f, 255.0f);
-RGBA_float bright_blue(0.0f, 0.0f, 255.0f, 255.0f);
+RGBA_float bright_blue(100.0f, 100.0f, 200.0f, 255.0f);
 RGBA_float bright_green(0.0f, 255.0f, 0.0f, 255.0f);
 // dark RGB colors
 RGBA_float dark_red(128.0f, 0.0f, 0.0f, 255.0f);
@@ -25,7 +25,7 @@ void WORLD::init() {
 	// add Points to World
 	Points.push_back(Point('O', Pos(0.0f, 0.0f, 0.0f), black));
 	Points.push_back(Point('A', Pos(1.0f, 1.0f, 2.0f), bright_red));
-	Points.push_back(Point('B', Pos(2.0f, 1.0f, 2.0f), bright_green));
+	Points.push_back(Point('B', Pos(2.0f, 1.25f, 2.0f), bright_green));
 	Points.push_back(Point('C', Pos(1.5f, 2.0f, 2.0f), bright_blue));
 	Points.push_back(Point('D', Pos(4.0f, 4.0f, -3.0f), dark_red));
 	Points.push_back(Point('E', Pos(0.0f, 0.05f, 0.0f), dark_green));
