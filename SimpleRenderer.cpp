@@ -203,8 +203,6 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 					BufferDepth = FrontDepth - z;
 					//cout << BufferDepth << " " << fixed << setprecision(5) << A.z << endl;
 					if (DepthBufferPoint(L.x, L.y, BufferDepth)) { // checking if the point is in front in the depth Buffer
-						// changing the Depth Buffer
-						DepthBufferPoint(L.x, L.y, BufferDepth);
 						// drawing the point
 						SDL_SetRenderDrawColor(simple.renderer, Localc.r, Localc.g, Localc.b, Localc.a);
 						SDL_RenderPoint(simple.renderer, L.x, L.y);
@@ -329,8 +327,7 @@ void SimpleRenderer::DrawLine(Pos A, Pos B, RGBA_int c) {
 	int e2; // (later) doubled distance to avoid floating point math
 	bool run = true;
 	while (true) {
-		SDL_RenderPoint(simple.renderer, x0, y0);
-		//DepthBufferPoint(x0, y0, z0);
+		if (DepthBufferPoint(x0,y0,z0)) SDL_RenderPoint(simple.renderer, x0, y0);
 		if (x0 == x1 && y0 == y1) break; // stop drawing points if both values progressed to the target value
 		e2 = 2 * err; // double the distance to avoid floating point math
 		if (e2 >= dy) { err += dy; x0 += sx; if (dz != 0) z0 += sz; } // iterate x0 by 1 or -1 if Manhattan Distance is larger than y-distance and step z when x steps
@@ -339,8 +336,8 @@ void SimpleRenderer::DrawLine(Pos A, Pos B, RGBA_int c) {
 }
 
 bool SimpleRenderer::DepthBufferPoint(int x, int y, float d) {
-	if (DepthBuffer[x][y] == NULL or DepthBuffer[x][y] > d)
-	{
+	if (x < 0 or y < 0 or x >= DepthBuffer.size() or y >= DepthBuffer[0].size()) return false; // Check if Point is on screen
+	if (DepthBuffer[x][y] == NULL or DepthBuffer[x][y] > d) {
 		if (d > DepthBufferMax) DepthBufferMax = d;
 		DepthBuffer[x][y] = d;
 		return true;
