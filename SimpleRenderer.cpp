@@ -118,9 +118,10 @@ void SimpleRenderer::draw() {
 	SDL_RenderLine(simple.renderer, 0, ScreenHeightF, ScreenWidthF, ScreenHeightF);
 	// Draw coordinate system lines
 	float temp = 1000.0f;
-	simple.DrawLine(Pos(0.0f, 0.0f, 0.0f), Pos(temp, 0.0f, 0.0f), RGBA_int(128,0,0,255));
-	simple.DrawLine(Pos(0.0f, 0.0f, 0.0f), Pos(0.0f, temp, 0.0f), RGBA_int(0,128,0,255));
-	simple.DrawLine(Pos(0.0f, 0.0f, 0.0f), Pos(0.0f, 0.0f, temp), RGBA_int(0,0,128,255));
+	ScreenPos Origin = Projection(Pos(0.0f, 0.0f, 0.0f));
+	simple.DrawLine(Origin, Projection(Pos(temp, 0.0f, 0.0f)), RGBA_int(128,0,0,255));
+	simple.DrawLine(Origin, Projection(Pos(0.0f, temp, 0.0f)), RGBA_int(0,128,0,255));
+	simple.DrawLine(Origin, Projection(Pos(0.0f, 0.0f, temp)), RGBA_int(0,0,128,255));
 	
 
 	// Draw all points from world
@@ -163,7 +164,7 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 	ScreenPos Temp = Projection({ A.y, r + A.y, A.z });
 	float R = As.y - Temp.y;
 	// where the sphere is lit most brightly (temporary, will later be replaced)
-	ScreenPos Light = ScreenPos(As.x - (R/2), As.y - (R/2));
+	ScreenPos Light = ScreenPos(As.x - (R/2), As.y - (R/2), As.z);
 
 	int X;
 	float TopY;
@@ -181,7 +182,7 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 		// Fill the circle
 		if (fill == true) {
 			for (int j = BotY; j <= TopY; j++) {
-				ScreenPos L = {X,j};
+				ScreenPos L = {X,j, 0};
 				if (L.x >= 0 and L.x <= DepthBuffer.size() and L.y >= 0 and L.y <= DepthBuffer[0].size()) {
 					//cout << L.x << " " << L.y << " " << DepthBuffer.size() << " " << DepthBuffer[0].size() << endl;
 					// shading the point
@@ -265,7 +266,7 @@ ScreenPos SimpleRenderer::Projection(Pos A) {
 	y = -y;
 	float screenx = (x / z) * simple.RenderScale + ScreenWidthF / 2.0f;
 	float screeny = (y / z) * simple.RenderScale + ScreenHeightF / 2.0f;
-	return ScreenPos(screenx, screeny);
+	return ScreenPos(screenx, screeny, z);
 }
 
 void SimpleRenderer::DrawTriangle(Triangle T) {
@@ -280,12 +281,34 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	ScreenPos ScB = Projection(B);
 	ScreenPos ScC = Projection(C);
 	// Drawing the WireFrame
-	//DrawScreenLineInterpolation(ScA, ScB, ColorInt);
-	//DrawScreenLineInterpolation(ScB, ScC, ColorInt);
-	//DrawScreenLineInterpolation(ScC, ScA, ColorInt);
-	DrawLine(A, B, ColorInt);
-	DrawLine(B, C, ColorInt);
-	DrawLine(C, A, ColorInt);	
+	DrawLine(ScA, ScB, ColorInt);
+	DrawLine(ScB, ScC, ColorInt);
+	DrawLine(ScC, ScA, ColorInt);
+	// Filling the Triangle
+	Pos temp = A;
+	// Sort so that A is the bottom point and C ist the Top point.
+	if (B.y < A.y) temp = B; B = A; A = temp;
+	if (C.y < A.y) temp = C; C = A; A = temp;
+	if (C.y < B.y) temp = C; C = B; B = temp;
+	// Bresenham algorithm ig
+	ScreenPos ScreenA = Projection(A);
+	ScreenPos ScreenB = Projection(B);
+	ScreenPos ScreenC = Projection(C);
+	// Using Bresenhams line Algorithm
+	int AB0x = ScreenA.x, AB0y = ScreenA.y; // Starting Point of AB
+	int AC0x = ScreenA.x, AC0y = ScreenA.y; // Starting Point of AC
+	int AB1x = ScreenB.x, AB1y = ScreenB.y; // Ending Point of AB
+	int AC1x = ScreenC.x, AC1y = ScreenC.y; // Ending Point of AC
+	int ABdx = abs(AB1x - AB0x); // x-distance AB
+	int ABdy = abs(AB1y - AB0y); // y-distance AB
+	int ACdx = abs(AC1x - AC0x); // x-distance AC
+	int ACdy = abs(AC1y - AC0y); // y-distance AC
+	int ABsx = AB0x < AB1x ? 1 : -1; // x-direction of AB
+	int ABsy = AB0y < AB1y ? 1 : -1; // y-direction of AB
+	int ACsx = AC0x < AB1x ? 1 : -1; // x-direction of AC
+	int ACsy = AC0y < AB1y ? 1 : -1; // y-direction of AC
+	int ABerr = ABdx - ABdy; // error of AB
+	int ACer = ACdx - ACdy; // error of AC
 }
 void SimpleRenderer::DrawScreenLineInterpolation(ScreenPos A, ScreenPos B, RGBA_int c) {
 	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
@@ -306,26 +329,22 @@ void SimpleRenderer::DrawScreenLineInterpolation(ScreenPos A, ScreenPos B, RGBA_
 		if (e2 <= dx) { err += dx; y0 += sy; } // iterate y0 by 1 or -1 if Manhattan Distance is larger than x distance
 	}
 }
-void SimpleRenderer::DrawLine(Pos A, Pos B, RGBA_int c) {
+void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
 	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
-	// Projecting Points to Screen Space
-	ScreenPos ScreenA = Projection(A);
-	ScreenPos ScreenB = Projection(B);
 	// Interpolating for Depth Buffer
 	int z0 = A.z - Camera.z; // Set A as coordinate origin
 	int z1 = B.z - Camera.z; // Set B as target point
 	int dz = abs(z1 - z0); // z-Distance between A and B
 	int sz = z0 < z1 ? 1 : -1; // get z-direction of line
 	// Using Bresenhams line Algorithm
-	int x0 = ScreenA.x, y0 = ScreenA.y; // Set A as coordinate origin
-	int x1 = ScreenB.x, y1 = ScreenB.y; // Set B as target point
+	int x0 = A.x, y0 = A.y; // Set A as coordinate origin
+	int x1 = B.x, y1 = B.y; // Set B as target point
 	int dx = abs(x1 - x0); // x-Distance between A and B
 	int sx = x0 < x1 ? 1 : -1; // get direction of the line in the x-axis
 	int dy = -abs(y1 - y0); // y-Distance between A and B
 	int sy = y0 < y1 ? 1 : -1; // get direction of the line in the y-axis
 	int err = dx + dy; // "absolute-ish" Manhattan-Distance between A and B
 	int e2; // (later) doubled distance to avoid floating point math
-	bool run = true;
 	while (true) {
 		if (DepthBufferPoint(x0,y0,z0)) SDL_RenderPoint(simple.renderer, x0, y0);
 		if (x0 == x1 && y0 == y1) break; // stop drawing points if both values progressed to the target value
