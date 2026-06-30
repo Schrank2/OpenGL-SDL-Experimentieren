@@ -182,32 +182,20 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 		// Fill the circle
 		if (fill == true) {
 			for (int j = BotY; j <= TopY; j++) {
-				ScreenPos L = {X,j, 0};
-				if (L.x >= 0 and L.x <= DepthBuffer.size() and L.y >= 0 and L.y <= DepthBuffer[0].size()) {
-					//cout << L.x << " " << L.y << " " << DepthBuffer.size() << " " << DepthBuffer[0].size() << endl;
-					// shading the point
-					float d = ScreenDist(Light, L); // Distance Between Lightspot and Point
-					float center = ScreenDist(As, L); // Distance Between Lightspot and Point
-					lshade = 1.0f - (d / R);
-					//lshade = lshade * lshade;
-					//cout << lshade << endl;ss
-					RGBA_int Localc = ModifyColor(lshade, 0.5f, c);
-					// Estimating the distance of the point from the camera
-					// mithilfe von Kugel Rotationskörper Funktion (f(x) = sqrt(1-(x*x))
-					float x = center / R; // Distance Between Center and Point displayed between 0.0f and 1.0f.
-					//cout << "x: " << x << " center: " << center << " R: " << R << endl;
-					if (x < 0.0f)
-						x = 0.0f;
-					if (x > 1.0f)
-						x = 1.0f;
-					float z = sqrt(1.0f - x * x) * r; // Tiefenunterschied zwischen Punkt und Zentrum
-					BufferDepth = FrontDepth - z;
-					//cout << BufferDepth << " " << fixed << setprecision(5) << A.z << endl;
-					if (DepthBufferPoint(L.x, L.y, BufferDepth)) { // checking if the point is in front in the depth Buffer
-						// drawing the point
-						SDL_SetRenderDrawColor(simple.renderer, Localc.r, Localc.g, Localc.b, Localc.a);
-						SDL_RenderPoint(simple.renderer, L.x, L.y);
-					}
+				float center = ScreenDist(As, ScreenPos(X,j,0.0f)); // Distance Between Lightspot and Poin
+				float x = center / R; // Distance Between Center and Point displayed between 0.0f and 1.0f.
+				if (x < 0.0f) x = 0.0f;
+				if (x > 1.0f) x = 1.0f;
+				float z = sqrt(1.0f - x * x) * r; // Tiefenunterschied zwischen Punkt und Zentrum
+				ScreenPos L = { X,j, FrontDepth - z };
+				// shading the point
+				float d = ScreenDist(Light, L); // Distance Between Lightspot and Point
+				lshade = 1.0f - (d / R);
+				RGBA_int Localc = ModifyColor(lshade, 0.5f, c);
+				// drawing
+				if (DepthBufferPoint(L)) { // checking if the point is in front in the depth Buffer
+					SDL_SetRenderDrawColor(simple.renderer, Localc.r, Localc.g, Localc.b, Localc.a);
+					SDL_RenderPoint(simple.renderer, L.x, L.y);
 				}
 			}
 		}
@@ -332,10 +320,10 @@ void SimpleRenderer::DrawScreenLineInterpolation(ScreenPos A, ScreenPos B, RGBA_
 void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
 	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
 	// Interpolating for Depth Buffer
-	int z0 = A.z - Camera.z; // Set A as coordinate origin
-	int z1 = B.z - Camera.z; // Set B as target point
-	int dz = abs(z1 - z0); // z-Distance between A and B
-	int sz = z0 < z1 ? 1 : -1; // get z-direction of line
+	float z0 = A.z - Camera.z; // Set A as coordinate origin
+	float z1 = B.z - Camera.z; // Set B as target point
+	float dz = abs(z1 - z0); // z-Distance between A and B
+	float sz = z0 < z1 ? 1 : -1; // get z-direction of line
 	// Using Bresenhams line Algorithm
 	int x0 = A.x, y0 = A.y; // Set A as coordinate origin
 	int x1 = B.x, y1 = B.y; // Set B as target point
@@ -346,7 +334,7 @@ void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
 	int err = dx + dy; // "absolute-ish" Manhattan-Distance between A and B
 	int e2; // (later) doubled distance to avoid floating point math
 	while (true) {
-		if (DepthBufferPoint(x0,y0,z0)) SDL_RenderPoint(simple.renderer, x0, y0);
+		if (DepthBufferPoint({x0,y0,z0})) SDL_RenderPoint(simple.renderer, x0, y0);
 		if (x0 == x1 && y0 == y1) break; // stop drawing points if both values progressed to the target value
 		e2 = 2 * err; // double the distance to avoid floating point math
 		if (e2 >= dy) { err += dy; x0 += sx; if (dz != 0) z0 += sz; } // iterate x0 by 1 or -1 if Manhattan Distance is larger than y-distance and step z when x steps
@@ -354,11 +342,11 @@ void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
 	}
 }
 
-bool SimpleRenderer::DepthBufferPoint(int x, int y, float d) {
-	if (x < 0 or y < 0 or x >= DepthBuffer.size() or y >= DepthBuffer[0].size()) return false; // Check if Point is on screen
-	if (DepthBuffer[x][y] == NULL or DepthBuffer[x][y] > d) {
-		if (d > DepthBufferMax) DepthBufferMax = d;
-		DepthBuffer[x][y] = d;
+bool SimpleRenderer::DepthBufferPoint(ScreenPos A) {
+	if (A.x < 0 or A.y < 0 or A.x >= DepthBuffer.size() or A.y >= DepthBuffer[0].size()) return false; // Check if Point is on screen
+	if (DepthBuffer[A.x][A.y] == NULL or DepthBuffer[A.x][A.y] > A.z) {
+		if (A.z > DepthBufferMax) DepthBufferMax = A.z;
+		DepthBuffer[A.x][A.y] = A.z;
 		return true;
 	}
 	return false;

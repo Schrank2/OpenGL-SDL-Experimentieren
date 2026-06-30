@@ -27,7 +27,7 @@ public:
 	void DrawSphere2(Pos A, float r, RGBA_int c);
 	void DrawPosition(Pos A, RGBA_int c);
 	ScreenPos Projection(Pos A);
-	bool DepthBufferPoint(int x, int y, float z);
+	bool DepthBufferPoint(ScreenPos A);
 	void DrawPoint(Point point);
 	void DrawLine(ScreenPos A, ScreenPos B, RGBA_int c);
 	void DrawTriangle(Triangle A);

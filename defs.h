@@ -30,7 +30,7 @@ struct Pos {
 
 struct ScreenPos {
 	int x, y, z;
-	ScreenPos(int x, int y, int z) : x(x), y(y), z(z) {}
+	ScreenPos(int x, int y, float z) : x(x), y(y), z(z) {}
 };
 
 struct Vector {
