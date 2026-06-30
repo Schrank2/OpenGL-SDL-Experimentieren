@@ -262,13 +262,6 @@ void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) 
 	// y = r - x - z
 }
 
-void SimpleRenderer::DrawLine(Pos A, Pos B, RGBA_int c) {
-	ScreenPos ScreenA = Projection(A);
-	ScreenPos ScreenB = Projection(B);
-	SDL_SetRenderDrawColor(simple.renderer,c.r,c.g,c.b,c.a);
-	SDL_RenderLine(simple.renderer, ScreenA.x, ScreenA.y, ScreenB.x, ScreenB.y);
-}
-
 ScreenPos SimpleRenderer::Projection(Pos A) {
 	float x = A.x - simple.Camera.x;
 	float y = A.y - simple.Camera.y;
@@ -282,17 +275,21 @@ ScreenPos SimpleRenderer::Projection(Pos A) {
 void SimpleRenderer::DrawTriangle(Triangle T) {
 	RGBA_int ColorInt = FloatToIntColor(T.color);
 	SDL_SetRenderDrawColor(simple.renderer, ColorInt.r, ColorInt.g, ColorInt.b, ColorInt.a);
+	// Get Coordinates
+	Pos A = T.p1.pos;
+	Pos B = T.p2.pos;
+	Pos C = T.p3.pos;
 	// Get Screen Coordinates
-	ScreenPos ScA = Projection(T.p1.pos);
-	ScreenPos ScB = Projection(T.p2.pos);
-	ScreenPos ScC = Projection(T.p3.pos);
+	ScreenPos ScA = Projection(A);
+	ScreenPos ScB = Projection(B);
+	ScreenPos ScC = Projection(C);
 	// Drawing the WireFrame
-	DrawScreenLineInterpolation(ScA, ScB, ColorInt);
-	DrawScreenLineInterpolation(ScB, ScC, ColorInt);
-	DrawScreenLineInterpolation(ScC, ScA, ColorInt);
-	//DrawScreenLine(ScA, ScB, ColorInt);
-	//DrawScreenLine(ScB, ScC, ColorInt);
-	//DrawScreenLine(ScC, ScA, ColorInt);	
+	//DrawScreenLineInterpolation(ScA, ScB, ColorInt);
+	//DrawScreenLineInterpolation(ScB, ScC, ColorInt);
+	//DrawScreenLineInterpolation(ScC, ScA, ColorInt);
+	DrawLine(A, B, ColorInt);
+	DrawLine(B, C, ColorInt);
+	DrawLine(C, A, ColorInt);	
 }
 void SimpleRenderer::DrawScreenLineInterpolation(ScreenPos A, ScreenPos B, RGBA_int c) {
 	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
@@ -311,6 +308,35 @@ void SimpleRenderer::DrawScreenLineInterpolation(ScreenPos A, ScreenPos B, RGBA_
 		e2 = 2 * err; // double the distance to avoid floating point math
 		if (e2 >= dy) { err += dy; x0 += sx; } // iterate x0 by 1 or -1 if Manhattan Distance is larger than y distance
 		if (e2 <= dx) { err += dx; y0 += sy; } // iterate y0 by 1 or -1 if Manhattan Distance is larger than x distance
+	}
+}
+void SimpleRenderer::DrawLine(Pos A, Pos B, RGBA_int c) {
+	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
+	// Projecting Points to Screen Space
+	ScreenPos ScreenA = Projection(A);
+	ScreenPos ScreenB = Projection(B);
+	// Interpolating for Depth Buffer
+	int z0 = A.z - Camera.z; // Set A as coordinate origin
+	int z1 = B.z - Camera.z; // Set B as target point
+	int dz = abs(z1 - z0); // z-Distance between A and B
+	int sz = z0 < z1 ? 1 : -1; // get z-direction of line
+	// Using Bresenhams line Algorithm
+	int x0 = A.x, y0 = A.y; // Set A as coordinate origin
+	int x1 = B.x, y1 = B.y; // Set B as target point
+	int dx = abs(x1 - x0); // x-Distance between A and B
+	int sx = x0 < x1 ? 1 : -1; // get direction of the line in the x-axis
+	int dy = -abs(y1 - y0); // y-Distance between A and B
+	int sy = y0 < y1 ? 1 : -1; // get direction of the line in the y-axis
+	int err = dx + dy + dz; // "absolute-ish" Manhattan-Distance between A and B
+	int e2; // (later) doubled distance to avoid floating point math
+	while (true) {
+		SDL_RenderPoint(simple.renderer, x0, y0);
+		if (z0 > DepthBuffer[x0][y0]) { DepthBuffer[x0][y0] = z0; }
+		if (x0 == x1 && y0 == y1 && z0 == z1) break; // stop drawing points if both values progressed to the target value
+		e2 = 3 * err; // double the distance to avoid floating point math
+		if (e2 >= dy) { err += dy; x0 += sx; } // iterate x0 by 1 or -1 if Manhattan Distance is larger than y-distance
+		if (e2 <= dx) { err += dx; y0 += sy; } // iterate y0 by 1 or -1 if Manhattan Distance is larger than x-distance
+		if (e2 <= dz) { err += dz; z0 += sz; } // iterate z0 by 1 or -1 if Manhattan Distance is larger than z-distance
 	}
 }
 
