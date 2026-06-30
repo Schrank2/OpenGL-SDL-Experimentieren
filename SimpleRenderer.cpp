@@ -269,9 +269,9 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	ScreenPos ScB = Projection(B);
 	ScreenPos ScC = Projection(C);
 	// Drawing the WireFrame
-	DrawLine(ScA, ScB, ColorInt);
-	DrawLine(ScB, ScC, ColorInt);
-	DrawLine(ScC, ScA, ColorInt);
+	//DrawLine(ScA, ScB, ColorInt);
+	//DrawLine(ScB, ScC, ColorInt);
+	//DrawLine(ScC, ScA, ColorInt);
 	// Filling the Triangle with
 	// Bresenham algorithm
 	ScreenPos ScreenA = Projection(A);
@@ -283,9 +283,9 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	ScreenPos AB1 = ScreenB; // Ending Point of AB
 	ScreenPos AC1 = ScreenC; // Ending Point of AC
 	int ABdx = abs(AB1.x - AB0.x); // x-distance AB
-	int ABdy = abs(AB1.y - AB0.y); // y-distance AB
+	int ABdy = -abs(AB1.y - AB0.y); // y-distance AB
 	int ACdx = abs(AC1.x - AC0.x); // x-distance AC
-	int ACdy = abs(AC1.y - AC0.y); // y-distance AC
+	int ACdy = -abs(AC1.y - AC0.y); // y-distance AC
 	int ABsx = AB0.x < AB1.x ? 1 : -1; // x-direction of AB
 	int ABsy = AB0.y < AB1.y ? 1 : -1; // y-direction of AB
 	int ACsx = AC0.x < AB1.x ? 1 : -1; // x-direction of AC
@@ -294,9 +294,13 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	int ACerr = ACdx + ACdy; // error of AC
 	int ABe2;
 	int ACe2;
+	//cout << "O";
 	while (true) {
+		cout << "AB0: " << AB0.x << " " << AB0.y << " AC0: " << AC0.x << " " << AC0.y << endl;
 		DrawLine(AB0, AC0, ColorInt);
-		if (AB0.x == AB1.x && AB0.y == AB1.y) break;
+		//cout << "_";
+		if (AB0.x == AB1.x && AB0.y == AB1.y && AC0.y == AC1.y && AC0.x == AC1.x) break;
+		//cout << "-";
 		ABe2 = 2 * ABerr;
 		ACe2 = 2 * ACerr;
 		if (ABe2 >= ABdy) { ABerr += ABdy; AB0.x += ABsx; }
