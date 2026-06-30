@@ -272,31 +272,38 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	DrawLine(ScA, ScB, ColorInt);
 	DrawLine(ScB, ScC, ColorInt);
 	DrawLine(ScC, ScA, ColorInt);
-	// Filling the Triangle
-	Pos temp = A;
-	// Sort so that A is the bottom point and C ist the Top point.
-	if (B.y < A.y) temp = B; B = A; A = temp;
-	if (C.y < A.y) temp = C; C = A; A = temp;
-	if (C.y < B.y) temp = C; C = B; B = temp;
-	// Bresenham algorithm ig
+	// Filling the Triangle with
+	// Bresenham algorithm
 	ScreenPos ScreenA = Projection(A);
 	ScreenPos ScreenB = Projection(B);
 	ScreenPos ScreenC = Projection(C);
 	// Using Bresenhams line Algorithm
-	int AB0x = ScreenA.x, AB0y = ScreenA.y; // Starting Point of AB
-	int AC0x = ScreenA.x, AC0y = ScreenA.y; // Starting Point of AC
-	int AB1x = ScreenB.x, AB1y = ScreenB.y; // Ending Point of AB
-	int AC1x = ScreenC.x, AC1y = ScreenC.y; // Ending Point of AC
-	int ABdx = abs(AB1x - AB0x); // x-distance AB
-	int ABdy = abs(AB1y - AB0y); // y-distance AB
-	int ACdx = abs(AC1x - AC0x); // x-distance AC
-	int ACdy = abs(AC1y - AC0y); // y-distance AC
-	int ABsx = AB0x < AB1x ? 1 : -1; // x-direction of AB
-	int ABsy = AB0y < AB1y ? 1 : -1; // y-direction of AB
-	int ACsx = AC0x < AB1x ? 1 : -1; // x-direction of AC
-	int ACsy = AC0y < AB1y ? 1 : -1; // y-direction of AC
-	int ABerr = ABdx - ABdy; // error of AB
-	int ACer = ACdx - ACdy; // error of AC
+	ScreenPos AB0 = ScreenA; // Starting Point of AB
+	ScreenPos AC0 = ScreenA; // Starting Point of AC
+	ScreenPos AB1 = ScreenB; // Ending Point of AB
+	ScreenPos AC1 = ScreenC; // Ending Point of AC
+	int ABdx = abs(AB1.x - AB0.x); // x-distance AB
+	int ABdy = abs(AB1.y - AB0.y); // y-distance AB
+	int ACdx = abs(AC1.x - AC0.x); // x-distance AC
+	int ACdy = abs(AC1.y - AC0.y); // y-distance AC
+	int ABsx = AB0.x < AB1.x ? 1 : -1; // x-direction of AB
+	int ABsy = AB0.y < AB1.y ? 1 : -1; // y-direction of AB
+	int ACsx = AC0.x < AB1.x ? 1 : -1; // x-direction of AC
+	int ACsy = AC0.y < AB1.y ? 1 : -1; // y-direction of AC
+	int ABerr = ABdx + ABdy; // error of AB
+	int ACerr = ACdx + ACdy; // error of AC
+	int ABe2;
+	int ACe2;
+	while (true) {
+		DrawLine(AB0, AC0, ColorInt);
+		if (AB0.x == AB1.x && AB0.y == AB1.y) break;
+		ABe2 = 2 * ABerr;
+		ACe2 = 2 * ACerr;
+		if (ABe2 >= ABdy) { ABerr += ABdy; AB0.x += ABsx; }
+		if (ABe2 <= ABdx) { ABerr += ABdx; AB0.y += ABsy; }
+		if (ACe2 >= ACdy) { ACerr += ACdy; AC0.x += ACsx; }
+		if (ACe2 <= ACdx) { ACerr += ACdx; AC0.y += ACsy; }
+	}
 }
 void SimpleRenderer::DrawScreenLineInterpolation(ScreenPos A, ScreenPos B, RGBA_int c) {
 	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
