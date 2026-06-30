@@ -267,16 +267,36 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	// Sort by smallest x
 	ScreenPos temp = A;
 	if (B.x < A.x) { temp = B; B = A; A = temp; }
-	if (C.x < B.x) { temp = C; C = B; B = temp; }
 	if (C.x < A.x) { temp = C; C = A; A = temp; }
-	//cout << "sort result: " << A.x << " " << B.x << " " << C.x << endl;
+	if (C.x < B.x) { temp = C; C = B; B = temp; }
+	cout << "sort result: " << A.x << " " << B.x << " " << C.x << endl;
 
 	// Drawing the WireFrame
 	DrawLine(A, B, ColorInt);
 	DrawLine(B, C, ColorInt);
 	DrawLine(C, A, ColorInt);
-	// AB
-	//float ABm = 
+	// AB Line
+	float ABm = static_cast<float>(B.x - A.x) / static_cast<float>(B.y - A.y);
+	float ABb = -A.y + static_cast<int>(ScreenHeightF / 2);
+	// AC Line
+	float ACm = static_cast<float>(C.x - A.x) / static_cast<float>(C.y - A.y);
+	float ACb = -A.y + static_cast<int>(ScreenHeightF / 2);
+	// BC Line
+	float BCm = static_cast<float>(C.x - B.x) / static_cast<float>(C.y - B.y);
+	float BCb = -B.y + static_cast<int>(ScreenHeightF / 2);
+
+	int Y1 = 0;
+	int Y2 = 0;
+	for (int x = A.x; x <= B.x; x++) {
+		Y1 = (ACm * x + ACb);
+		Y2 = (ABm * x + ABb);
+		for (int i = 0; i <= Y1 - Y2; i++) SDL_RenderPoint(simple.renderer, x, Y1 + i);
+	}
+	for (int x = B.x; x <= C.x; x++) {
+		Y1 = (ACm * x + ACb);
+		Y2 = (BCm * x + BCb);
+		for (int i = 0; i <= Y1 - Y2; i++) SDL_RenderPoint(simple.renderer, x, Y1 + i);
+	}
 }
 void SimpleRenderer::DrawScreenLineInterpolation(ScreenPos A, ScreenPos B, RGBA_int c) {
 	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
