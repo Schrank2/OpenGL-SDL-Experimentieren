@@ -304,7 +304,7 @@ void SimpleRenderer::DrawScreenLineInterpolation(ScreenPos A, ScreenPos B, RGBA_
 	int dy = -abs(y1 - y0); // y-Distance between A and B
 	int sy = y0 < y1 ? 1 : -1; // get direction of the line in the y-axis
 	int err = dx + dy; // "absolute-ish" Manhattan-Distance between A and B
-	int e2; // 
+	int e2; // (later) doubled distance to avoid floating point math
 	while (true) {
 		SDL_RenderPoint(simple.renderer, x0, y0);
 		if (x0 == x1 && y0 == y1) break; // stop drawing points if both values progressed to the target value
