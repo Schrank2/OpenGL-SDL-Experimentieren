@@ -266,24 +266,24 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	ScreenPos C = Projection(T.p3.pos);
 	// Sort by smallest x
 	ScreenPos temp = A;
-	if (B.x < A.x) { temp = B; B = A; A = temp; }
-	if (C.x < A.x) { temp = C; C = A; A = temp; }
-	if (C.x < B.x) { temp = C; C = B; B = temp; }
-	cout << "sort result: " << A.x << " " << B.x << " " << C.x << endl;
+	if (B.y < A.y) { temp = B; B = A; A = temp; }
+	if (C.y < A.y) { temp = C; C = A; A = temp; }
+	if (C.y < B.y) { temp = C; C = B; B = temp; }
+	cout << "sort result: " << A.y << " " << B.y << " " << C.y << endl;
 
 	// Drawing the WireFrame
-	DrawLine(A, B, ColorInt);
-	DrawLine(B, C, ColorInt);
-	DrawLine(C, A, ColorInt);
+	//DrawLine(A, B, ColorInt);
+	//DrawLine(B, C, ColorInt);
+	//DrawLine(C, A, ColorInt);
 	// AB Line
 	float ABm = static_cast<float>(B.x - A.x) / static_cast<float>(B.y - A.y);
-	float ABb = -A.y + static_cast<int>(ScreenHeightF / 2);
+	float ABb = -A.y;
 	// AC Line
 	float ACm = static_cast<float>(C.x - A.x) / static_cast<float>(C.y - A.y);
-	float ACb = -A.y + static_cast<int>(ScreenHeightF / 2);
+	float ACb = -A.y;
 	// BC Line
 	float BCm = static_cast<float>(C.x - B.x) / static_cast<float>(C.y - B.y);
-	float BCb = -B.y + static_cast<int>(ScreenHeightF / 2);
+	float BCb = -B.y;
 
 	int Y1 = 0;
 	int Y2 = 0;
