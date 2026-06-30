@@ -260,18 +260,23 @@ ScreenPos SimpleRenderer::Projection(Pos A) {
 void SimpleRenderer::DrawTriangle(Triangle T) {
 	RGBA_int ColorInt = FloatToIntColor(T.color);
 	SDL_SetRenderDrawColor(simple.renderer, ColorInt.r, ColorInt.g, ColorInt.b, ColorInt.a);
-	// Get Coordinates
-	Pos A = T.p1.pos;
-	Pos B = T.p2.pos;
-	Pos C = T.p3.pos;
 	// Get Screen Coordinates
-	ScreenPos ScA = Projection(A);
-	ScreenPos ScB = Projection(B);
-	ScreenPos ScC = Projection(C);
+	ScreenPos A = Projection(T.p1.pos);
+	ScreenPos B = Projection(T.p2.pos);
+	ScreenPos C = Projection(T.p3.pos);
+	// Sort by smallest x
+	ScreenPos temp = A;
+	if (B.x < A.x) { temp = B; B = A; A = temp; }
+	if (C.x < B.x) { temp = C; C = B; B = temp; }
+	if (C.x < A.x) { temp = C; C = A; A = temp; }
+	//cout << "sort result: " << A.x << " " << B.x << " " << C.x << endl;
+
 	// Drawing the WireFrame
-	DrawLine(ScA, ScB, ColorInt);
-	DrawLine(ScB, ScC, ColorInt);
-	DrawLine(ScC, ScA, ColorInt);
+	DrawLine(A, B, ColorInt);
+	DrawLine(B, C, ColorInt);
+	DrawLine(C, A, ColorInt);
+	// AB
+	//float ABm = 
 }
 void SimpleRenderer::DrawScreenLineInterpolation(ScreenPos A, ScreenPos B, RGBA_int c) {
 	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
