@@ -202,11 +202,9 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 					float z = sqrt(1.0f - x * x) * r; // Tiefenunterschied zwischen Punkt und Zentrum
 					BufferDepth = FrontDepth - z;
 					//cout << BufferDepth << " " << fixed << setprecision(5) << A.z << endl;
-					if (DepthBuffer[L.x][L.y] == NULL or DepthBuffer[L.x][L.y] > BufferDepth) { // checking if the point is in front in the depth Buffer
+					if (DepthBufferPoint(L.x, L.y, BufferDepth)) { // checking if the point is in front in the depth Buffer
 						// changing the Depth Buffer
-						if (BufferDepth > DepthBufferMax)
-							DepthBufferMax = BufferDepth;
-						DepthBuffer[L.x][L.y] = BufferDepth;
+						DepthBufferPoint(L.x, L.y, BufferDepth);
 						// drawing the point
 						SDL_SetRenderDrawColor(simple.renderer, Localc.r, Localc.g, Localc.b, Localc.a);
 						SDL_RenderPoint(simple.renderer, L.x, L.y);
@@ -321,23 +319,33 @@ void SimpleRenderer::DrawLine(Pos A, Pos B, RGBA_int c) {
 	int dz = abs(z1 - z0); // z-Distance between A and B
 	int sz = z0 < z1 ? 1 : -1; // get z-direction of line
 	// Using Bresenhams line Algorithm
-	int x0 = A.x, y0 = A.y; // Set A as coordinate origin
-	int x1 = B.x, y1 = B.y; // Set B as target point
+	int x0 = ScreenA.x, y0 = ScreenA.y; // Set A as coordinate origin
+	int x1 = ScreenB.x, y1 = ScreenB.y; // Set B as target point
 	int dx = abs(x1 - x0); // x-Distance between A and B
 	int sx = x0 < x1 ? 1 : -1; // get direction of the line in the x-axis
 	int dy = -abs(y1 - y0); // y-Distance between A and B
 	int sy = y0 < y1 ? 1 : -1; // get direction of the line in the y-axis
-	int err = dx + dy + dz; // "absolute-ish" Manhattan-Distance between A and B
+	int err = dx + dy; // "absolute-ish" Manhattan-Distance between A and B
 	int e2; // (later) doubled distance to avoid floating point math
+	bool run = true;
 	while (true) {
 		SDL_RenderPoint(simple.renderer, x0, y0);
-		if (z0 > DepthBuffer[x0][y0]) { DepthBuffer[x0][y0] = z0; }
-		if (x0 == x1 && y0 == y1 && z0 == z1) break; // stop drawing points if both values progressed to the target value
-		e2 = 3 * err; // double the distance to avoid floating point math
-		if (e2 >= dy) { err += dy; x0 += sx; } // iterate x0 by 1 or -1 if Manhattan Distance is larger than y-distance
-		if (e2 <= dx) { err += dx; y0 += sy; } // iterate y0 by 1 or -1 if Manhattan Distance is larger than x-distance
-		if (e2 <= dz) { err += dz; z0 += sz; } // iterate z0 by 1 or -1 if Manhattan Distance is larger than z-distance
+		//DepthBufferPoint(x0, y0, z0);
+		if (x0 == x1 && y0 == y1) break; // stop drawing points if both values progressed to the target value
+		e2 = 2 * err; // double the distance to avoid floating point math
+		if (e2 >= dy) { err += dy; x0 += sx; if (dz != 0) z0 += sz; } // iterate x0 by 1 or -1 if Manhattan Distance is larger than y-distance and step z when x steps
+		if (e2 <= dx) { err += dx; y0 += sy; if (dz != 0) z0 += sz; } // iterate y0 by 1 or -1 if Manhattan Distance is larger than x-distance and step z when y steps
 	}
+}
+
+bool SimpleRenderer::DepthBufferPoint(int x, int y, float d) {
+	if (DepthBuffer[x][y] == NULL or DepthBuffer[x][y] > d)
+	{
+		if (d > DepthBufferMax) DepthBufferMax = d;
+		DepthBuffer[x][y] = d;
+		return true;
+	}
+	return false;
 }
 
 void SimpleRenderer::DrawScreenLine(ScreenPos A, ScreenPos B, RGBA_int c) {
