@@ -24,7 +24,7 @@ void WORLD::init() {
 	if (debug == true) { cout << "[DEBUG] function world.init() from world.cpp" << endl; }
 	// add Points to World
 	Points.push_back(Point('O', Pos(0.0f, 0.0f, 0.0f), black));
-	Points.push_back(Point('A', Pos(1.0f, 1.0f, 2.0f), bright_red));
+	Points.push_back(Point('A', Pos(1.0f, 1.0f, 1.5f), bright_red));
 	Points.push_back(Point('B', Pos(2.0f, 1.25f, 2.0f), bright_green));
 	Points.push_back(Point('C', Pos(1.5f, 2.0f, 2.0f), bright_blue));
 	Points.push_back(Point('D', Pos(4.0f, 4.0f, -3.0f), dark_red));

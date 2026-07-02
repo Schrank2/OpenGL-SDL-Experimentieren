@@ -298,37 +298,25 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 		for (int i = 0; i <= Y1 - Y2; i++) SDL_RenderPoint(simple.renderer, x, Y1 + i);
 	}
 }
-void SimpleRenderer::DrawScreenLineInterpolation(ScreenPos A, ScreenPos B, RGBA_int c) {
-	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
-	// Using Bresenhams line Algorithm
-	int x0 = A.x, y0 = A.y; // Set A as coordinate origin
-	int x1 = B.x, y1 = B.y; // Set B as target point
-	int dx = abs(x1 - x0); // x-Distance between A and B
-	int sx = x0 < x1 ? 1 : -1; // get direction of the line in the x-axis
-	int dy = -abs(y1 - y0); // y-Distance between A and B
-	int sy = y0 < y1 ? 1 : -1; // get direction of the line in the y-axis
-	int err = dx + dy; // "absolute-ish" Manhattan-Distance between A and B
-	int e2; // (later) doubled distance to avoid floating point math
-	while (true) {
-		SDL_RenderPoint(simple.renderer, x0, y0);
-		if (x0 == x1 && y0 == y1) break; // stop drawing points if both values progressed to the target value
-		e2 = 2 * err; // double the distance to avoid floating point math
-		if (e2 >= dy) { err += dy; x0 += sx; } // iterate x0 by 1 or -1 if Manhattan Distance is larger than y distance
-		if (e2 <= dx) { err += dx; y0 += sy; } // iterate y0 by 1 or -1 if Manhattan Distance is larger than x distance
-	}
-}
 void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
 	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
-	// parametric form of AB (A + r(DV))
+	// Direction Vector AB
 	ScreenPos DV = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z);
-	float r; 
-	// Variables for Interpolation (s Stepsize, C Current Position)
-	float s = max(abs(1.0f / static_cast<float>(DV.x)), abs(1.0f / static_cast<float>(DV.y)));
+	//Step Count
+	float r = max(abs(DV.x), abs(DV.y));
+	// Step Size
+	float s = 1.0f / r;
+	// Current Position
 	ScreenPos C = A;
-	// Vector to add Between each step
+	// Just Draw a point if steps == 0;
+	if (s == 0) {
+		if (DepthBufferPoint(C)) SDL_RenderPoint(simple.renderer, C.x, C.y);
+		return;
+	}
+	// Vector to add Between each step (SV Stepvector)
 	ScreenPos SV = ScreenPos(DV.x * s, DV.y * s, DV.z * s);
 
-	for (r = 0.0f; r <= 1.0f; r += s) {
+	for (float i = 0; i <= r; i++) { // r starts at -s because s is instantly added so it starts at 0.0f
 		C.x += SV.x;
 		C.y += SV.y;
 		C.z += SV.z;
@@ -349,11 +337,6 @@ bool SimpleRenderer::DepthBufferPoint(ScreenPos A) {
 		return true;
 	}
 	return false;
-}
-
-void SimpleRenderer::DrawScreenLine(ScreenPos A, ScreenPos B, RGBA_int c) {
-	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
-	SDL_RenderLine(simple.renderer, A.x, A.y, B.x, B.y);
 }
 
 float SimpleRenderer::DistBetweenPoints(Pos a, Pos b) {
