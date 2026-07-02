@@ -230,6 +230,13 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	ScreenPos DV_AB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z);
 	ScreenPos DV_BC = ScreenPos(C.x - B.x, C.y - B.y, C.z - B.z);
 	ScreenPos DV_AC = ScreenPos(C.x - A.x, C.y - A.y, C.z - A.z);
+	// SHADING PREREQUISITES
+	float maxZ = max(A.z, max(B.z, C.z));
+	float minZ = min(A.z, min(B.z, C.z));
+	float diffZ = maxZ-minZ;
+	float shade;
+	float shadeIntensity = 0.4f;
+	RGBA_int LocalColor = ColorInt;
 	// Get Step Vectors for AB,BC and AC
 	int sAB = abs(A.y - B.y); // Step Count between A and B
 	ScreenPos SV_AB = ScreenPos(DV_AB.x / sAB, DV_AB.y / sAB, DV_AB.z / sAB);
@@ -260,6 +267,9 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 		SV_SC.z = C_AC.z - C_AB.z;
 		for (float j = 0.0f; j < abs(SV_SC.x); j++) {
 			if (DepthBufferPoint(SC)) {
+				shade = (SC.z - minZ) / diffZ;
+				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, ColorInt);
+				SDL_SetRenderDrawColor(simple.renderer, LocalColor.r, LocalColor.g, LocalColor.b, LocalColor.a);
 				SDL_RenderPoint(simple.renderer, SC.x, Ay+i);
 			}
 			SC.x += SV_SC.x / abs(SV_SC.x);
@@ -273,12 +283,10 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 		C_AC.z += SV_AC.z;
 	}
 	// Drawing the Triangle from By to Cy
-	RGBA_int DE = ModifyColor(0.5f, 1.0f, ColorInt);
-	SDL_SetRenderDrawColor(simple.renderer, DE.r, DE.g, DE.b, DE.a);
 	// Handle if sAB == 0 to avoid division by zero
 	if (sBC == 0) {
 		sBC = 1;
-		DrawLine(B, C, DE);
+		DrawLine(B, C, ColorInt);
 	}
 	// Draw the Triangle
 	ScreenPos C_BC = B;
@@ -288,6 +296,7 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	SV_SC = B;
 	SV_SC.y = 0.0f;
 	int By = static_cast<int>(B.y);
+	// Actually Draw the Triangle from By to Cy
 	for (int i = 0; i < static_cast<int>(sBC); i++) {
 		// Interpolating the Scanline between C_AB and C_AC
 		SC = C_BC; // Set Scanline to C_BC
@@ -295,6 +304,9 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 		SV_SC.z = C_AC.z - C_BC.z;
 		for (float j = 0.0f; j < abs(SV_SC.x); j++) {
 			if (DepthBufferPoint(SC)) {
+				shade = (SC.z - minZ) / diffZ;
+				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, ColorInt);
+				SDL_SetRenderDrawColor(simple.renderer, LocalColor.r, LocalColor.g, LocalColor.b, LocalColor.a);
 				SDL_RenderPoint(simple.renderer, SC.x, By+i);
 			}
 			SC.x += SV_SC.x / abs(SV_SC.x);
