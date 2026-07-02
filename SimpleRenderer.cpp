@@ -122,7 +122,6 @@ void SimpleRenderer::draw() {
 	simple.DrawLine(Origin, Projection(Pos(temp, 0.0f, 0.0f)), RGBA_int(255,0,0,255));
 	simple.DrawLine(Origin, Projection(Pos(0.0f, temp, 0.0f)), RGBA_int(0,255,0,255));
 	simple.DrawLine(Origin, Projection(Pos(0.0f, 0.0f, temp)), RGBA_int(0,0,255,255));
-	
 
 	// Draw all points from world
 	for (int i = 0; i < static_cast<int>(world.Points.size()); i++) {
@@ -134,30 +133,7 @@ void SimpleRenderer::draw() {
 	}
 }
 
-void SimpleRenderer::DrawCircle(float x, float y, float r, RGBA_int c) {
-	cout << "Drawing Circle at (" << x << ", " << y << ") with radius " << r << endl;
-	float X;
-	float TopY;
-	float BotY;
-	bool fill = true;
-	for (float i = -r; i <= r; i++) {
-			// get where the circle begins and ends
-			X = x + i;
-			TopY = y + sqrt(r * r - i * i);
-			BotY = y - sqrt(r * r - i * i);
-			// Fill the circle
-			if (fill == true) {
-				for (float j = BotY; j <= TopY; j++) {
-					SDL_RenderPoint(simple.renderer, X, j);
-				}
-			}
-			// Draw the outline of the circle
-			SDL_RenderPoint(simple.renderer, X, TopY);
-			SDL_RenderPoint(simple.renderer, X, BotY);
-	}
-}
-
-void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
+void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
 	ScreenPos As = Projection(A);
 	float FrontDepth = A.z - simple.Camera.z - r;
 	// weirdly adjusting the radius for depth of A
@@ -215,36 +191,6 @@ float SimpleRenderer::ScreenDist(ScreenPos A, ScreenPos B) {
 	float LineX = A.x - B.x;
 	float LineY = A.y - B.y;
 	return abs(sqrt(LineX * LineX + LineY * LineY));
-}
-
-void SimpleRenderer::DrawSphere(float x, float y, float z, float r, RGBA_int c) {
-	// initialising variables
-	float maxY;
-	float maxZ;
-	RGBA_int cr = c;
-	float shade;
-	//if (debug = true) { cout << "x: " << x << " y: " << y << " z: " << z << " cd: " << cd << endl; }
-	// loop
-	float step = 0.003f;
-	for (float i = -r; i <= r; i += step) {
-		maxY = sqrt(r * r - i * i);
-		for (float j = -maxY; j <= maxY; j += step) {
-			maxZ = sqrt(r * r - i * i - j * j);
-			for (float k = -maxZ; k <= maxZ; k += step) {
-				Pos P = Pos(x + i, y + j, z + k);
-				shade = k / (2 * r);
-				cr.r = static_cast<UINT8>(c.r * shade);
-				cr.g = static_cast<UINT8>(c.g * shade);
-				cr.b = static_cast<UINT8>(c.b * shade);
-				// Drawing the Point
-				simple.DrawPosition({ P.x, P.y, P.z }, cr);
-			}
-		}
-	}
-	// x + y + z = r
-	// z = r - x - y
-	// x = r - y - z
-	// y = r - x - z
 }
 
 ScreenPos SimpleRenderer::Projection(Pos A) {
@@ -345,15 +291,6 @@ float SimpleRenderer::DistBetweenPoints(Pos a, Pos b) {
 	return sqrt(v.x*v.x + v.y * v.y + v.z * v.z);
 }
 
-void SimpleRenderer::DrawPosition(Pos A, RGBA_int c) {
-	if (A.z <= 0) { return; }
-	SDL_SetRenderDrawColor(simple.renderer,c.r,c.g,c.b,c.a);
-	// calculating the screen coordinates for the point
-	ScreenPos ScreenA = Projection(A);
-	// drawing the point on the screen
-	SDL_RenderPoint(simple.renderer, ScreenA.x, ScreenA.y);
-}
-
 void SimpleRenderer::DrawPoint(Point A) {
 	// calculating the screen coordinates for the point
 	ScreenPos ScreenA = Projection(A.pos);
@@ -361,9 +298,7 @@ void SimpleRenderer::DrawPoint(Point A) {
 	SDL_SetRenderDrawColor(simple.renderer, Color.r,Color.g,Color.b, Color.a);
 	if (debug == true) { cout << "[DEBUG] Drawing Point: " << A.letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl; }
 	SDL_RenderPoint(simple.renderer, ScreenA.x, ScreenA.y);
-	//simple.DrawCircle(screenx, screeny, 10.0f, Color);
-	//simple.DrawSphere(A.position.x, A.position.y, A.position.z, 0.1, Color);
-	//simple.DrawSphere2(A.pos, 0.1f, Color);
+	simple.DrawSphere(A.pos, 0.1f, Color);
 }
 
 SimpleRenderer simple;

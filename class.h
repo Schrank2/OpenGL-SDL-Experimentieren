@@ -22,10 +22,7 @@ public:
 	SDL_Window* Create_Window(string title);
 	void GetScreenData();
 	void draw();
-	void DrawCircle(float x, float y, float r, RGBA_int c);
-	void DrawSphere(float x, float y, float z, float r, RGBA_int c);
-	void DrawSphere2(Pos A, float r, RGBA_int c);
-	void DrawPosition(Pos A, RGBA_int c);
+	void DrawSphere(Pos A, float r, RGBA_int c);
 	ScreenPos Projection(Pos A);
 	bool DepthBufferPoint(ScreenPos A);
 	void DrawPoint(Point point);
