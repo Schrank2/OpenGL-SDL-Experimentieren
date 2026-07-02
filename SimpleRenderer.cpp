@@ -252,24 +252,25 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	ScreenPos SV_SC = A;
 	SV_SC.y = 0.0f;
 	// Actually Draw the Triangle from Ay to By
-	for (float i = 0.0f; i < sAB; i++) {
-		C_AB.x += SV_AB.x;
-		C_AB.y += SV_AB.y;
-		C_AB.z += SV_AB.z;
-		C_AC.x += SV_AC.x;
-		C_AC.y += SV_AC.y;
-		C_AC.z += SV_AC.z;
+	int Ay = static_cast<int>(A.y);
+	for (int i = 0; i <= static_cast<int>(sAB); i++) {
 		// Interpolating the Scanline between C_AB and C_AC
 		SC = C_AB; // Set Scanline to C_AB
 		SV_SC.x = C_AC.x - C_AB.x;
 		SV_SC.z = C_AC.z - C_AB.z;
 		for (float j = 0.0f; j < abs(SV_SC.x); j++) {
 			if (DepthBufferPoint(SC)) {
-				SDL_RenderPoint(simple.renderer, SC.x, SC.y);
+				SDL_RenderPoint(simple.renderer, SC.x, Ay+i);
 			}
 			SC.x += SV_SC.x / abs(SV_SC.x);
 			SC.z += SV_SC.z / abs(SV_SC.x);
 		}
+		C_AB.x += SV_AB.x;
+		C_AB.y += SV_AB.y;
+		C_AB.z += SV_AB.z;
+		C_AC.x += SV_AC.x;
+		C_AC.y += SV_AC.y;
+		C_AC.z += SV_AC.z;
 	}
 	// Drawing the Triangle from By to Cy
 	RGBA_int DE = ModifyColor(0.5f, 1.0f, ColorInt);
@@ -279,16 +280,35 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 		sBC = 1;
 		DrawLine(B, C, DE);
 	}
-	// Actually Draw the Triangle
+	cout << "B.y    = " << B.y << '\n';
+	//cout << "C_BC.y = " << C_BC.y << '\n';
+	cout << "C_AC.y = " << C_AC.y << '\n';
+	// Draw the Triangle
 	ScreenPos C_BC = B;
-	for (float i = 0.0f; i < sBC; i++) {
+	// Current Position for Scanline
+	SC = C_BC;
+	// Vector of Scanline
+	SV_SC = B;
+	SV_SC.y = 0.0f;
+	int By = static_cast<int>(B.y);
+	for (int i = 0; i < static_cast<int>(sBC); i++) {
+		// Interpolating the Scanline between C_AB and C_AC
+		SC = C_BC; // Set Scanline to C_BC
+		SV_SC.x = C_AC.x - C_BC.x;
+		SV_SC.z = C_AC.z - C_BC.z;
+		for (float j = 0.0f; j < abs(SV_SC.x); j++) {
+			if (DepthBufferPoint(SC)) {
+				SDL_RenderPoint(simple.renderer, SC.x, By+i);
+			}
+			SC.x += SV_SC.x / abs(SV_SC.x);
+			SC.z += SV_SC.z / abs(SV_SC.x);
+		}
 		C_BC.x += SV_BC.x;
 		C_BC.y += SV_BC.y;
 		C_BC.z += SV_BC.z;
 		C_AC.x += SV_AC.x;
 		C_AC.y += SV_AC.y;
 		C_AC.z += SV_AC.z;
-		DrawLine(C_BC, C_AC, DE);
 	}
 }
 
@@ -346,7 +366,7 @@ void SimpleRenderer::DrawPoint(Point A) {
 	SDL_SetRenderDrawColor(simple.renderer, Color.r,Color.g,Color.b, Color.a);
 	if (debug == true) { cout << "[DEBUG] Drawing Point: " << A.letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl; }
 	SDL_RenderPoint(simple.renderer, ScreenA.x, ScreenA.y);
-	simple.DrawSphere(A.pos, 0.1f, Color);
+	//simple.DrawSphere(A.pos, 0.1f, Color);
 }
 
 SimpleRenderer simple;
