@@ -117,11 +117,11 @@ void SimpleRenderer::draw() {
 	SDL_SetRenderDrawColor(simple.renderer, 255, 0, 255, 255);
 	SDL_RenderLine(simple.renderer, 0, ScreenHeightF, ScreenWidthF, ScreenHeightF);
 	// Draw coordinate system lines
-	float temp = 1000.0f;
+	float temp = 1.5f;
 	ScreenPos Origin = Projection(Pos(0.0f, 0.0f, 0.0f));
-	simple.DrawLine(Origin, Projection(Pos(temp, 0.0f, 0.0f)), RGBA_int(128,0,0,255));
-	simple.DrawLine(Origin, Projection(Pos(0.0f, temp, 0.0f)), RGBA_int(0,128,0,255));
-	simple.DrawLine(Origin, Projection(Pos(0.0f, 0.0f, temp)), RGBA_int(0,0,128,255));
+	simple.DrawLine(Origin, Projection(Pos(temp, 0.0f, 0.0f)), RGBA_int(255,0,0,255));
+	simple.DrawLine(Origin, Projection(Pos(0.0f, temp, 0.0f)), RGBA_int(0,255,0,255));
+	simple.DrawLine(Origin, Projection(Pos(0.0f, 0.0f, temp)), RGBA_int(0,0,255,255));
 	
 
 	// Draw all points from world
@@ -251,7 +251,7 @@ ScreenPos SimpleRenderer::Projection(Pos A) {
 	float x = A.x - simple.Camera.x;
 	float y = A.y - simple.Camera.y;
 	float z = A.z - simple.Camera.z;
-	y = -y;
+	y *= -1;
 	float screenx = (x / z) * simple.RenderScale + ScreenWidthF / 2.0f;
 	float screeny = (y / z) * simple.RenderScale + ScreenHeightF / 2.0f;
 	return ScreenPos(screenx, screeny, z);
@@ -298,6 +298,7 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 		for (int i = 0; i <= Y1 - Y2; i++) SDL_RenderPoint(simple.renderer, x, Y1 + i);
 	}
 }
+
 void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
 	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
 	// Direction Vector AB
@@ -362,7 +363,7 @@ void SimpleRenderer::DrawPoint(Point A) {
 	SDL_RenderPoint(simple.renderer, ScreenA.x, ScreenA.y);
 	//simple.DrawCircle(screenx, screeny, 10.0f, Color);
 	//simple.DrawSphere(A.position.x, A.position.y, A.position.z, 0.1, Color);
-	simple.DrawSphere2(A.pos, 0.1f, Color);
+	//simple.DrawSphere2(A.pos, 0.1f, Color);
 }
 
 SimpleRenderer simple;

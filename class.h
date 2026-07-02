@@ -16,7 +16,7 @@ public:
 	void render();
 	vector<vector<float>> CreateDepthBuffer();
 	vector<vector<float>> DepthBuffer;
-	Pos Camera = Pos(0.0f, 0.0f, -3.0f);
+	Pos Camera = Pos(2.0f, 1.0f, -3.0f);
 	float DepthBufferMax;
 	SDL_Renderer* Create_Renderer(SDL_Window* window);
 	SDL_Window* Create_Window(string title);
