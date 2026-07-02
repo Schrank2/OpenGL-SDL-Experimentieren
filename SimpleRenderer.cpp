@@ -166,7 +166,7 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 	// where the sphere is lit most brightly (temporary, will later be replaced)
 	ScreenPos Light = ScreenPos(As.x - (R/2), As.y - (R/2), As.z);
 
-	int X;
+	float X;
 	float TopY;
 	float BotY;
 	bool fill = true;
@@ -174,14 +174,14 @@ void SimpleRenderer::DrawSphere2(Pos A, float r, RGBA_int c) {
 	float lshade;
 	float BufferDepth;
 
-	int i;
+	float i;
 	for (i = - R; i <= R; i++) {
 		X = As.x + i;
 		TopY = As.y + sqrt(R * R - i * i);
 		BotY = As.y - sqrt(R * R - i * i);
 		// Fill the circle
 		if (fill == true) {
-			for (int j = BotY; j <= TopY; j++) {
+			for (float j = BotY; j <= TopY; j++) {
 				float center = ScreenDist(As, ScreenPos(X,j,0.0f)); // Distance Between Lightspot and Poin
 				float x = center / R; // Distance Between Center and Point displayed between 0.0f and 1.0f.
 				if (x < 0.0f) x = 0.0f;
@@ -285,8 +285,8 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	float BCm = static_cast<float>(C.x - B.x) / static_cast<float>(C.y - B.y);
 	float BCb = -B.y;
 
-	int Y1 = 0;
-	int Y2 = 0;
+	int Y1;
+	int Y2;
 	for (int x = A.x; x <= B.x; x++) {
 		Y1 = (ACm * x + ACb);
 		Y2 = (ABm * x + ABb);
@@ -319,27 +319,21 @@ void SimpleRenderer::DrawScreenLineInterpolation(ScreenPos A, ScreenPos B, RGBA_
 }
 void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
 	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
-	// Interpolating for Depth Buffer
-	float z0 = A.z - Camera.z; // Set A as coordinate origin
-	float z1 = B.z - Camera.z; // Set B as target point
-	float dz = abs(z1 - z0); // z-Distance between A and B
-	float sz = z0 < z1 ? 1 : -1; // get z-direction of line
-	// Using Bresenhams line Algorithm
-	int x0 = A.x, y0 = A.y; // Set A as coordinate origin
-	int x1 = B.x, y1 = B.y; // Set B as target point
-	int dx = abs(x1 - x0); // x-Distance between A and B
-	int sx = x0 < x1 ? 1 : -1; // get direction of the line in the x-axis
-	int dy = -abs(y1 - y0); // y-Distance between A and B
-	int sy = y0 < y1 ? 1 : -1; // get direction of the line in the y-axis
-	int err = dx + dy; // "absolute-ish" Manhattan-Distance between A and B
-	int e2; // (later) doubled distance to avoid floating point math
-	while (true) {
-		if (DepthBufferPoint({x0,y0,z0})) SDL_RenderPoint(simple.renderer, x0, y0);
-		if (x0 == x1 && y0 == y1) break; // stop drawing points if both values progressed to the target value
-		e2 = 2 * err; // double the distance to avoid floating point math
-		if (e2 >= dy) { err += dy; x0 += sx; if (dz != 0) z0 += sz; } // iterate x0 by 1 or -1 if Manhattan Distance is larger than y-distance and step z when x steps
-		if (e2 <= dx) { err += dx; y0 += sy; if (dz != 0) z0 += sz; } // iterate y0 by 1 or -1 if Manhattan Distance is larger than x-distance and step z when y steps
+	// parametric form of AB (A + r(DV))
+	ScreenPos DV = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z);
+	float r; 
+	// Variables for Interpolation (s Stepsize, C Current Position)
+	float s = max(abs(1.0f / static_cast<float>(DV.x)), abs(1.0f / static_cast<float>(DV.y)));
+	ScreenPos C = A;
+	for (r = 0.0f; r <= 1.0f; r += s) {
+		C.x += DV.x * s;
+		C.y += DV.y * s;
+		C.z += DV.z * s;
+		if (DepthBufferPoint(C)) {
+			SDL_RenderPoint(simple.renderer, C.x, C.y);
+		}
 	}
+	
 }
 
 bool SimpleRenderer::DepthBufferPoint(ScreenPos A) {
