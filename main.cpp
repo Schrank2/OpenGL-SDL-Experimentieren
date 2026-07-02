@@ -27,10 +27,10 @@ int main(int argc, char* argv[])
 	while (running) {
 		// Rendering and Showing a Plane
 		FrameStartTime = SDL_GetTicks();
-		if (FrameStartTime >= LastFrameTime + 10) {
+		//if (FrameStartTime >= LastFrameTime + 10) {
 			simple.render();
 			LastFrameTime = FrameStartTime;
-		}
+		//}
 		FrameEndTime = SDL_GetTicks();
 		if (FrameEndTime >= LastFrameRateReportTime + 1000) {
 			LastFrameRateReportTime = FrameEndTime;

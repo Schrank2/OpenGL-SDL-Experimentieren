@@ -74,9 +74,6 @@ void SimpleRenderer::render() {
 	// Clear the Main Window
 	SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
 	SDL_RenderClear(simple.renderer);
-	// Clear the Depth Buffer
-	SDL_SetRenderDrawColor(simple.DepthBufferRenderer, 255, 255, 255, 255);
-	SDL_RenderClear(simple.DepthBufferRenderer);
 	for (auto& row : DepthBuffer)
 		fill(row.begin(), row.end(), NULL);
 	DepthBufferMax = 0.0f;
@@ -108,7 +105,6 @@ void SimpleRenderer::render() {
 		}
 	}
 	SDL_RenderPresent(simple.renderer);
-	SDL_RenderPresent(simple.DepthBufferRenderer);
 	RenderEndTime = SDL_GetTicks();
 	RenderTime = RenderEndTime - RenderStartTime;
 }
