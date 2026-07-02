@@ -66,6 +66,7 @@ int main(int argc, char* argv[])
 				if (simple.DepthBufferShown == true) simple.DepthBufferShown = false;
 					else simple.DepthBufferShown = true;
 			}
+			cout << "Camera z: " << simple.Camera.z << endl;
 		}
 	}
 }
