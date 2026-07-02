@@ -203,7 +203,6 @@ ScreenPos SimpleRenderer::Projection(Pos A) {
 	float x = A.x - simple.Camera.x;
 	float y = A.y - simple.Camera.y;
 	float z = A.z - simple.Camera.z;
-	if (z <= 0.0f) z = 0.000001; // Prevent Division by Zero
 	y *= -1;
 	float screenx = (x / z) * simple.RenderScale + ScreenWidthF / 2.0f;
 	float screeny = (y / z) * simple.RenderScale + ScreenHeightF / 2.0f;
