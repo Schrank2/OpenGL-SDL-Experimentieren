@@ -325,10 +325,13 @@ void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
 	// Variables for Interpolation (s Stepsize, C Current Position)
 	float s = max(abs(1.0f / static_cast<float>(DV.x)), abs(1.0f / static_cast<float>(DV.y)));
 	ScreenPos C = A;
+	// Vector to add Between each step
+	ScreenPos SV = ScreenPos(DV.x * s, DV.y * s, DV.z * s);
+
 	for (r = 0.0f; r <= 1.0f; r += s) {
-		C.x += DV.x * s;
-		C.y += DV.y * s;
-		C.z += DV.z * s;
+		C.x += SV.x;
+		C.y += SV.y;
+		C.z += SV.z;
 		if (DepthBufferPoint(C)) {
 			SDL_RenderPoint(simple.renderer, C.x, C.y);
 		}
@@ -337,10 +340,12 @@ void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
 }
 
 bool SimpleRenderer::DepthBufferPoint(ScreenPos A) {
-	if (A.x < 0 or A.y < 0 or A.x >= DepthBuffer.size() or A.y >= DepthBuffer[0].size()) return false; // Check if Point is on screen
-	if (DepthBuffer[A.x][A.y] == NULL or DepthBuffer[A.x][A.y] > A.z) {
+	int x = static_cast<int>(A.x);
+	int y = static_cast<int>(A.y);
+	if (x < 0 or y < 0 or x >= DepthBuffer.size() or y >= DepthBuffer[0].size()) return false; // Check if Point is on screen
+	if (DepthBuffer[x][y] == NULL or DepthBuffer[x][y] > A.z) {
 		if (A.z > DepthBufferMax) DepthBufferMax = A.z;
-		DepthBuffer[A.x][A.y] = A.z;
+		DepthBuffer[x][y] = A.z;
 		return true;
 	}
 	return false;
