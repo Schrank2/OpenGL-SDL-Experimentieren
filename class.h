@@ -35,8 +35,6 @@ public:
 	RGBA_int ModifyColor(float modifier, float strength, RGBA_int c);
 	SDL_Window* window;
 	SDL_Renderer* renderer;
-	SDL_Window* DepthBufferWindow;
-	SDL_Renderer* DepthBufferRenderer;
 	int RenderStartTime;
 	int RenderEndTime;
 	int RenderTime;
