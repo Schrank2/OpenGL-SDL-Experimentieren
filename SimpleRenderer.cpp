@@ -239,6 +239,10 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	ScreenPos SV_BC = ScreenPos(DV_BC.x / sBC, DV_BC.y / sBC, DV_BC.z / sBC);
 	int sAC = abs(A.y - C.y); // Step Count between A and C
 	ScreenPos SV_AC = ScreenPos(DV_AC.x / sAC, DV_AC.y / sAC, DV_AC.z / sAC);
+	if (sAC > ScreenHeight / 2) {
+		if (debug == true) cout << "Triangle " << T.name << " is too large and will not be drawn." << endl;
+		return;
+	}
 	// Current Position for AB and AC
 	ScreenPos C_AB = A;
 	ScreenPos C_AC = A;
