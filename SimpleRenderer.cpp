@@ -253,7 +253,7 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	SV_SC.y = 0.0f;
 	// Actually Draw the Triangle from Ay to By
 	int Ay = static_cast<int>(A.y);
-	for (int i = 0; i <= static_cast<int>(sAB); i++) {
+	for (int i = 0; i < static_cast<int>(sAB); i++) {
 		// Interpolating the Scanline between C_AB and C_AC
 		SC = C_AB; // Set Scanline to C_AB
 		SV_SC.x = C_AC.x - C_AB.x;
@@ -280,9 +280,6 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 		sBC = 1;
 		DrawLine(B, C, DE);
 	}
-	cout << "B.y    = " << B.y << '\n';
-	//cout << "C_BC.y = " << C_BC.y << '\n';
-	cout << "C_AC.y = " << C_AC.y << '\n';
 	// Draw the Triangle
 	ScreenPos C_BC = B;
 	// Current Position for Scanline
