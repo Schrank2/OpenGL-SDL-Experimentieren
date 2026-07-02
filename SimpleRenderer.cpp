@@ -81,6 +81,7 @@ void SimpleRenderer::render() {
 	for (auto& row : DepthBuffer)
 		fill(row.begin(), row.end(), NULL);
 	DepthBufferMax = 0.0f;
+	DepthBufferMin = 1000000.0f;
 	// Draw the Main Window
 	simple.draw();
 	// Render the Depth Buffer
@@ -89,15 +90,18 @@ void SimpleRenderer::render() {
 	cout << DepthBuffer.size() << endl;
 	for (i = 0; i < DepthBuffer.size(); i++) {
 		for (j = 0; j < DepthBuffer[0].size(); j++) {
-			a = DepthBuffer[i][j] / DepthBufferMax;
+			a = (DepthBuffer[i][j] - DepthBufferMin) / (DepthBufferMax-DepthBufferMin);
 			//cout << fixed << setprecision(3) << a << " " << DepthBuffer[i][j] << endl;
-			if (a < 0.0f) { a = 0.0f; }
-			if (a > 1.0f) { a = 1.0f; }
+			if (a < 0.0f) { a = 1.0f; }
+			if (a > 1.0f) { a = 0.0f; }
 			//cout << fixed << setprecision(2) << a << endl;
+			a = 1.0f - a;
 			SDL_SetRenderDrawColorFloat(simple.DepthBufferRenderer, a, a, a, 1.0f);
 			SDL_RenderPoint(simple.DepthBufferRenderer, i, j);
 		}
 	}
+	cout << "DepthBufferMax: " << DepthBufferMax << endl;
+	cout << "DepthBufferMin: " << DepthBufferMin << endl;
 	SDL_RenderPresent(simple.renderer);
 	SDL_RenderPresent(simple.DepthBufferRenderer);
 }
@@ -280,6 +284,7 @@ bool SimpleRenderer::DepthBufferPoint(ScreenPos A) {
 	if (x < 0 or y < 0 or x >= DepthBuffer.size() or y >= DepthBuffer[0].size()) return false; // Check if Point is on screen
 	if (DepthBuffer[x][y] == NULL or DepthBuffer[x][y] > A.z) {
 		if (A.z > DepthBufferMax) DepthBufferMax = A.z;
+		if (A.z < DepthBufferMin) DepthBufferMin = A.z;
 		DepthBuffer[x][y] = A.z;
 		return true;
 	}
