@@ -267,7 +267,8 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 			if (DepthBufferPoint(SC)) {
 				SDL_RenderPoint(simple.renderer, SC.x, SC.y);
 			}
-			SC.x += 1.0f;
+			SC.x += SV_SC.x / abs(SV_SC.x);
+			SC.z += SV_SC.z / abs(SV_SC.x);
 		}
 	}
 	// Drawing the Triangle from By to Cy
