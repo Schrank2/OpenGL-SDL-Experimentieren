@@ -214,7 +214,7 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	ScreenPos A = Projection(T.p1.pos);
 	ScreenPos B = Projection(T.p2.pos);
 	ScreenPos C = Projection(T.p3.pos);
-	// Sort by smallest x
+	// Sort by smallest y
 	ScreenPos temp = A;
 	if (B.y < A.y) { temp = B; B = A; A = temp; }
 	if (C.y < A.y) { temp = C; C = A; A = temp; }
@@ -222,9 +222,10 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	cout << "sort result: " << A.y << " " << B.y << " " << C.y << endl;
 
 	// Drawing the WireFrame
-	DrawLine(A, B, ColorInt);
-	DrawLine(B, C, ColorInt);
-	DrawLine(C, A, ColorInt);
+	RGBA_int FrameColor = ModifyColor(0.5f, 1.0f, ColorInt);
+	//DrawLine(A, B, FrameColor);
+	//DrawLine(B, C, FrameColor);
+	//DrawLine(C, A, FrameColor);
 	// Get Direction Vectors for AB,BC and AC
 	ScreenPos DV_AB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z);
 	ScreenPos DV_BC = ScreenPos(C.x - B.x, C.y - B.y, C.z - B.z);
@@ -240,6 +241,17 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	ScreenPos C_AB = A;
 	ScreenPos C_AC = A;
 	// Drawing the Triangle from Ay to By
+	// Handle if sAB == 0 to avoid division by zero
+	if(sAB == 0) {
+		sAB = 1; 
+		DrawLine(A, C, ColorInt);
+	}
+	// Current Position for Scanline
+	ScreenPos SC = C_AB;
+	// Vector of Scanline
+	ScreenPos SV_SC = A;
+	SV_SC.y = 0.0f;
+	// Actually Draw the Triangle from Ay to By
 	for (float i = 0.0f; i < sAB; i++) {
 		C_AB.x += SV_AB.x;
 		C_AB.y += SV_AB.y;
@@ -247,9 +259,26 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 		C_AC.x += SV_AC.x;
 		C_AC.y += SV_AC.y;
 		C_AC.z += SV_AC.z;
-		DrawLine(C_AB, C_AC, ColorInt);
+		// Interpolating the Scanline between C_AB and C_AC
+		SC = C_AB; // Set Scanline to C_AB
+		SV_SC.x = C_AC.x - C_AB.x;
+		SV_SC.z = C_AC.z - C_AB.z;
+		for (float j = 0.0f; j < abs(SV_SC.x); j++) {
+			if (DepthBufferPoint(SC)) {
+				SDL_RenderPoint(simple.renderer, SC.x, SC.y);
+			}
+			SC.x += 1.0f;
+		}
 	}
 	// Drawing the Triangle from By to Cy
+	RGBA_int DE = ModifyColor(0.5f, 1.0f, ColorInt);
+	SDL_SetRenderDrawColor(simple.renderer, DE.r, DE.g, DE.b, DE.a);
+	// Handle if sAB == 0 to avoid division by zero
+	if (sBC == 0) {
+		sBC = 1;
+		DrawLine(B, C, DE);
+	}
+	// Actually Draw the Triangle
 	ScreenPos C_BC = B;
 	for (float i = 0.0f; i < sBC; i++) {
 		C_BC.x += SV_BC.x;
@@ -258,7 +287,7 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 		C_AC.x += SV_AC.x;
 		C_AC.y += SV_AC.y;
 		C_AC.z += SV_AC.z;
-		DrawLine(C_BC, C_AC, ColorInt);
+		DrawLine(C_BC, C_AC, DE);
 	}
 }
 
@@ -280,13 +309,13 @@ void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
 	// Vector to add Between each step (SV Stepvector)
 	ScreenPos SV = ScreenPos(DV.x * s, DV.y * s, DV.z * s);
 
-	for (float i = 0; i <= r; i++) { // r starts at -s because s is instantly added so it starts at 0.0f
-		C.x += SV.x;
-		C.y += SV.y;
-		C.z += SV.z;
+	for (float i = 0; i <= r; i++) {
 		if (DepthBufferPoint(C)) {
 			SDL_RenderPoint(simple.renderer, C.x, C.y);
 		}
+		C.x += SV.x;
+		C.y += SV.y;
+		C.z += SV.z;
 	}
 	
 }
