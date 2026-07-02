@@ -111,25 +111,14 @@ void SimpleRenderer::render() {
 
 void SimpleRenderer::draw() {
 	if (debug == true) { cout << "[DEBUG] function simple.draw() from SimpleRenderer.cpp" << endl; }
-	// Red line from top left to top right
-	SDL_SetRenderDrawColor(simple.renderer, 255, 0, 0, 255);
-	SDL_RenderLine(simple.renderer, 0.0f, 0.0f, ScreenWidthF, 0.0f);
-	// Green line from top left to bottom left
-	SDL_SetRenderDrawColor(simple.renderer, 0, 255, 0, 255);
-	SDL_RenderLine(simple.renderer, 0, 0, 0, ScreenHeightF);
-	// Blue line from top right to bottom right
-	SDL_SetRenderDrawColor(simple.renderer, 0, 0, 255, 255);
-	SDL_RenderLine(simple.renderer, ScreenWidthF, 0, ScreenWidthF, ScreenHeightF);
-	// Magenta line from bottom left to bottom right
-	SDL_SetRenderDrawColor(simple.renderer, 255, 0, 255, 255);
-	SDL_RenderLine(simple.renderer, 0, ScreenHeightF, ScreenWidthF, ScreenHeightF);
 	// Draw coordinate system lines
 	float temp = 1.5f;
 	ScreenPos Origin = Projection(Pos(0.0f, 0.0f, 0.0f));
-	simple.DrawLine(Origin, Projection(Pos(temp, 0.0f, 0.0f)), RGBA_int(255,0,0,255));
-	simple.DrawLine(Origin, Projection(Pos(0.0f, temp, 0.0f)), RGBA_int(0,255,0,255));
-	simple.DrawLine(Origin, Projection(Pos(0.0f, 0.0f, temp)), RGBA_int(0,0,255,255));
-
+	if(0.0f > Camera.z + 0.25f) {
+		simple.DrawLine(Origin, Projection(Pos(temp, 0.0f, 0.0f)), RGBA_int(255,0,0,255));
+		simple.DrawLine(Origin, Projection(Pos(0.0f, temp, 0.0f)), RGBA_int(0,255,0,255));
+		simple.DrawLine(Origin, Projection(Pos(0.0f, 0.0f, temp)), RGBA_int(0,0,255,255));
+	}
 	// Draw all points from world
 	for (int i = 0; i < static_cast<int>(world.Points.size()); i++) {
 		simple.DrawPoint(world.Points[i]);
@@ -210,6 +199,10 @@ ScreenPos SimpleRenderer::Projection(Pos A) {
 }
 
 void SimpleRenderer::DrawTriangle(Triangle T) {
+	if(T.p1.pos.z - Camera.z < 0.3f or T.p2.pos.z - Camera.z < 0.3f or T.p3.pos.z - Camera.z < 0.3f) {
+		if (debug == true) cout << "Triangle " << T.name << " is behind the camera and will not be drawn." << endl;
+		return;
+	}
 	RGBA_int ColorInt = FloatToIntColor(T.color);
 	SDL_SetRenderDrawColor(simple.renderer, ColorInt.r, ColorInt.g, ColorInt.b, ColorInt.a);
 	// Get Screen Coordinates
