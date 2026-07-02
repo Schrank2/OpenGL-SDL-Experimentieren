@@ -225,27 +225,40 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	DrawLine(A, B, ColorInt);
 	DrawLine(B, C, ColorInt);
 	DrawLine(C, A, ColorInt);
-	// AB Line
-	float ABm = static_cast<float>(B.x - A.x) / static_cast<float>(B.y - A.y);
-	float ABb = -A.y;
-	// AC Line
-	float ACm = static_cast<float>(C.x - A.x) / static_cast<float>(C.y - A.y);
-	float ACb = -A.y;
-	// BC Line
-	float BCm = static_cast<float>(C.x - B.x) / static_cast<float>(C.y - B.y);
-	float BCb = -B.y;
-
-	int Y1;
-	int Y2;
-	for (int x = A.x; x <= B.x; x++) {
-		Y1 = (ACm * x + ACb);
-		Y2 = (ABm * x + ABb);
-		for (int i = 0; i <= Y1 - Y2; i++) SDL_RenderPoint(simple.renderer, x, Y1 + i);
+	// Get Direction Vectors for AB,BC and AC
+	ScreenPos DV_AB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z);
+	ScreenPos DV_BC = ScreenPos(C.x - B.x, C.y - B.y, C.z - B.z);
+	ScreenPos DV_AC = ScreenPos(C.x - A.x, C.y - A.y, C.z - A.z);
+	// Get Step Vectors for AB,BC and AC
+	int sAB = abs(A.y - B.y); // Step Count between A and B
+	ScreenPos SV_AB = ScreenPos(DV_AB.x / sAB, DV_AB.y / sAB, DV_AB.z / sAB);
+	int sBC = abs(B.y - C.y); // Step Count between B and C
+	ScreenPos SV_BC = ScreenPos(DV_BC.x / sBC, DV_BC.y / sBC, DV_BC.z / sBC);
+	int sAC = abs(A.y - C.y); // Step Count between A and C
+	ScreenPos SV_AC = ScreenPos(DV_AC.x / sAC, DV_AC.y / sAC, DV_AC.z / sAC);
+	// Current Position for AB and AC
+	ScreenPos C_AB = A;
+	ScreenPos C_AC = A;
+	// Drawing the Triangle from Ay to By
+	for (float i = 0.0f; i < sAB; i++) {
+		C_AB.x += SV_AB.x;
+		C_AB.y += SV_AB.y;
+		C_AB.z += SV_AB.z;
+		C_AC.x += SV_AC.x;
+		C_AC.y += SV_AC.y;
+		C_AC.z += SV_AC.z;
+		DrawLine(C_AB, C_AC, ColorInt);
 	}
-	for (int x = B.x; x <= C.x; x++) {
-		Y1 = (ACm * x + ACb);
-		Y2 = (BCm * x + BCb);
-		for (int i = 0; i <= Y1 - Y2; i++) SDL_RenderPoint(simple.renderer, x, Y1 + i);
+	// Drawing the Triangle from By to Cy
+	ScreenPos C_BC = B;
+	for (float i = 0.0f; i < sBC; i++) {
+		C_BC.x += SV_BC.x;
+		C_BC.y += SV_BC.y;
+		C_BC.z += SV_BC.z;
+		C_AC.x += SV_AC.x;
+		C_AC.y += SV_AC.y;
+		C_AC.z += SV_AC.z;
+		DrawLine(C_BC, C_AC, ColorInt);
 	}
 }
 
