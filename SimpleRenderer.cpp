@@ -272,9 +272,9 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	cout << "sort result: " << A.y << " " << B.y << " " << C.y << endl;
 
 	// Drawing the WireFrame
-	//DrawLine(A, B, ColorInt);
-	//DrawLine(B, C, ColorInt);
-	//DrawLine(C, A, ColorInt);
+	DrawLine(A, B, ColorInt);
+	DrawLine(B, C, ColorInt);
+	DrawLine(C, A, ColorInt);
 	// AB Line
 	float ABm = static_cast<float>(B.x - A.x) / static_cast<float>(B.y - A.y);
 	float ABb = -A.y;
