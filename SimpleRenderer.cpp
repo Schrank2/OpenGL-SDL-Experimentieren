@@ -64,14 +64,13 @@ void SimpleRenderer::init() {
 	// Creating the Main Window
 	simple.window = Create_Window("Simple Render Main");
 	simple.renderer = Create_Renderer(simple.window);
-	// Creating the Depth Buffer Window
-	simple.DepthBufferWindow = Create_Window("Simple Render Depth Buffer");
-	simple.DepthBufferRenderer = Create_Renderer(simple.DepthBufferWindow);
+	// Creating the Depth Buffer
 	simple.DepthBuffer = simple.CreateDepthBuffer();
 }
 
 void SimpleRenderer::render() {
 	if (debug == true) { cout << "[DEBUG] function simple.render() from SimpleRenderer.cpp" << endl; }
+	RenderStartTime = SDL_GetTicks();
 	// Clear the Main Window
 	SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
 	SDL_RenderClear(simple.renderer);
@@ -85,25 +84,33 @@ void SimpleRenderer::render() {
 	// Draw the Main Window
 	simple.draw();
 	// Render the Depth Buffer
-	int i, j;
-	float a;
-	cout << DepthBuffer.size() << endl;
-	for (i = 0; i < DepthBuffer.size(); i++) {
-		for (j = 0; j < DepthBuffer[0].size(); j++) {
-			a = (DepthBuffer[i][j] - DepthBufferMin) / (DepthBufferMax-DepthBufferMin);
-			//cout << fixed << setprecision(3) << a << " " << DepthBuffer[i][j] << endl;
-			if (a < 0.0f) { a = 1.0f; }
-			if (a > 1.0f) { a = 0.0f; }
-			//cout << fixed << setprecision(2) << a << endl;
-			a = 1.0f - a;
-			SDL_SetRenderDrawColorFloat(simple.DepthBufferRenderer, a, a, a, 1.0f);
-			SDL_RenderPoint(simple.DepthBufferRenderer, i, j);
+	if (DepthBufferShown == true) {
+		// Clear the Main Window
+		SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
+		SDL_RenderClear(simple.renderer);
+		int i, j;
+		float a;
+		for (i = 0; i < DepthBuffer.size(); i++) {
+			for (j = 0; j < DepthBuffer[0].size(); j++) {
+				a = (DepthBuffer[i][j] - DepthBufferMin) / (DepthBufferMax - DepthBufferMin);
+				//cout << fixed << setprecision(3) << a << " " << DepthBuffer[i][j] << endl;
+				if (a < 0.0f) { a = 1.0f; }
+				if (a > 1.0f) { a = 0.0f; }
+				//cout << fixed << setprecision(2) << a << endl;
+				a = 1.0f - a;
+				SDL_SetRenderDrawColorFloat(simple.renderer, a, a, a, 1.0f);
+				SDL_RenderPoint(simple.renderer, i, j);
+			}
+		}
+		if (debug == true) {
+			cout << "DepthBufferMax: " << DepthBufferMax << endl;
+			cout << "DepthBufferMin: " << DepthBufferMin << endl;
 		}
 	}
-	cout << "DepthBufferMax: " << DepthBufferMax << endl;
-	cout << "DepthBufferMin: " << DepthBufferMin << endl;
 	SDL_RenderPresent(simple.renderer);
 	SDL_RenderPresent(simple.DepthBufferRenderer);
+	RenderEndTime = SDL_GetTicks();
+	RenderTime = RenderEndTime - RenderStartTime;
 }
 
 void SimpleRenderer::draw() {
@@ -219,7 +226,7 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	if (B.y < A.y) { temp = B; B = A; A = temp; }
 	if (C.y < A.y) { temp = C; C = A; A = temp; }
 	if (C.y < B.y) { temp = C; C = B; B = temp; }
-	cout << "sort result: " << A.y << " " << B.y << " " << C.y << endl;
+	if (debug == true) cout << "sort result: " << A.y << " " << B.y << " " << C.y << endl;
 
 	// Drawing the WireFrame
 	RGBA_int FrameColor = ModifyColor(0.5f, 1.0f, ColorInt);

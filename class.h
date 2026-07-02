@@ -13,6 +13,7 @@ using namespace std;
 class SimpleRenderer {
 public:
 	void init();
+	bool DepthBufferShown = false;
 	void render();
 	vector<vector<float>> CreateDepthBuffer();
 	vector<vector<float>> DepthBuffer;
@@ -36,6 +37,9 @@ public:
 	SDL_Renderer* renderer;
 	SDL_Window* DepthBufferWindow;
 	SDL_Renderer* DepthBufferRenderer;
+	int RenderStartTime;
+	int RenderEndTime;
+	int RenderTime;
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;

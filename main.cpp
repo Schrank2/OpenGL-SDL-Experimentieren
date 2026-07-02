@@ -5,7 +5,8 @@
 #include "class.h"
 #include <iomanip> // for more precise floats in cout
 using namespace std;
-bool debug = true;
+bool debug = false;
+bool report = true;
 
 int main(int argc, char* argv[])
 {
@@ -20,13 +21,13 @@ int main(int argc, char* argv[])
 	SDL_Event event;
 	bool running = true;
 	int FrameStartTime, FrameEndTime, FrameTime;
-	int LastFrameTime = -1000;
+	int LastFrameTime = -10;
 	int LastFrameRateReportTime = SDL_GetTicks();
 	float Framerate;
 	while (running) {
 		// Rendering and Showing a Plane
 		FrameStartTime = SDL_GetTicks();
-		if (FrameStartTime >= LastFrameTime + 1000) {
+		if (FrameStartTime >= LastFrameTime + 10) {
 			simple.render();
 			LastFrameTime = FrameStartTime;
 		}
@@ -35,7 +36,7 @@ int main(int argc, char* argv[])
 			LastFrameRateReportTime = FrameEndTime;
 			FrameTime = FrameEndTime - FrameStartTime;
 			Framerate = 1000.0f / static_cast<float>(FrameTime);
-			cout << fixed << setprecision(2) <<  "[Report] Frametime: " << FrameTime << "ms Framerate: " << Framerate << " per Second" << endl;
+			if (report == true) cout << fixed << setprecision(2) <<  "[REPORT] Frametime: " << FrameTime << "ms Framerate: " << Framerate << " per Second RenderTime: " << simple.RenderTime << "ms" << endl;
 		}
 
 		// Checking for Key inputs
