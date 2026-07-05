@@ -16,6 +16,8 @@ public:
 	bool DepthBufferShown = false;
 	void render();
 	vector<vector<float>> CreateDepthBuffer();
+	void Get_TTF_Fonts();
+	TTF_Font* ReportFont;
 	vector<vector<float>> DepthBuffer;
 	Pos Camera = Pos(2.0f, 1.0f, -3.0f);
 	float CameraPitch = 0.0f;

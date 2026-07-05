@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 				FPS = 1000.0f / static_cast<float>(Frametime);
 				Report = "Frametime: " + to_string(Frametime) + "ms Framerate: " + to_string(static_cast<int>(FPS)) + " per Second RenderTime: " + to_string(simple.RenderTime) + "ms";
 				const char* ReportTemp = Report.c_str();
-				SDL_SetWindowTitle(simple.window, ReportTemp);
+				//SDL_SetWindowTitle(simple.window, ReportTemp);
 			}
 		}
 
