@@ -58,7 +58,16 @@ SDL_Renderer* SimpleRenderer::Create_Renderer(SDL_Window* window){
 	return renderer;
 }
 
-//SDL_TTF_Tex
+TTF_TextEngine* SimpleRenderer::Create_TextEngine(SDL_Renderer* renderer) {
+	if (debug == true) { cout << "[DEBUG] function simple.Create_TextRenderer() from SimpleRenderer.cpp" << endl; }
+	TTF_TextEngine* TextEngine = TTF_CreateRendererTextEngine(renderer);
+	if (!TextEngine)
+	{
+		cout << "Text Engine creation failed: " << SDL_GetError() << endl;
+		exit(1);
+	}
+	return TextEngine;
+}
 
 void SimpleRenderer::init() {
 	// Get Screen Data for Window creation
@@ -69,6 +78,8 @@ void SimpleRenderer::init() {
 	simple.renderer = Create_Renderer(simple.window);
 	// Creating the Depth Buffer
 	simple.DepthBuffer = simple.CreateDepthBuffer();
+	// Creating the Text Renderer
+	simple.TextEngine = Create_TextEngine(simple.renderer);
 }
 
 void SimpleRenderer::render() {

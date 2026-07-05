@@ -23,6 +23,7 @@ public:
 	float DepthBufferMax, DepthBufferMin;
 	SDL_Renderer* Create_Renderer(SDL_Window* window);
 	SDL_Window* Create_Window(string title);
+	TTF_TextEngine* Create_TextEngine(SDL_Renderer* renderer);
 	void GetScreenData();
 	void draw();
 	void DrawSphere(Pos A, float r, RGBA_int c);
@@ -37,6 +38,7 @@ public:
 	RGBA_int ModifyColor(float modifier, float strength, RGBA_int c);
 	SDL_Window* window;
 	SDL_Renderer* renderer;
+	TTF_TextEngine* TextEngine;
 	int RenderStartTime;
 	int RenderEndTime;
 	int RenderTime;
