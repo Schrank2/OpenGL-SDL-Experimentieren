@@ -25,9 +25,22 @@ int main(int argc, char* argv[])
 	int CurrentTime = 0;
 	int LastReportTime = 0;
 	float FPS = 0.0f;
+
+	int Ticktime = 0;
+	int TickRateTarget = 20;
+	int TickStartTime = 0;
+	float TPS = 0.0f;
+
 	while (running) {
-		// Rendering and Showing a Plane
 		CurrentTime = SDL_GetTicks();
+
+		if (CurrentTime > TickStartTime + (1000 / TickRateTarget)) {
+			world.tick();
+			Ticktime = CurrentTime - TickStartTime;
+			TickStartTime = CurrentTime;
+		}
+		world.tick();
+		// Rendering and Showing a Plane
 		if (CurrentTime> FrameStartTime + (1000 / FrameRateTarget)) {
 			simple.render();
 			Frametime = CurrentTime - FrameStartTime;
@@ -70,7 +83,7 @@ int main(int argc, char* argv[])
 				world.KeyBoard.o = true;
 			}
 		}
-		if (SDL_PollEvent(&event) && event.type == SDL_EVENT_KEY_UP) {
+		if (event.type == SDL_EVENT_KEY_UP) {
 			if (event.key.key == SDLK_W) {
 				world.KeyBoard.w = false;
 			}
@@ -102,5 +115,12 @@ int main(int argc, char* argv[])
 			else simple.DepthBufferShown = true;
 		}
 		// Movement
+		cout << Ticktime << endl;
+		if (world.KeyBoard.w == true) simple.Camera.velocity.z += 0.01f;
+		if (world.KeyBoard.a == true) simple.Camera.velocity.x -= 0.01f;
+		if (world.KeyBoard.s == true) simple.Camera.velocity.z -= 0.01f;
+		if (world.KeyBoard.d == true) simple.Camera.velocity.x += 0.01f;
+		if (world.KeyBoard.space == true) simple.Camera.velocity.y += 0.01f;
+		if (world.KeyBoard.lshift == true) simple.Camera.velocity.y -= 0.01f;
 	}
 }
