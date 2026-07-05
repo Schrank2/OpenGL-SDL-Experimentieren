@@ -290,10 +290,10 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	int lz, rz, dz;
 	ScreenPos P = A; // Current Position to Draw
 	for (y = A.y; y <= C.y; y++) {
-		if (y == B.y) { g = BC; g0 = B; g1 = C; } // switch line g to BC
+		if (y >= B.y) { g = BC; g0 = B; g1 = C; } // switch line g to BC
 		// get x and z for line f = AC
 		if (y - f0.y != 0) {
-			r =  static_cast<float>(y - f0.y) / static_cast<float>(f0.y - f1.y);
+			r =  static_cast<float>(y - f0.y) / static_cast<float>(f1.y - f0.y);
 			lx = f0.x + r * f.x;
 			lz = f0.z + r * f.z;
 		}
@@ -301,21 +301,15 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 
 		// get x and z for line g = AB, later BC
 		if (y - g0.y != 0) {
-			r = static_cast<float>(y - g0.y) / static_cast<float>(g0.y - g1.y);
+			r = static_cast<float>(y - g0.y) / static_cast<float>(g1.y - g0.y);
 			rx = g0.x + r * g.x;
 			rz = g0.z + r * g.z;
 		}
 		else { rx = g0.x; rz = g0.z; }
-
-		// get direction of x
-		cout << "00000000000000000000000000000000000000000000" << endl;
-		cout << "lx: " << lx << " rx: " << rx << endl;
 		if (lx > rx) { dx = lx; lx = rx; rx = dx; }
-		cout << "lx: " << lx << " rx: " << rx << endl;
 		for (x = lx; x < rx; x++) {
 			P.x = x;
 			P.y = y;
-			// get z for line lx to rx
 			r = static_cast<float>(x - lx) / static_cast<float>(lx - rx);
 			P.z = lz + r * (rz - lx);
 			if (DepthBufferPoint(P)) {
