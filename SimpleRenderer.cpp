@@ -162,6 +162,9 @@ void SimpleRenderer::draw() {
 }
 
 void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
+	// dont draw if behind camera
+	if (A.z - Camera.pos.z - 0.3 <= r) return;
+
 	ScreenPos As = Projection(A);
 	float FrontDepth = A.z - simple.Camera.pos.z - r;
 	// weirdly adjusting the radius for depth of A
@@ -287,24 +290,29 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	int lz, rz, dz;
 	ScreenPos P = A; // Current Position to Draw
 	for (y = A.y; y <= C.y; y++) {
-		if (y == B.y) g = BC; g0 = B; g1 = C; // switch line g to BC
-		// get x for line f = AC
-		r = static_cast<float>(y - f0.y) / static_cast<float>(f0.y - f1.y);
-		lx = f0.x + r * f.x;
-		// get z for line f = AC
-		lz = f0.z + r * f.z;
+		if (y == B.y) { g = BC; g0 = B; g1 = C; } // switch line g to BC
+		// get x and z for line f = AC
+		if (y - f0.y != 0) {
+			r =  static_cast<float>(y - f0.y) / static_cast<float>(f0.y - f1.y);
+			lx = f0.x + r * f.x;
+			lz = f0.z + r * f.z;
+		}
+		else { lx = f0.x; lz = f0.z; }
 
-		// get x for line g = AB, later BC
-		r = static_cast<float>(y - g0.y) / static_cast<float>(g0.y - g1.y);
-		rx = g0.x + r * g.x;
-		// get z for line g = AB, later BC
-		rz = g0.z + r * g.z;
+		// get x and z for line g = AB, later BC
+		if (y - g0.y != 0) {
+			r = static_cast<float>(y - g0.y) / static_cast<float>(g0.y - g1.y);
+			rx = g0.x + r * g.x;
+			rz = g0.z + r * g.z;
+		}
+		else { rx = g0.x; rz = g0.z; }
 
 		// get direction of x
-		dx = lx < rx ? 1 : -1;
-		cout << "lx: " << lx << " rx: " << rx << " dx: " << dx << endl;
-		cout << dx << endl;
-		for (x = lx; x < rx; x += dx) {
+		cout << "00000000000000000000000000000000000000000000" << endl;
+		cout << "lx: " << lx << " rx: " << rx << endl;
+		if (lx > rx) { dx = lx; lx = rx; rx = dx; }
+		cout << "lx: " << lx << " rx: " << rx << endl;
+		for (x = lx; x < rx; x++) {
 			P.x = x;
 			P.y = y;
 			// get z for line lx to rx
@@ -372,7 +380,7 @@ void SimpleRenderer::DrawPoint(Point A) {
 	SDL_SetRenderDrawColor(simple.renderer, Color.r,Color.g,Color.b, Color.a);
 	if (debug == true) { cout << "[DEBUG] Drawing Point: " << A.letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl; }
 	SDL_RenderPoint(simple.renderer, ScreenA.x, ScreenA.y);
-	//simple.DrawSphere(A.pos, 0.1f, Color);
+	simple.DrawSphere(A.pos, 0.05f, Color);
 }
 
 SimpleRenderer simple;
