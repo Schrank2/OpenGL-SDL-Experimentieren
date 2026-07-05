@@ -287,28 +287,31 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	int lz, rz, dz;
 	ScreenPos P = A; // Current Position to Draw
 	for (y = A.y; y <= C.y; y++) {
-		if (y == B.y) g = BC; g0 = B; g1 = B; // switch line g to BC
+		if (y == B.y) g = BC; g0 = B; g1 = C; // switch line g to BC
 		// get x for line f = AC
-		r = (y - f0.y) / (f0.y - f1.y);
+		r = static_cast<float>(y - f0.y) / static_cast<float>(f0.y - f1.y);
 		lx = f0.x + r * f.x;
 		// get z for line f = AC
 		lz = f0.z + r * f.z;
 
 		// get x for line g = AB, later BC
-		r = (y - g0.y) / (g0.y - g1.y);
+		r = static_cast<float>(y - g0.y) / static_cast<float>(g0.y - g1.y);
 		rx = g0.x + r * g.x;
 		// get z for line g = AB, later BC
 		rz = g0.z + r * g.z;
 
 		// get direction of x
 		dx = lx < rx ? 1 : -1;
+		cout << "lx: " << lx << " rx: " << rx << " dx: " << dx << endl;
+		cout << dx << endl;
 		for (x = lx; x < rx; x += dx) {
 			P.x = x;
 			P.y = y;
 			// get z for line lx to rx
-			r = (x - lx) / (lx - rx);
+			r = static_cast<float>(x - lx) / static_cast<float>(lx - rx);
 			P.z = lz + r * (rz - lx);
 			if (DepthBufferPoint(P)) {
+				SDL_SetRenderDrawColor(simple.renderer, ColorInt.r, ColorInt.g, ColorInt.b, ColorInt.a);
 				SDL_RenderPoint(simple.renderer, P.x, P.y);
 			}
 		}
