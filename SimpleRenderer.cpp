@@ -197,7 +197,7 @@ void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
 				// shading the point
 				float d = ScreenDist(Light, L); // Distance Between Lightspot and Point
 				lshade = 1.0f - (d / R);
-				RGBA_int Localc = ModifyColor(lshade, 0.5f, c);
+				RGBA_int Localc = ModifyColor(lshade, 0.4f, c);
 				// drawing
 				if (DepthBufferPoint(L)) { // checking if the point is in front in the depth Buffer
 					SDL_SetRenderDrawColor(simple.renderer, Localc.r, Localc.g, Localc.b, Localc.a);
@@ -242,16 +242,14 @@ bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
 }
 
 void SimpleRenderer::DrawTriangle(Triangle T) {
-	if(T.p1.pos.z - Camera.pos.z < 0.3f and T.p2.pos.z - Camera.pos.z < 0.3f and T.p3.pos.z - Camera.pos.z < 0.3f) {
-		if (debug == true) cout << "Triangle " << T.name << " is behind the camera and will not be drawn." << endl;
-		return;
-	}
 	RGBA_int ColorInt = FloatToIntColor(T.color);
 	SDL_SetRenderDrawColor(simple.renderer, ColorInt.r, ColorInt.g, ColorInt.b, ColorInt.a);
 	// Get Screen Coordinates
 	ScreenPos A = Projection(T.p1.pos);
 	ScreenPos B = Projection(T.p2.pos);
 	ScreenPos C = Projection(T.p3.pos);
+	// Culling if fully behind camera
+	if (!A.valid and !B.valid and !C.valid) return;
 	// Sort by smallest y
 	ScreenPos temp = A;
 	if (B.y < A.y) { temp = B; B = A; A = temp; }
