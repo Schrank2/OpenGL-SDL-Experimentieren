@@ -283,13 +283,15 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	ScreenPos g1 = B;
 	float r; // parameter
 
-
+	int a = 0;
 	// Drawing the Triangle
-	int y,x;
+	int x, maxX;
+	int y = A.y > 0 ? A.y : 0; // Clipping if minY < 0
 	int lx, rx, dx;
 	float lz, rz, dz;
 	ScreenPos P = A; // Current Position to Draw
-	for (y = A.y; y <= C.y; y++) {
+	int maxY = C.y < ScreenHeight ? C.y : ScreenHeight; // Clipping if maxY > ScreenHeight
+	for (; y <= maxY; y++) {
 		if (y >= B.y) { g = BC; g0 = B; g1 = C; } // switch line g to BC
 		// get x and z for line f = AC
 		if (y - f0.y != 0) {
@@ -307,11 +309,13 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 		}
 		else { rx = g0.x; rz = g0.z; }
 		if (lx > rx) { dx = lx; lx = rx; rx = dx; }
-		for (x = lx; x < rx; x++) {
+		maxX = rx < ScreenWidth ? rx : ScreenWidth; // Clipping if maxX > ScreenWidth
+		for (x = lx > 0 ? lx : 0; x < maxX; x++) { // Clipping if minX < 0
 			P.x = x;
 			P.y = y;
 			r = static_cast<float>(x - lx) / static_cast<float>(rx - lx);
 			P.z = lz + r * (rz - lz);
+			a += 1;
 			if (DepthBufferPoint(P)) {
 				shade = static_cast<float>(P.z - minZ) / static_cast<float>(diffZ);
 				//cout << shade << endl;
@@ -321,6 +325,7 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 			}
 		}
 	}
+	cout << "Pixels considered: " << a << endl;
 }
 
 void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
