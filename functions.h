@@ -6,7 +6,7 @@
 #include <SDL3/SDL_opengl.h>
 #include "defs.h"
 using namespace std;
-void InitSdl();
+void init_libs();
 void open_window();
 RGBA_int FloatToIntColor(RGBA_float color);
 

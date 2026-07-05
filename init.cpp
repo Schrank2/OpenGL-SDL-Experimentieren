@@ -12,6 +12,7 @@ int ScreenWidth = 0;
 int ScreenHeight = 0;
 float ScreenWidthF = 0.0f;
 float ScreenHeightF = 0.0f;
+const char* Report = "You should not see this for long.";
 int bpp = 0;
 int flags = 0;
 SDL_Window* window;
@@ -20,7 +21,7 @@ SDL_GLContext OpenglContext;
 string WindowTitle;
 
 
-void InitSdl()
+void init_libs()
 {
 	if (debug == true) { cout << "[DEBUG] function InitSdl() from init.cpp" << endl; }
 	// Initialize SDL's video subsystem and check for errors.

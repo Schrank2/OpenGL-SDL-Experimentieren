@@ -13,10 +13,9 @@ int main(int argc, char* argv[])
 	if (debug == true) { cout << "[DEBUG] function main() from main.cpp" << endl; }
 	// World Setup
 	world.init();
-	// Rendering
-	InitSdl();
+	// Initialising Libraries and Rendering
+	init_libs();
 	simple.init();
-	simple.render();
 	//TEST 3002016
 	SDL_Event event;
 	bool running = true;
@@ -39,8 +38,8 @@ int main(int argc, char* argv[])
 			if (report == true) {
 				FPS = 1000.0f / static_cast<float>(Frametime);
 				string ReportString = "Frametime: " + to_string(Frametime) + "ms Framerate: " + to_string(static_cast<int>(FPS)) + " per Second RenderTime: " + to_string(simple.RenderTime) + "ms";
-				const char* ReportChar = ReportString.c_str();
-				SDL_SetWindowTitle(simple.window, ReportChar);
+				Report = ReportString.c_str();
+				SDL_SetWindowTitle(simple.window, Report);
 			}
 		}
 

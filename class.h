@@ -30,6 +30,7 @@ public:
 	ScreenPos Projection(Pos A);
 	bool DepthBufferPoint(ScreenPos A);
 	void DrawPoint(Point point);
+	void TextRender();
 	void DrawLine(ScreenPos A, ScreenPos B, RGBA_int c);
 	void DrawTriangle(Triangle A);
 	float DistBetweenPoints(Pos a, Pos b);

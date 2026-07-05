@@ -118,9 +118,20 @@ void SimpleRenderer::render() {
 			cout << "DepthBufferMin: " << DepthBufferMin << endl;
 		}
 	}
+	simple.TextRender();
 	SDL_RenderPresent(simple.renderer);
 	RenderEndTime = SDL_GetTicks();
 	RenderTime = RenderEndTime - RenderStartTime;
+}
+
+void SimpleRenderer::TextRender() {
+	if (debug == true) { cout << "[DEBUG] function simple.TextRender() from SimpleRenderer.cpp" << endl; }
+	TTF_Font* ReportFont = TTF_OpenFont("fonts/arial.ttf", 24);
+	TTF_Text* ReportText = TTF_CreateText(simple.TextEngine, ReportFont, Report, strlen(Report));
+	SDL_SetRenderDrawColor(simple.renderer, 0, 0, 0, 255);
+	if(TTF_DrawRendererText(ReportText, 10, 10)) {
+		cout << "Text Render Error: " << SDL_GetError() << endl;
+	}
 }
 
 void SimpleRenderer::draw() {

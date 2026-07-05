@@ -18,6 +18,9 @@ extern int bpp;
 /* Flags we will pass into SDL_SetVideoMode. */
 extern int flags;
 extern bool debug;
+// Text for the Report
+extern const char* Report;
+extern bool DoReport;
 
 // declare the game objects
 struct Pos {
