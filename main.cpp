@@ -46,30 +46,61 @@ int main(int argc, char* argv[])
 		// Checking for Key inputs
 		if (SDL_PollEvent(&event) && event.type == SDL_EVENT_KEY_DOWN) {
 			if (event.key.key == SDLK_W) {
-				simple.Camera.z += 0.1f;
+				world.KeyBoard.w = true;
 			}
 			if (event.key.key == SDLK_A) {
-				simple.Camera.x -= 0.1f;
+				world.KeyBoard.a = true;
 			}
 			if (event.key.key == SDLK_S) {
-				simple.Camera.z -= 0.1f;
+				world.KeyBoard.s = true;
 			}
 			if (event.key.key == SDLK_D) {
-				simple.Camera.x += 0.1f;
+				world.KeyBoard.d = true;
 			}
 			if (event.key.key == SDLK_SPACE) {
-				simple.Camera.y += 0.1f;
+				world.KeyBoard.space = true;
 			}
 			if (event.key.key == SDLK_LSHIFT) {
-				simple.Camera.y -= 0.1f;
+				world.KeyBoard.lshift = true;
 			}
 			if (event.key.key == SDLK_P) {
-				running = false;
+				world.KeyBoard.p = true;
 			}
 			if (event.key.key == SDLK_O) {
-				if (simple.DepthBufferShown == true) simple.DepthBufferShown = false;
-					else simple.DepthBufferShown = true;
+				world.KeyBoard.o = true;
 			}
 		}
+		if (SDL_PollEvent(&event) && event.type == SDL_EVENT_KEY_UP) {
+			if (event.key.key == SDLK_W) {
+				world.KeyBoard.w = false;
+			}
+			if (event.key.key == SDLK_A) {
+				world.KeyBoard.a = false;
+			}
+			if (event.key.key == SDLK_S) {
+				world.KeyBoard.s = false;
+			}
+			if (event.key.key == SDLK_D) {
+				world.KeyBoard.d = false;
+			}
+			if (event.key.key == SDLK_SPACE) {
+				world.KeyBoard.space = false;
+			}
+			if (event.key.key == SDLK_LSHIFT) {
+				world.KeyBoard.lshift = false;
+			}
+			if (event.key.key == SDLK_P) {
+				world.KeyBoard.p = false;
+			}
+			if (event.key.key == SDLK_O) {
+				world.KeyBoard.o = false;
+			}
+		}
+		// Handle Reading Results of Key Inputs
+		if (world.KeyBoard.o == true) {
+			if (simple.DepthBufferShown == true) simple.DepthBufferShown = false;
+			else simple.DepthBufferShown = true;
+		}
+		// Movement
 	}
 }

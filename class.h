@@ -19,7 +19,7 @@ public:
 	void Get_TTF_Fonts();
 	TTF_Font* ReportFont;
 	vector<vector<float>> DepthBuffer;
-	Pos Camera = Pos(2.0f, 1.0f, -3.0f);
+	PhysicsObject Camera = PhysicsObject(Pos(2.0f, 1.0f, -3.0f), Pos(0.0f, 0.0f, 0.0f), 1.0f);
 	float CameraPitch = 0.0f;
 	float CameraYaw = 45.0f;
 	float DepthBufferMax, DepthBufferMin;
@@ -58,6 +58,7 @@ public:
 	vector<Plane> Planes;
 	void init();
 	void tick();
+	KeyBoardState KeyBoard;
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern WORLD world;

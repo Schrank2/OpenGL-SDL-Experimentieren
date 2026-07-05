@@ -146,7 +146,7 @@ void SimpleRenderer::draw() {
 	// Draw coordinate system lines
 	float temp = 1.5f;
 	ScreenPos Origin = Projection(Pos(0.0f, 0.0f, 0.0f));
-	if(0.0f > Camera.z + 0.25f) {
+	if(0.0f > Camera.pos.z + 0.25f) {
 		simple.DrawLine(Origin, Projection(Pos(temp, 0.0f, 0.0f)), RGBA_int(255,0,0,255));
 		simple.DrawLine(Origin, Projection(Pos(0.0f, temp, 0.0f)), RGBA_int(0,255,0,255));
 		simple.DrawLine(Origin, Projection(Pos(0.0f, 0.0f, temp)), RGBA_int(0,0,255,255));
@@ -163,7 +163,7 @@ void SimpleRenderer::draw() {
 
 void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
 	ScreenPos As = Projection(A);
-	float FrontDepth = A.z - simple.Camera.z - r;
+	float FrontDepth = A.z - simple.Camera.pos.z - r;
 	// weirdly adjusting the radius for depth of A
 	ScreenPos Temp = Projection({ A.y, r + A.y, A.z });
 	float R = As.y - Temp.y;
@@ -221,9 +221,9 @@ float SimpleRenderer::ScreenDist(ScreenPos A, ScreenPos B) {
 }
 
 ScreenPos SimpleRenderer::Projection(Pos A) {
-	float x = A.x - simple.Camera.x;
-	float y = A.y - simple.Camera.y;
-	float z = A.z - simple.Camera.z;
+	float x = A.x - simple.Camera.pos.x;
+	float y = A.y - simple.Camera.pos.y;
+	float z = A.z - simple.Camera.pos.z;
 	y *= -1;
 	float screenx = (x / z) * simple.RenderScale + ScreenWidthF / 2.0f;
 	float screeny = (y / z) * simple.RenderScale + ScreenHeightF / 2.0f;
@@ -231,7 +231,7 @@ ScreenPos SimpleRenderer::Projection(Pos A) {
 }
 
 void SimpleRenderer::DrawTriangle(Triangle T) {
-	if(T.p1.pos.z - Camera.z < 0.3f or T.p2.pos.z - Camera.z < 0.3f or T.p3.pos.z - Camera.z < 0.3f) {
+	if(T.p1.pos.z - Camera.pos.z < 0.3f or T.p2.pos.z - Camera.pos.z < 0.3f or T.p3.pos.z - Camera.pos.z < 0.3f) {
 		if (debug == true) cout << "Triangle " << T.name << " is behind the camera and will not be drawn." << endl;
 		return;
 	}

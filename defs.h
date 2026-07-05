@@ -103,5 +103,23 @@ struct Plane {
 	Plane(Triangle triangle, RGBA_float color) : SupportV(GetVector(Pos(0,0,0), triangle.p1.pos)), Span1V(GetVector(triangle.p1.pos, triangle.p2.pos)), Span2V(GetVector(triangle.p1.pos, triangle.p3.pos)), triangle(triangle), name(plane_getname()), color(color) {}
 };
 
+struct PhysicsObject {
+	Pos pos;
+	Pos velocity;
+	float mass;
+	PhysicsObject(Pos pos, Pos velocity, float mass) : pos(pos), velocity(velocity), mass(mass) {}
+};
+
+struct KeyBoardState {
+	bool w = false;
+	bool a = false;
+	bool s = false;
+	bool d = false;
+	bool space = false;
+	bool lshift = false;
+	bool p = false;
+	bool o = false;
+};
+
 
 #endif // DEFS_H
