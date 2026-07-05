@@ -1,4 +1,5 @@
 #include <SDL3/SDL.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include "functions.h"
 #include "defs.h"
 #include "class.h"
@@ -56,6 +57,8 @@ SDL_Renderer* SimpleRenderer::Create_Renderer(SDL_Window* window){
 	simple.RenderScale = (min(ScreenWidthF,ScreenHeightF)) * 1.0f;
 	return renderer;
 }
+
+//SDL_TTF_Tex
 
 void SimpleRenderer::init() {
 	// Get Screen Data for Window creation

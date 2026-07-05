@@ -20,25 +20,25 @@ int main(int argc, char* argv[])
 	//TEST 3002016
 	SDL_Event event;
 	bool running = true;
-	int FrameStartTime, FrameEndTime, FrameTime;
-	int LastFrameTime = -10;
-	int LastFrameRateReportTime = SDL_GetTicks();
-	float Framerate;
+	int Frametime = 0;
+	int FrameRateTarget = 60;
+	int FrameStartTime = 0;
+	int CurrentTime = 0;
+	int LastReportTime = 0;
+	float FPS = 0.0f;
 	while (running) {
 		// Rendering and Showing a Plane
-		FrameStartTime = SDL_GetTicks();
-		//if (FrameStartTime >= LastFrameTime + 10) {
+		CurrentTime = SDL_GetTicks();
+		if (CurrentTime> FrameStartTime + (1000 / FrameRateTarget)) {
 			simple.render();
-			LastFrameTime = FrameStartTime;
-		//}
-		FrameEndTime = SDL_GetTicks();
-		if (FrameEndTime >= LastFrameRateReportTime + 1000) {
-			LastFrameRateReportTime = FrameEndTime;
+			Frametime = CurrentTime - FrameStartTime;
+			FrameStartTime = CurrentTime;
+		}
+		if (CurrentTime >= LastReportTime + 1000) {
+			LastReportTime = CurrentTime;
 			if (report == true) {
-				FrameTime = FrameEndTime - FrameStartTime;
-				Framerate = 1000.0f / static_cast<float>(FrameTime);
-				cout << fixed << setprecision(0);
-				string ReportString = "Frametime: " + to_string(FrameTime) + "ms Framerate: " + to_string(Framerate) + " per Second RenderTime: " + to_string(simple.RenderTime) + "ms";
+				FPS = 1000.0f / static_cast<float>(Frametime);
+				string ReportString = "Frametime: " + to_string(Frametime) + "ms Framerate: " + to_string(static_cast<int>(FPS)) + " per Second RenderTime: " + to_string(simple.RenderTime) + "ms";
 				const char* ReportChar = ReportString.c_str();
 				SDL_SetWindowTitle(simple.window, ReportChar);
 			}
@@ -71,7 +71,6 @@ int main(int argc, char* argv[])
 				if (simple.DepthBufferShown == true) simple.DepthBufferShown = false;
 					else simple.DepthBufferShown = true;
 			}
-			cout << "Camera z: " << simple.Camera.z << endl;
 		}
 	}
 }
