@@ -40,12 +40,12 @@ void WORLD::init() {
 void WORLD::tick() {
 	if (debug == true) { cout << "[DEBUG] function game.tick() from game.cpp" << endl; }
 	// Update Physics, later for all physics objects in the world
-	simple.Camera.pos.x += simple.Camera.velocity.x * 0.03f;
-	simple.Camera.pos.y += simple.Camera.velocity.y * 0.03f;
-	simple.Camera.pos.z += simple.Camera.velocity.z * 0.03f;
-	simple.Camera.velocity.x *= 0.99f;
-	simple.Camera.velocity.y *= 0.99f;
-	simple.Camera.velocity.z *= 0.99f;
+	simple.Camera.pos.x += simple.Camera.velocity.x * 0.3f * TickStrength;
+	simple.Camera.pos.y += simple.Camera.velocity.y * 0.3f * TickStrength;
+	simple.Camera.pos.z += simple.Camera.velocity.z * 0.3f * TickStrength;
+	simple.Camera.velocity.x *= 0.9f * TickStrength;
+	simple.Camera.velocity.y *= 0.9f * TickStrength;
+	simple.Camera.velocity.z *= 0.9f * TickStrength;
 }
 
 WORLD world;

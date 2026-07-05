@@ -59,6 +59,7 @@ public:
 	void init();
 	void tick();
 	KeyBoardState KeyBoard;
+	float TickStrength = 0.0f;
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern WORLD world;

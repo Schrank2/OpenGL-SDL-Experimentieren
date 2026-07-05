@@ -28,6 +28,7 @@ int main(int argc, char* argv[])
 
 	int Ticktime = 0;
 	int TickRateTarget = 20;
+	world.TickStrength = 1.0f / static_cast<float>(TickRateTarget);
 	int TickStartTime = 0;
 	float TPS = 0.0f;
 
@@ -35,16 +36,18 @@ int main(int argc, char* argv[])
 		CurrentTime = SDL_GetTicks();
 
 		if (CurrentTime > TickStartTime + (1000 / TickRateTarget)) {
-			world.tick();
 			Ticktime = CurrentTime - TickStartTime;
-			TickStartTime = CurrentTime;
+			world.TickStrength = 1.0f / (1000.0f / static_cast<float>(Ticktime));
+			cout << world.TickStrength << endl;
+			world.tick();
+			TickStartTime = SDL_GetTicks();
 		}
 		world.tick();
 		// Rendering and Showing a Plane
 		if (CurrentTime> FrameStartTime + (1000 / FrameRateTarget)) {
 			simple.render();
 			Frametime = CurrentTime - FrameStartTime;
-			FrameStartTime = CurrentTime;
+			FrameStartTime = SDL_GetTicks();
 		}
 		if (CurrentTime >= LastReportTime + 1000) {
 			LastReportTime = CurrentTime;
@@ -115,12 +118,11 @@ int main(int argc, char* argv[])
 			else simple.DepthBufferShown = true;
 		}
 		// Movement
-		cout << Ticktime << endl;
-		if (world.KeyBoard.w == true) simple.Camera.velocity.z += 0.01f;
-		if (world.KeyBoard.a == true) simple.Camera.velocity.x -= 0.01f;
-		if (world.KeyBoard.s == true) simple.Camera.velocity.z -= 0.01f;
-		if (world.KeyBoard.d == true) simple.Camera.velocity.x += 0.01f;
-		if (world.KeyBoard.space == true) simple.Camera.velocity.y += 0.01f;
-		if (world.KeyBoard.lshift == true) simple.Camera.velocity.y -= 0.01f;
+		if (world.KeyBoard.w == true) simple.Camera.velocity.z += 0.01f * world.TickStrength;
+		if (world.KeyBoard.a == true) simple.Camera.velocity.x -= 0.01f * world.TickStrength;
+		if (world.KeyBoard.s == true) simple.Camera.velocity.z -= 0.01f * world.TickStrength;
+		if (world.KeyBoard.d == true) simple.Camera.velocity.x += 0.01f * world.TickStrength;
+		if (world.KeyBoard.space == true) simple.Camera.velocity.y += 0.01f * world.TickStrength;
+		if (world.KeyBoard.lshift == true) simple.Camera.velocity.y -= 0.01f * world.TickStrength;
 	}
 }
