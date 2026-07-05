@@ -37,9 +37,9 @@ int main(int argc, char* argv[])
 			LastReportTime = CurrentTime;
 			if (report == true) {
 				FPS = 1000.0f / static_cast<float>(Frametime);
-				string ReportString = "Frametime: " + to_string(Frametime) + "ms Framerate: " + to_string(static_cast<int>(FPS)) + " per Second RenderTime: " + to_string(simple.RenderTime) + "ms";
-				Report = ReportString.c_str();
-				SDL_SetWindowTitle(simple.window, Report);
+				Report = "Frametime: " + to_string(Frametime) + "ms Framerate: " + to_string(static_cast<int>(FPS)) + " per Second RenderTime: " + to_string(simple.RenderTime) + "ms";
+				const char* ReportTemp = Report.c_str();
+				SDL_SetWindowTitle(simple.window, ReportTemp);
 			}
 		}
 

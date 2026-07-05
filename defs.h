@@ -19,7 +19,7 @@ extern int bpp;
 extern int flags;
 extern bool debug;
 // Text for the Report
-extern const char* Report;
+extern string Report;
 extern bool DoReport;
 
 // declare the game objects
