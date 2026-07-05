@@ -34,9 +34,14 @@ int main(int argc, char* argv[])
 		FrameEndTime = SDL_GetTicks();
 		if (FrameEndTime >= LastFrameRateReportTime + 1000) {
 			LastFrameRateReportTime = FrameEndTime;
-			FrameTime = FrameEndTime - FrameStartTime;
-			Framerate = 1000.0f / static_cast<float>(FrameTime);
-			if (report == true) cout << fixed << setprecision(2) <<  "[REPORT] Frametime: " << FrameTime << "ms Framerate: " << Framerate << " per Second RenderTime: " << simple.RenderTime << "ms" << endl;
+			if (report == true) {
+				FrameTime = FrameEndTime - FrameStartTime;
+				Framerate = 1000.0f / static_cast<float>(FrameTime);
+				cout << fixed << setprecision(0);
+				string ReportString = "Frametime: " + to_string(FrameTime) + "ms Framerate: " + to_string(Framerate) + " per Second RenderTime: " + to_string(simple.RenderTime) + "ms";
+				const char* ReportChar = ReportString.c_str();
+				SDL_SetWindowTitle(simple.window, ReportChar);
+			}
 		}
 
 		// Checking for Key inputs
