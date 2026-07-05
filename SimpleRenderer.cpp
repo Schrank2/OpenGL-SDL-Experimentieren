@@ -70,7 +70,7 @@ TTF_TextEngine* SimpleRenderer::Create_TextEngine(SDL_Renderer* renderer) {
 }
 
 void SimpleRenderer::Get_TTF_Fonts() {
-	TTF_Font* ReportFont = TTF_OpenFont("C:/Windows/Fonts/arial.ttf", 24);
+	ReportFont = TTF_OpenFont("C:/Windows/Fonts/arial.ttf", 12);
 	if (!ReportFont) {
 		cout << "TTF_OpenFont failed: " << SDL_GetError() << endl;
 		return;
@@ -136,19 +136,9 @@ void SimpleRenderer::render() {
 void SimpleRenderer::TextRender() {
 	if (debug == true) { cout << "[DEBUG] function simple.TextRender() from SimpleRenderer.cpp" << endl; }
 	const char* ReportChar = Report.c_str();
-	TTF_Text* ReportText = TTF_CreateText(simple.TextEngine, ReportFont, ReportChar, strlen(ReportChar));
-	if (!ReportText) {
-		cout << "TTF_CreateText failed: " << SDL_GetError() << endl;
-		TTF_CloseFont(ReportFont);
-		return;
-	}
-	SDL_SetRenderDrawColor(simple.renderer, 0, 0, 0, 255);
-	bool TextDrawFeedback = TTF_DrawRendererText(ReportText, 10, 10);
-	cout << Report << endl;
-	//SDL_SetWindowTitle(simple.window, ReportChar);
-	if(!TextDrawFeedback) {
-		cout << "Text Render Error: " << SDL_GetError() << endl;
-	}
+	TTF_Text* ReportText = TTF_CreateText(simple.TextEngine, simple.ReportFont, ReportChar, strlen(ReportChar));
+	TTF_SetTextColor(ReportText, 0, 0, 0, 255);
+	TTF_DrawRendererText(ReportText, 0, 0);
 }
 
 void SimpleRenderer::draw() {

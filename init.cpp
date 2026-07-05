@@ -42,6 +42,10 @@ void init_libs()	{
 		cout << "SDL_ttf initialization failed: " << SDL_GetError() << endl;
 		exit(1);
 	}
+
+	// Display Versions of Libraries
+	cout << "SDL Version: " << SDL_GetVersion() << endl;
+	cout << "SDL_ttf Version: " << TTF_Version() << endl;
 }
 
 void open_window() {
