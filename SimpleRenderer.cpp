@@ -267,98 +267,51 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	float shade;
 	float shadeIntensity = 0.4f;
 	RGBA_int LocalColor = ColorInt;
-	// Get Step Vectors for AB,BC and AC
-	int sAB = abs(A.y - B.y); // Step Count between A and B
-	ScreenPos SV_AB = ScreenPos(DV_AB.x / sAB, DV_AB.y / sAB, DV_AB.z / sAB);
-	int sBC = abs(B.y - C.y); // Step Count between B and C
-	ScreenPos SV_BC = ScreenPos(DV_BC.x / sBC, DV_BC.y / sBC, DV_BC.z / sBC);
-	int sAC = abs(A.y - C.y); // Step Count between A and C
-	ScreenPos SV_AC = ScreenPos(DV_AC.x / sAC, DV_AC.y / sAC, DV_AC.z / sAC);
-	//if (sAC > ScreenHeight / 2) {
-	//	if (debug == true) cout << "Triangle " << T.name << " is too large and will not be drawn." << endl;
-	//	return;
-	//}
-	// Current Position for AB and AC
-	ScreenPos C_AB = A;
-	ScreenPos C_AC = A;
-	// Drawing the Triangle from Ay to By
-	// Handle if sAB == 0 to avoid division by zero
-	if(sAB == 0) {
-		sAB = 1; 
-		DrawLine(A, C, ColorInt);
-	}
-	// Current Position for Scanline
-	ScreenPos SC = C_AB;
-	// Vector of Scanline
-	ScreenPos SV_SC = A;
-	SV_SC.y = 0.0f;
-	// Actually Draw the Triangle from Ay to By
-	int Ay = static_cast<int>(A.y);
-	// culling screenheight
-	if (Ay + sAB > ScreenHeight) sAB = ScreenHeight - Ay;
-	if (Ay + sAB < 0) sAB = 0 - Ay;
-	// loop for lower triangle
-	for (int i = 0; i <= static_cast<int>(sAB); i++) {
-		// Interpolating the Scanline between C_AB and C_AC
-		SC = C_AB; // Set Scanline to C_AB
-		SV_SC.x = C_AC.x - C_AB.x;
-		SV_SC.z = C_AC.z - C_AB.z;
-		for (float j = 0.0f; j < abs(SV_SC.x); j++) {
-			if (DepthBufferPoint(SC)) {
-				shade = (SC.z - minZ) / diffZ;
-				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, ColorInt);
-				SDL_SetRenderDrawColor(simple.renderer, LocalColor.r, LocalColor.g, LocalColor.b, LocalColor.a);
-				SDL_RenderPoint(simple.renderer, SC.x, Ay+i);
+
+	// Vectors
+	ScreenPos AB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z);
+	ScreenPos AC = ScreenPos(C.x - A.x, C.y - A.y, C.z - A.z);
+	ScreenPos BC = ScreenPos(C.x - B.x, C.y - B.y, C.z - B.z);
+	ScreenPos f = AC;
+	ScreenPos f0 = A;
+	ScreenPos f1 = C;
+	ScreenPos g = AB;
+	ScreenPos g0 = A;
+	ScreenPos g1 = B;
+	float r; // parameter
+
+
+	// Drawing the Triangle
+	int y,x;
+	int lx, rx, dx;
+	int lz, rz, dz;
+	ScreenPos P = A; // Current Position to Draw
+	for (y = A.y; y <= C.y; y++) {
+		if (y == B.y) g = BC; g0 = B; g1 = B; // switch line g to BC
+		// get x for line f = AC
+		r = (y - f0.y) / (f0.y - f1.y);
+		lx = f0.x + r * f.x;
+		// get z for line f = AC
+		lz = f0.z + r * f.z;
+
+		// get x for line g = AB, later BC
+		r = (y - g0.y) / (g0.y - g1.y);
+		rx = g0.x + r * g.x;
+		// get z for line g = AB, later BC
+		rz = g0.z + r * g.z;
+
+		// get direction of x
+		dx = lx < rx ? 1 : -1;
+		for (x = lx; x < rx; x += dx) {
+			P.x = x;
+			P.y = y;
+			// get z for line lx to rx
+			r = (x - lx) / (lx - rx);
+			P.z = lz + r * (rz - lx);
+			if (DepthBufferPoint(P)) {
+				SDL_RenderPoint(simple.renderer, P.x, P.y);
 			}
-			SC.x += SV_SC.x / abs(SV_SC.x);
-			SC.z += SV_SC.z / abs(SV_SC.x);
 		}
-		C_AB.x += SV_AB.x;
-		C_AB.y += SV_AB.y;
-		C_AB.z += SV_AB.z;
-		C_AC.x += SV_AC.x;
-		C_AC.y += SV_AC.y;
-		C_AC.z += SV_AC.z;
-	}
-	// Drawing the Triangle from By to Cy
-	// Handle if sAB == 0 to avoid division by zero
-	if (sBC == 0) {
-		sBC = 1;
-		DrawLine(B, C, ColorInt);
-	}
-	// Draw the Triangle
-	ScreenPos C_BC = B;
-	// Current Position for Scanline
-	SC = C_BC;
-	// Vector of Scanline
-	SV_SC = B;
-	SV_SC.y = 0.0f;
-	int By = static_cast<int>(B.y);
-	// culling screenheight
-	if (By + sBC > ScreenHeight) sBC = ScreenHeight - By;
-	if (By + sBC < 0) sBC = 0 - By;
-	// Actually Draw the Triangle from By to Cy
-	for (int i = 0; i < static_cast<int>(sBC); i++) { // stepping along y
-		// Interpolating the Scanline between C_AB and C_AC
-		SC = C_BC; // Set Scanline to C_BC
-		SV_SC.x = C_AC.x - C_BC.x;
-		SV_SC.z = C_AC.z - C_BC.z;
-		for (float j = 0.0f; j < abs(SV_SC.x); j++) { // stepping along x
-			if (DepthBufferPoint(SC)) {
-				shade = (SC.z - minZ) / diffZ;
-				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, ColorInt);
-				SDL_SetRenderDrawColor(simple.renderer, LocalColor.r, LocalColor.g, LocalColor.b, LocalColor.a);
-				SDL_RenderPoint(simple.renderer, SC.x, By+i);
-			}
-			SC.x += SV_SC.x / abs(SV_SC.x);
-			SC.z += SV_SC.z / abs(SV_SC.x);
-		}
-		C_BC.x += SV_BC.x;
-		C_BC.y += SV_BC.y;
-		C_BC.z += SV_BC.z;
-		C_AC.x += SV_AC.x;
-		C_AC.y += SV_AC.y;
-		C_AC.z += SV_AC.z;
 	}
 }
 
