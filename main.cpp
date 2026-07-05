@@ -38,7 +38,6 @@ int main(int argc, char* argv[])
 		if (CurrentTime > TickStartTime + (1000 / TickRateTarget)) {
 			Ticktime = CurrentTime - TickStartTime;
 			world.TickStrength = 1.0f / (1000.0f / static_cast<float>(Ticktime));
-			cout << world.TickStrength << endl;
 			world.tick();
 			TickStartTime = SDL_GetTicks();
 		}

@@ -248,11 +248,6 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	ScreenPos A = Projection(T.p1.pos);
 	ScreenPos B = Projection(T.p2.pos);
 	ScreenPos C = Projection(T.p3.pos);
-	// Check if all Points are on Screen
-	if (!CheckScreenPos(A) or !CheckScreenPos(B) or !CheckScreenPos(C)) {
-		if (debug == true) cout << "Triangle " << T.name << " is partially off screen and will not be drawn." << endl;
-		return;
-	}
 	// Sort by smallest y
 	ScreenPos temp = A;
 	if (B.y < A.y) { temp = B; B = A; A = temp; }
@@ -279,10 +274,10 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	ScreenPos SV_BC = ScreenPos(DV_BC.x / sBC, DV_BC.y / sBC, DV_BC.z / sBC);
 	int sAC = abs(A.y - C.y); // Step Count between A and C
 	ScreenPos SV_AC = ScreenPos(DV_AC.x / sAC, DV_AC.y / sAC, DV_AC.z / sAC);
-	if (sAC > ScreenHeight / 2) {
-		if (debug == true) cout << "Triangle " << T.name << " is too large and will not be drawn." << endl;
-		return;
-	}
+	//if (sAC > ScreenHeight / 2) {
+	//	if (debug == true) cout << "Triangle " << T.name << " is too large and will not be drawn." << endl;
+	//	return;
+	//}
 	// Current Position for AB and AC
 	ScreenPos C_AB = A;
 	ScreenPos C_AC = A;
@@ -299,6 +294,10 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	SV_SC.y = 0.0f;
 	// Actually Draw the Triangle from Ay to By
 	int Ay = static_cast<int>(A.y);
+	// culling screenheight
+	if (Ay + sAB > ScreenHeight) sAB = ScreenHeight - Ay;
+	if (Ay + sAB < 0) sAB = 0 - Ay;
+	// loop for lower triangle
 	for (int i = 0; i <= static_cast<int>(sAB); i++) {
 		// Interpolating the Scanline between C_AB and C_AC
 		SC = C_AB; // Set Scanline to C_AB
@@ -335,13 +334,16 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	SV_SC = B;
 	SV_SC.y = 0.0f;
 	int By = static_cast<int>(B.y);
+	// culling screenheight
+	if (By + sBC > ScreenHeight) sBC = ScreenHeight - By;
+	if (By + sBC < 0) sBC = 0 - By;
 	// Actually Draw the Triangle from By to Cy
-	for (int i = 0; i < static_cast<int>(sBC); i++) {
+	for (int i = 0; i < static_cast<int>(sBC); i++) { // stepping along y
 		// Interpolating the Scanline between C_AB and C_AC
 		SC = C_BC; // Set Scanline to C_BC
 		SV_SC.x = C_AC.x - C_BC.x;
 		SV_SC.z = C_AC.z - C_BC.z;
-		for (float j = 0.0f; j < abs(SV_SC.x); j++) {
+		for (float j = 0.0f; j < abs(SV_SC.x); j++) { // stepping along x
 			if (DepthBufferPoint(SC)) {
 				shade = (SC.z - minZ) / diffZ;
 				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, ColorInt);
