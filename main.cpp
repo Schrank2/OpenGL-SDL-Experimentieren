@@ -20,15 +20,15 @@ int main(int argc, char* argv[])
 	SDL_Event event;
 	bool running = true;
 	int Frametime = 0;
-	int FrameRateTarget = 60;
+	int FrameRateTarget = 240;
 	int FrameStartTime = 0;
 	int CurrentTime = 0;
 	int LastReportTime = 0;
 	float FPS = 0.0f;
 
 	int Ticktime = 0;
-	int TickRateTarget = 20;
-	world.TickStrength = 1.0f / static_cast<float>(TickRateTarget);
+	float TickRateTarget = 40;
+	world.TickStrength = TickRateTarget / 1000.0f;
 	int TickStartTime = 0;
 	float TPS = 0.0f;
 
@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 
 		if (CurrentTime > TickStartTime + (1000 / TickRateTarget)) {
 			Ticktime = CurrentTime - TickStartTime;
-			world.TickStrength = 1.0f / (1000.0f / static_cast<float>(Ticktime));
+			world.TickStrength = static_cast<float>(Ticktime) / 1000.0f;
 			world.tick();
 			TickStartTime = SDL_GetTicks();
 		}
