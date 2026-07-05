@@ -171,7 +171,7 @@ void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
 	ScreenPos Temp = Projection({ A.y, r + A.y, A.z });
 	float R = As.y - Temp.y;
 	// where the sphere is lit most brightly (temporary, will later be replaced)
-	ScreenPos Light = ScreenPos(As.x - (R/2), As.y - (R/2), As.z);
+	ScreenPos Light = ScreenPos(As.x - (R/2), As.y - (R/2), As.z, true);
 
 	float X;
 	float TopY;
@@ -188,12 +188,12 @@ void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
 		// Fill the circle
 		if (fill == true) {
 			for (float j = BotY; j <= TopY; j++) {
-				float center = ScreenDist(As, ScreenPos(X,j,0.0f)); // Distance Between Lightspot and Poin
+				float center = ScreenDist(As, ScreenPos(X,j,0.0f, true)); // Distance Between Lightspot and Poin
 				float x = center / R; // Distance Between Center and Point displayed between 0.0f and 1.0f.
 				if (x < 0.0f) x = 0.0f;
 				if (x > 1.0f) x = 1.0f;
 				float z = sqrt(1.0f - x * x) * r; // Tiefenunterschied zwischen Punkt und Zentrum
-				ScreenPos L = { X,j, FrontDepth - z };
+				ScreenPos L = ScreenPos(X,j, FrontDepth - z,true);
 				// shading the point
 				float d = ScreenDist(Light, L); // Distance Between Lightspot and Point
 				lshade = 1.0f - (d / R);
@@ -227,10 +227,11 @@ ScreenPos SimpleRenderer::Projection(Pos A) {
 	float x = A.x - simple.Camera.pos.x;
 	float y = A.y - simple.Camera.pos.y;
 	float z = A.z - simple.Camera.pos.z;
+	if (z <= 0.1) return ScreenPos(0,0,0,false);
 	y *= -1;
 	float screenx = (x / z) * simple.RenderScale + ScreenWidthF / 2.0f;
 	float screeny = (y / z) * simple.RenderScale + ScreenHeightF / 2.0f;
-	return ScreenPos(screenx, screeny, z);
+	return ScreenPos(screenx, screeny, z, true);
 }
 
 bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
@@ -241,7 +242,7 @@ bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
 }
 
 void SimpleRenderer::DrawTriangle(Triangle T) {
-	if(T.p1.pos.z - Camera.pos.z < 0.3f or T.p2.pos.z - Camera.pos.z < 0.3f or T.p3.pos.z - Camera.pos.z < 0.3f) {
+	if(T.p1.pos.z - Camera.pos.z < 0.3f and T.p2.pos.z - Camera.pos.z < 0.3f and T.p3.pos.z - Camera.pos.z < 0.3f) {
 		if (debug == true) cout << "Triangle " << T.name << " is behind the camera and will not be drawn." << endl;
 		return;
 	}
@@ -260,9 +261,9 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 
 	// Drawing the WireFrame
 	// Get Direction Vectors for AB,BC and AC
-	ScreenPos DV_AB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z);
-	ScreenPos DV_BC = ScreenPos(C.x - B.x, C.y - B.y, C.z - B.z);
-	ScreenPos DV_AC = ScreenPos(C.x - A.x, C.y - A.y, C.z - A.z);
+	ScreenPos DV_AB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z, true);
+	ScreenPos DV_BC = ScreenPos(C.x - B.x, C.y - B.y, C.z - B.z, true);
+	ScreenPos DV_AC = ScreenPos(C.x - A.x, C.y - A.y, C.z - A.z, true);
 	// SHADING PREREQUISITES
 	float maxZ = max(A.z, max(B.z, C.z));
 	float minZ = min(A.z, min(B.z, C.z));
@@ -272,9 +273,9 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	RGBA_int LocalColor = ColorInt;
 
 	// Vectors
-	ScreenPos AB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z);
-	ScreenPos AC = ScreenPos(C.x - A.x, C.y - A.y, C.z - A.z);
-	ScreenPos BC = ScreenPos(C.x - B.x, C.y - B.y, C.z - B.z);
+	ScreenPos AB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z, true);
+	ScreenPos AC = ScreenPos(C.x - A.x, C.y - A.y, C.z - A.z, true);
+	ScreenPos BC = ScreenPos(C.x - B.x, C.y - B.y, C.z - B.z, true);
 	ScreenPos f = AC;
 	ScreenPos f0 = A;
 	ScreenPos f1 = C;
@@ -288,7 +289,7 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	int x, maxX;
 	int y = A.y > 0 ? A.y : 0; // Clipping if minY < 0
 	int lx, rx, dx;
-	float lz, rz, dz;
+	float lz, rz;
 	ScreenPos P = A; // Current Position to Draw
 	int maxY = C.y < ScreenHeight ? C.y : ScreenHeight; // Clipping if maxY > ScreenHeight
 	for (; y <= maxY; y++) {
@@ -331,7 +332,7 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
 	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
 	// Direction Vector AB
-	ScreenPos DV = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z);
+	ScreenPos DV = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z, true);
 	//Step Count
 	float r = max(abs(DV.x), abs(DV.y));
 	// Step Size
@@ -344,7 +345,7 @@ void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
 		return;
 	}
 	// Vector to add Between each step (SV Stepvector)
-	ScreenPos SV = ScreenPos(DV.x * s, DV.y * s, DV.z * s);
+	ScreenPos SV = ScreenPos(DV.x * s, DV.y * s, DV.z * s, true);
 
 	for (float i = 0; i <= r; i++) {
 		if (DepthBufferPoint(C)) {
@@ -358,6 +359,7 @@ void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
 }
 
 bool SimpleRenderer::DepthBufferPoint(ScreenPos A) {
+	if (!A.valid) return false;
 	int x = static_cast<int>(A.x);
 	int y = static_cast<int>(A.y);
 	if (x < 0 or y < 0 or x >= DepthBuffer.size() or y >= DepthBuffer[0].size()) return false; // Check if Point is on screen

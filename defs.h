@@ -30,7 +30,8 @@ struct Pos {
 
 struct ScreenPos {
 	float x, y, z;
-	ScreenPos(float x, float y, float z) : x(x), y(y), z(z) {}
+	bool valid = true;
+	ScreenPos(float x, float y, float z, bool valid) : x(x), y(y), z(z), valid(valid) {}
 };
 
 struct Vector {

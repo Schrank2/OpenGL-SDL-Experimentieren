@@ -117,11 +117,11 @@ int main(int argc, char* argv[])
 			else simple.DepthBufferShown = true;
 		}
 		// Movement
-		if (world.KeyBoard.w == true) simple.Camera.velocity.z += 0.01f * world.TickStrength;
-		if (world.KeyBoard.a == true) simple.Camera.velocity.x -= 0.01f * world.TickStrength;
-		if (world.KeyBoard.s == true) simple.Camera.velocity.z -= 0.01f * world.TickStrength;
-		if (world.KeyBoard.d == true) simple.Camera.velocity.x += 0.01f * world.TickStrength;
-		if (world.KeyBoard.space == true) simple.Camera.velocity.y += 0.01f * world.TickStrength;
-		if (world.KeyBoard.lshift == true) simple.Camera.velocity.y -= 0.01f * world.TickStrength;
+		if (world.KeyBoard.w == true) simple.Camera.velocity.z += 0.001f * world.TickStrength;
+		if (world.KeyBoard.a == true) simple.Camera.velocity.x -= 0.001f * world.TickStrength;
+		if (world.KeyBoard.s == true) simple.Camera.velocity.z -= 0.001f * world.TickStrength;
+		if (world.KeyBoard.d == true) simple.Camera.velocity.x += 0.001f * world.TickStrength;
+		if (world.KeyBoard.space == true) simple.Camera.velocity.y += 0.001f * world.TickStrength;
+		if (world.KeyBoard.lshift == true) simple.Camera.velocity.y -= 0.001f * world.TickStrength;
 	}
 }
