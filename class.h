@@ -45,6 +45,7 @@ public:
 	int RenderStartTime;
 	int RenderEndTime;
 	int RenderTime;
+	bool CheckScreenPos(ScreenPos A);
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;

@@ -230,6 +230,13 @@ ScreenPos SimpleRenderer::Projection(Pos A) {
 	return ScreenPos(screenx, screeny, z);
 }
 
+bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
+	if (A.x < 0.0f or A.x > ScreenWidthF or A.y < 0.0f or A.y > ScreenHeightF) {
+		return false;
+	}
+	return true;
+}
+
 void SimpleRenderer::DrawTriangle(Triangle T) {
 	if(T.p1.pos.z - Camera.pos.z < 0.3f or T.p2.pos.z - Camera.pos.z < 0.3f or T.p3.pos.z - Camera.pos.z < 0.3f) {
 		if (debug == true) cout << "Triangle " << T.name << " is behind the camera and will not be drawn." << endl;
@@ -241,6 +248,11 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	ScreenPos A = Projection(T.p1.pos);
 	ScreenPos B = Projection(T.p2.pos);
 	ScreenPos C = Projection(T.p3.pos);
+	// Check if all Points are on Screen
+	if (!CheckScreenPos(A) or !CheckScreenPos(B) or !CheckScreenPos(C)) {
+		if (debug == true) cout << "Triangle " << T.name << " is partially off screen and will not be drawn." << endl;
+		return;
+	}
 	// Sort by smallest y
 	ScreenPos temp = A;
 	if (B.y < A.y) { temp = B; B = A; A = temp; }
@@ -249,10 +261,6 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	if (debug == true) cout << "sort result: " << A.y << " " << B.y << " " << C.y << endl;
 
 	// Drawing the WireFrame
-	RGBA_int FrameColor = ModifyColor(0.5f, 1.0f, ColorInt);
-	//DrawLine(A, B, FrameColor);
-	//DrawLine(B, C, FrameColor);
-	//DrawLine(C, A, FrameColor);
 	// Get Direction Vectors for AB,BC and AC
 	ScreenPos DV_AB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z);
 	ScreenPos DV_BC = ScreenPos(C.x - B.x, C.y - B.y, C.z - B.z);
@@ -291,7 +299,7 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	SV_SC.y = 0.0f;
 	// Actually Draw the Triangle from Ay to By
 	int Ay = static_cast<int>(A.y);
-	for (int i = 0; i < static_cast<int>(sAB); i++) {
+	for (int i = 0; i <= static_cast<int>(sAB); i++) {
 		// Interpolating the Scanline between C_AB and C_AC
 		SC = C_AB; // Set Scanline to C_AB
 		SV_SC.x = C_AC.x - C_AB.x;
