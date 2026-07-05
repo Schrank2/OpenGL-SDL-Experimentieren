@@ -287,7 +287,7 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	// Drawing the Triangle
 	int y,x;
 	int lx, rx, dx;
-	int lz, rz, dz;
+	float lz, rz, dz;
 	ScreenPos P = A; // Current Position to Draw
 	for (y = A.y; y <= C.y; y++) {
 		if (y >= B.y) { g = BC; g0 = B; g1 = C; } // switch line g to BC
@@ -310,10 +310,13 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 		for (x = lx; x < rx; x++) {
 			P.x = x;
 			P.y = y;
-			r = static_cast<float>(x - lx) / static_cast<float>(lx - rx);
-			P.z = lz + r * (rz - lx);
+			r = static_cast<float>(x - lx) / static_cast<float>(rx - lx);
+			P.z = lz + r * (rz - lz);
 			if (DepthBufferPoint(P)) {
-				SDL_SetRenderDrawColor(simple.renderer, ColorInt.r, ColorInt.g, ColorInt.b, ColorInt.a);
+				shade = static_cast<float>(P.z - minZ) / static_cast<float>(diffZ);
+				//cout << shade << endl;
+				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, ColorInt);
+				SDL_SetRenderDrawColor(simple.renderer, LocalColor.r, LocalColor.g, LocalColor.b, LocalColor.a);
 				SDL_RenderPoint(simple.renderer, P.x, P.y);
 			}
 		}
