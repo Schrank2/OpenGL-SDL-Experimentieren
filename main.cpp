@@ -4,6 +4,7 @@
 #include "defs.h"
 #include "class.h"
 #include <iomanip> // for more precise floats in cout
+#include <thread>
 using namespace std;
 bool debug = false;
 bool report = true;
