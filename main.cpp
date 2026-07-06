@@ -13,12 +13,9 @@ bool report = true;
 int main(int argc, char* argv[])
 {
 	if (debug == true) { cout << "[DEBUG] function main() from main.cpp" << endl; }
-	// World Setup
 	world.init();
-	// Initialising Libraries and Rendering
 	init_libs();
 	simple.init();
-	//TEST 3002016
 	SDL_Event event;
 	bool running = true;
 	int Frametime = 0;
@@ -27,7 +24,6 @@ int main(int argc, char* argv[])
 	int CurrentTime = 0;
 	int LastReportTime = 0;
 	int FPS = 0;
-
 	int Ticktime = 0;
 	float TickRateTarget = 40;
 	world.TickStrength = TickRateTarget / 1000.0f;
