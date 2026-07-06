@@ -205,7 +205,7 @@ void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
 				// drawing
 				if (DepthBufferPoint(L)) { // checking if the point is in front in the depth Buffer
 					SDL_SetRenderDrawColor(simple.renderer, Localc.r, Localc.g, Localc.b, Localc.a);
-					SDL_RenderPoint(simple.renderer, L.x, L.y);
+					DrawPixel(L.x, L.y, Localc);
 				}
 			}
 		}
@@ -323,10 +323,7 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 				shade = static_cast<float>(P.z - minZ) / static_cast<float>(diffZ);
 				//cout << shade << endl;
 				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, ColorInt);
-				SDL_SetRenderDrawColor(simple.renderer, LocalColor.r, LocalColor.g, LocalColor.b, LocalColor.a);
-				if (static_cast<int>(P.y * ScreenWidth + P.x) < ScreenWidth * ScreenHeight) {
-					pixels[static_cast<int>(P.y * ScreenWidth + P.x)] = (LocalColor.r << 24U) | (LocalColor.g << 16U) | (LocalColor.b << 8U) | LocalColor.a;
-				}	
+				DrawPixel(P.x, P.y, LocalColor);
 			}
 		}
 	}
@@ -334,7 +331,6 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 }
 
 void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
-	SDL_SetRenderDrawColor(simple.renderer, c.r, c.g, c.b, c.a);
 	// Direction Vector AB
 	ScreenPos DV = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z, true);
 	//Step Count
@@ -345,7 +341,7 @@ void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
 	ScreenPos C = A;
 	// Just Draw a point if steps == 0;
 	if (s == 0) {
-		if (DepthBufferPoint(C)) SDL_RenderPoint(simple.renderer, C.x, C.y);
+		if (DepthBufferPoint(C)) DrawPixel(C.x, C.y, c);
 		return;
 	}
 	// Vector to add Between each step (SV Stepvector)
@@ -353,7 +349,7 @@ void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
 
 	for (float i = 0; i <= r; i++) {
 		if (DepthBufferPoint(C)) {
-			SDL_RenderPoint(simple.renderer, C.x, C.y);
+			DrawPixel(C.x, C.y, c);
 		}
 		C.x += SV.x;
 		C.y += SV.y;
@@ -361,6 +357,13 @@ void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
 	}
 	
 }
+
+void SimpleRenderer::DrawPixel(int x, int y, RGBA_int c) {
+	if (static_cast<int>(y * ScreenWidth + x) < ScreenWidth * ScreenHeight) {
+		pixels[static_cast<int>(y * ScreenWidth + x)] = (c.r << 24U) | (c.g << 16U) | (c.b << 8U) | c.a;
+	}
+}
+
 
 bool SimpleRenderer::DepthBufferPoint(ScreenPos A) {
 	if (!A.valid) return false;

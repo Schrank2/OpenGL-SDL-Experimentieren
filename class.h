@@ -47,6 +47,7 @@ public:
 	int RenderTime;
 	bool CheckScreenPos(ScreenPos A);
 	vector<Uint32> pixels;
+	void DrawPixel(int x, int y, RGBA_int c);
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;
