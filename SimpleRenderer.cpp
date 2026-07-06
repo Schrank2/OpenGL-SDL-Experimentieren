@@ -110,9 +110,10 @@ void SimpleRenderer::render() {
 		SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
 		SDL_RenderClear(simple.renderer);
 		int i, j;
+		RGBA_int c = RGBA_int(0, 0, 0, 255);
 		float a;
 		for (i = 0; i < ScreenWidth; i++) {
-			for (j=0; j<= ScreenHeight; j++) {
+			for (j=0; j< ScreenHeight; j++) {
 				a = (DepthBuffer[j * ScreenWidth + i] - DepthBufferMin) / (DepthBufferMax - DepthBufferMin);
 				//cout << fixed << setprecision(3) << a << " " << DepthBuffer[i][j] << endl;
 				if (a < 0.0f) { a = 1.0f; }
@@ -120,7 +121,8 @@ void SimpleRenderer::render() {
 				//cout << fixed << setprecision(2) << a << endl;
 				a = 1.0f - a;
 				SDL_SetRenderDrawColorFloat(simple.renderer, a, a, a, 1.0f);
-				SDL_RenderPoint(simple.renderer, i, j);
+				c = RGBA_int(255 * a, 255 * a, 255 * a, 255);
+				DrawPixel(i, j, c);
 			}
 		}
 		if (debug == true) {
@@ -318,17 +320,14 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 			P.y = y;
 			r = static_cast<float>(x - lx) / static_cast<float>(rx - lx);
 			P.z = lz + r * (rz - lz);
-			a += 1;
 			if (DepthBufferPoint(P)) {
 				shade = static_cast<float>(P.z - minZ) / static_cast<float>(diffZ);
-				//cout << shade << endl;
 				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, ColorInt);
 				LocalColor.a = 255;
 				DrawPixel(P.x, P.y, LocalColor);
 			}
 		}
 	}
-	cout << "Pixels considered: " << a << endl;
 }
 
 void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
