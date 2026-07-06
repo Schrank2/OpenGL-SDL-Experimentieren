@@ -15,10 +15,9 @@ public:
 	void init();
 	bool DepthBufferShown = false;
 	void render();
-	vector<vector<float>> CreateDepthBuffer();
 	void Get_TTF_Fonts();
 	TTF_Font* ReportFont;
-	vector<vector<float>> DepthBuffer;
+	vector<float> DepthBuffer;
 	PhysicsObject Camera = PhysicsObject(Pos(2.0f, 1.0f, -3.0f), Pos(0.0f, 0.0f, 0.0f), 1.0f);
 	float CameraPitch = 0.0f;
 	float CameraYaw = 45.0f;

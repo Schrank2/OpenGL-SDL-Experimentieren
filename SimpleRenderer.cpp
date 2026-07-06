@@ -8,12 +8,6 @@
 #include <iomanip> // basically settings for cout
 #include <algorithm> // for clamp()
 
-vector<vector<float>> SimpleRenderer::CreateDepthBuffer() {
-	vector<vector<float>> D;
-	D.resize(ScreenWidth, vector<float>(ScreenHeight));
-	return D;
-	}
-
 void SimpleRenderer::GetScreenData() {
 	const SDL_DisplayMode* info = SDL_GetDesktopDisplayMode(1);
 	if (!info)
@@ -87,7 +81,7 @@ void SimpleRenderer::init() {
 	simple.canvas = SDL_CreateTexture(simple.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, ScreenWidth, ScreenHeight);
 	simple.pixels.resize(ScreenHeight * ScreenWidth, 0);
 	// Creating the Depth Buffer
-	simple.DepthBuffer = simple.CreateDepthBuffer();
+	simple.DepthBuffer.resize(ScreenHeight * ScreenWidth, 0);
 	// Creating the Text Renderer
 	simple.TextEngine = Create_TextEngine(simple.renderer);
 	simple.Get_TTF_Fonts();
@@ -105,8 +99,7 @@ void SimpleRenderer::render() {
 	SDL_RenderClear(simple.renderer);
 	fill(pixels.begin(), pixels.end(), 0);
 	// Clear the Depth Buffer
-	for (auto& row : DepthBuffer)
-		fill(row.begin(), row.end(), NULL);
+	fill(DepthBuffer.begin(), DepthBuffer.end(), 0);
 	DepthBufferMax = 0.0f;
 	DepthBufferMin = 1000000.0f;
 	// Draw the Main Window
@@ -118,9 +111,9 @@ void SimpleRenderer::render() {
 		SDL_RenderClear(simple.renderer);
 		int i, j;
 		float a;
-		for (i = 0; i < DepthBuffer.size(); i++) {
-			for (j = 0; j < DepthBuffer[0].size(); j++) {
-				a = (DepthBuffer[i][j] - DepthBufferMin) / (DepthBufferMax - DepthBufferMin);
+		for (i = 0; i < ScreenWidth; i++) {
+			for (j=0; j<= ScreenHeight; j++) {
+				a = (DepthBuffer[j * ScreenWidth + i] - DepthBufferMin) / (DepthBufferMax - DepthBufferMin);
 				//cout << fixed << setprecision(3) << a << " " << DepthBuffer[i][j] << endl;
 				if (a < 0.0f) { a = 1.0f; }
 				if (a > 1.0f) { a = 0.0f; }
@@ -373,11 +366,11 @@ bool SimpleRenderer::DepthBufferPoint(ScreenPos A) {
 	if (!A.valid) return false;
 	int x = static_cast<int>(A.x);
 	int y = static_cast<int>(A.y);
-	if (x < 0 or y < 0 or x >= DepthBuffer.size() or y >= DepthBuffer[0].size()) return false; // Check if Point is on screen
-	if (DepthBuffer[x][y] == NULL or DepthBuffer[x][y] > A.z) {
+	if (x < 0 or y < 0 or x >= ScreenWidth or y >= ScreenHeight) return false; // Check if Point is on screen
+	if (DepthBuffer[y * ScreenWidth + x] == NULL or DepthBuffer[y * ScreenWidth + x] > A.z) {
 		if (A.z > DepthBufferMax) DepthBufferMax = A.z;
 		if (A.z < DepthBufferMin) DepthBufferMin = A.z;
-		DepthBuffer[x][y] = A.z;
+		DepthBuffer[y * ScreenWidth + x] = A.z;
 		return true;
 	}
 	return false;
