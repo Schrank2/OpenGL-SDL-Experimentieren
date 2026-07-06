@@ -129,9 +129,9 @@ void SimpleRenderer::render() {
 		}
 	}
 	SDL_UpdateTexture(simple.canvas, 0, pixels.data(), ScreenWidth * sizeof(Uint32));
+	simple.TextRender();
 	SDL_SetRenderTarget(simple.renderer, NULL);
 	SDL_RenderTexture(simple.renderer, simple.canvas, 0, 0);
-	simple.TextRender();
 	SDL_RenderPresent(simple.renderer);
 	RenderEndTime = SDL_GetTicks();
 	RenderTime = RenderEndTime - RenderStartTime;
@@ -202,9 +202,9 @@ void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
 				float d = ScreenDist(Light, L); // Distance Between Lightspot and Point
 				lshade = 1.0f - (d / R);
 				RGBA_int Localc = ModifyColor(lshade, 0.4f, c);
+				Localc.a = 255;
 				// drawing
 				if (DepthBufferPoint(L)) { // checking if the point is in front in the depth Buffer
-					SDL_SetRenderDrawColor(simple.renderer, Localc.r, Localc.g, Localc.b, Localc.a);
 					DrawPixel(L.x, L.y, Localc);
 				}
 			}
@@ -323,6 +323,7 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 				shade = static_cast<float>(P.z - minZ) / static_cast<float>(diffZ);
 				//cout << shade << endl;
 				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, ColorInt);
+				LocalColor.a = 255;
 				DrawPixel(P.x, P.y, LocalColor);
 			}
 		}
@@ -388,10 +389,8 @@ void SimpleRenderer::DrawPoint(Point A) {
 	// calculating the screen coordinates for the point
 	ScreenPos ScreenA = Projection(A.pos);
 	RGBA_int Color = FloatToIntColor(A.color);
-	SDL_SetRenderDrawColor(simple.renderer, Color.r,Color.g,Color.b, Color.a);
 	if (debug == true) { cout << "[DEBUG] Drawing Point: " << A.letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl; }
-	SDL_RenderPoint(simple.renderer, ScreenA.x, ScreenA.y);
-	//simple.DrawSphere(A.pos, 0.05f, Color);
+	simple.DrawSphere(A.pos, 0.05f, Color);
 }
 
 SimpleRenderer simple;
