@@ -5,6 +5,7 @@
 #include "class.h"
 #include <iomanip> // for more precise floats in cout
 #include <thread>
+#include <format> // for to_string floats to not show too many decimal numbers
 using namespace std;
 bool debug = false;
 bool report = true;
@@ -25,7 +26,7 @@ int main(int argc, char* argv[])
 	int FrameStartTime = 0;
 	int CurrentTime = 0;
 	int LastReportTime = 0;
-	float FPS = 0.0f;
+	int FPS = 0;
 
 	int Ticktime = 0;
 	float TickRateTarget = 40;
@@ -58,7 +59,8 @@ int main(int argc, char* argv[])
 				int TTFVersion = TTF_Version();
 				Report.push_back("SDL Version: " + to_string(SDL_VERSIONNUM_MAJOR(SDLVersion)) + "." + to_string(SDL_VERSIONNUM_MINOR(SDLVersion)) + "." + to_string(SDL_VERSIONNUM_MICRO(SDLVersion)));
 				Report.push_back("TTF Version: " + to_string(SDL_VERSIONNUM_MAJOR(TTFVersion)) + "." + to_string(SDL_VERSIONNUM_MINOR(TTFVersion)) + "." + to_string(SDL_VERSIONNUM_MICRO(TTFVersion)));
-				Report.push_back("Rendering Performance: " + to_string(static_cast<int>(FPS)) + "fps | " + to_string(Frametime) + "ms");
+				Report.push_back("Camera Position x: " + std::format("{:.2f}",simple.Camera.pos.x) + " y: " + to_string(simple.Camera.pos.y) + " z: " + to_string(simple.Camera.pos.z));
+				Report.push_back("Rendering Performance: " + to_string(FPS) + "fps | " + to_string(Frametime) + "ms");
 			}
 		}
 
