@@ -12,7 +12,7 @@ int ScreenWidth = 0;
 int ScreenHeight = 0;
 float ScreenWidthF = 0.0f;
 float ScreenHeightF = 0.0f;
-string Report = "You should not see this for long.";
+vector<string> Report;
 int bpp = 0;
 int flags = 0;
 SDL_Window* window;

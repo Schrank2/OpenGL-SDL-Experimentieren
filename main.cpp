@@ -53,9 +53,12 @@ int main(int argc, char* argv[])
 			LastReportTime = CurrentTime;
 			if (report == true) {
 				FPS = 1000.0f / static_cast<float>(Frametime);
-				Report = "Frametime: " + to_string(Frametime) + "ms Framerate: " + to_string(static_cast<int>(FPS)) + " per Second RenderTime: " + to_string(simple.RenderTime) + "ms";
-				const char* ReportTemp = Report.c_str();
-				//SDL_SetWindowTitle(simple.window, ReportTemp);
+				Report.clear();
+				int SDLVersion = SDL_GetVersion();
+				int TTFVersion = TTF_Version();
+				Report.push_back("SDL Version: " + to_string(SDL_VERSIONNUM_MAJOR(SDLVersion)) + "." + to_string(SDL_VERSIONNUM_MINOR(SDLVersion)) + "." + to_string(SDL_VERSIONNUM_MICRO(SDLVersion)));
+				Report.push_back("TTF Version: " + to_string(SDL_VERSIONNUM_MAJOR(TTFVersion)) + "." + to_string(SDL_VERSIONNUM_MINOR(TTFVersion)) + "." + to_string(SDL_VERSIONNUM_MICRO(TTFVersion)));
+				Report.push_back("Rendering Performance: " + to_string(static_cast<int>(FPS)) + "fps | " + to_string(Frametime) + "ms");
 			}
 		}
 
@@ -85,6 +88,9 @@ int main(int argc, char* argv[])
 			if (event.key.key == SDLK_O) {
 				world.KeyBoard.o = true;
 			}
+			if (event.key.key == SDLK_F3) {
+				world.KeyBoard.f3 = true;
+			}
 		}
 		if (event.type == SDL_EVENT_KEY_UP) {
 			if (event.key.key == SDLK_W) {
@@ -111,12 +117,17 @@ int main(int argc, char* argv[])
 			if (event.key.key == SDLK_O) {
 				world.KeyBoard.o = false;
 			}
+			if (event.key.key == SDLK_F3) {
+				world.KeyBoard.f3 = false;
+			}
 		}
 		// Handle Reading Results of Key Inputs
 		if (world.KeyBoard.o == true) {
 			if (simple.DepthBufferShown == true) simple.DepthBufferShown = false;
 			else simple.DepthBufferShown = true;
 		}
+		if (world.KeyBoard.f3 == true) world.DebugMenuShown = true;
+		else world.DebugMenuShown = false;
 		// Movement
 		if (world.KeyBoard.w == true) simple.Camera.velocity.z += 0.001f * world.TickStrength;
 		if (world.KeyBoard.a == true) simple.Camera.velocity.x -= 0.001f * world.TickStrength;

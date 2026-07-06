@@ -63,6 +63,7 @@ public:
 	void tick();
 	KeyBoardState KeyBoard;
 	float TickStrength = 0.0f;
+	bool DebugMenuShown = false;
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern WORLD world;

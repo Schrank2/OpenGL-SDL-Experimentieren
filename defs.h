@@ -6,6 +6,7 @@ using namespace std;
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <string>
+#include <vector>
 /* Information about the current video settings. */
 /* extern const SDL_VideoInfo; */
 /* Dimensions of our window. */
@@ -19,7 +20,7 @@ extern int bpp;
 extern int flags;
 extern bool debug;
 // Text for the Report
-extern string Report;
+extern vector<string> Report;
 extern bool DoReport;
 
 // declare the game objects
@@ -120,6 +121,7 @@ struct KeyBoardState {
 	bool lshift = false;
 	bool p = false;
 	bool o = false;
+	bool f3 = false;
 };
 
 

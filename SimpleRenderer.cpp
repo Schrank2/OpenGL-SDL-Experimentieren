@@ -131,7 +131,7 @@ void SimpleRenderer::render() {
 		}
 	}
 	SDL_UpdateTexture(simple.canvas, 0, pixels.data(), ScreenWidth * sizeof(Uint32));
-	simple.TextRender();
+	if (world.DebugMenuShown) simple.TextRender();
 	SDL_SetRenderTarget(simple.renderer, NULL);
 	SDL_RenderTexture(simple.renderer, simple.canvas, 0, 0);
 	SDL_RenderPresent(simple.renderer);
@@ -141,10 +141,16 @@ void SimpleRenderer::render() {
 
 void SimpleRenderer::TextRender() {
 	if (debug == true) { cout << "[DEBUG] function simple.TextRender() from SimpleRenderer.cpp" << endl; }
-	const char* ReportChar = Report.c_str();
-	TTF_Text* ReportText = TTF_CreateText(simple.TextEngine, simple.ReportFont, ReportChar, strlen(ReportChar));
-	TTF_SetTextColor(ReportText, 0, 0, 0, 255);
-	TTF_DrawRendererText(ReportText, 0, 0);
+	int LastHeight = 0;
+	for (int i = 0; i < Report.size(); i++) {
+		const char* ReportChar = Report[i].c_str();
+		TTF_Text* ReportText = TTF_CreateText(simple.TextEngine, simple.ReportFont, ReportChar, strlen(ReportChar));
+		TTF_SetTextColor(ReportText, 0, 0, 0, 255);
+		TTF_DrawRendererText(ReportText, 1, LastHeight);
+		int w, h;
+		TTF_GetTextSize(ReportText, &w, &h);
+		LastHeight += h;
+	}
 }
 
 void SimpleRenderer::draw() {
