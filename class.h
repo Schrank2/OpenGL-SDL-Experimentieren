@@ -41,11 +41,13 @@ public:
 	RGBA_int ModifyColor(float modifier, float strength, RGBA_int c);
 	SDL_Window* window;
 	SDL_Renderer* renderer;
+	SDL_Texture* canvas;
 	TTF_TextEngine* TextEngine;
 	int RenderStartTime;
 	int RenderEndTime;
 	int RenderTime;
 	bool CheckScreenPos(ScreenPos A);
+	vector<Uint32> pixels;
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;

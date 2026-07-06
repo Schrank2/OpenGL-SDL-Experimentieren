@@ -84,6 +84,8 @@ void SimpleRenderer::init() {
 	// Creating the Main Window
 	simple.window = Create_Window("Simple Render Main");
 	simple.renderer = Create_Renderer(simple.window);
+	simple.canvas = SDL_CreateTexture(simple.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, ScreenWidth, ScreenHeight);
+	simple.pixels.resize(ScreenHeight * ScreenWidth, 0);
 	// Creating the Depth Buffer
 	simple.DepthBuffer = simple.CreateDepthBuffer();
 	// Creating the Text Renderer
@@ -97,6 +99,12 @@ void SimpleRenderer::render() {
 	// Clear the Main Window
 	SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
 	SDL_RenderClear(simple.renderer);
+	// Clear the Canvas Texture
+	SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
+	SDL_SetRenderTarget(simple.renderer, simple.canvas);
+	SDL_RenderClear(simple.renderer);
+	fill(pixels.begin(), pixels.end(), 0);
+	// Clear the Depth Buffer
 	for (auto& row : DepthBuffer)
 		fill(row.begin(), row.end(), NULL);
 	DepthBufferMax = 0.0f;
@@ -127,6 +135,9 @@ void SimpleRenderer::render() {
 			cout << "DepthBufferMin: " << DepthBufferMin << endl;
 		}
 	}
+	SDL_UpdateTexture(simple.canvas, 0, pixels.data(), ScreenWidth * sizeof(Uint32));
+	SDL_SetRenderTarget(simple.renderer, NULL);
+	SDL_RenderTexture(simple.renderer, simple.canvas, 0, 0);
 	simple.TextRender();
 	SDL_RenderPresent(simple.renderer);
 	RenderEndTime = SDL_GetTicks();
@@ -320,7 +331,9 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 				//cout << shade << endl;
 				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, ColorInt);
 				SDL_SetRenderDrawColor(simple.renderer, LocalColor.r, LocalColor.g, LocalColor.b, LocalColor.a);
-				SDL_RenderPoint(simple.renderer, P.x, P.y);
+				if (static_cast<int>(P.y * ScreenWidth + P.x) < ScreenWidth * ScreenHeight) {
+					pixels[static_cast<int>(P.y * ScreenWidth + P.x)] = (LocalColor.r << 24U) | (LocalColor.g << 16U) | (LocalColor.b << 8U) | LocalColor.a;
+				}	
 			}
 		}
 	}
@@ -382,7 +395,7 @@ void SimpleRenderer::DrawPoint(Point A) {
 	SDL_SetRenderDrawColor(simple.renderer, Color.r,Color.g,Color.b, Color.a);
 	if (debug == true) { cout << "[DEBUG] Drawing Point: " << A.letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl; }
 	SDL_RenderPoint(simple.renderer, ScreenA.x, ScreenA.y);
-	simple.DrawSphere(A.pos, 0.05f, Color);
+	//simple.DrawSphere(A.pos, 0.05f, Color);
 }
 
 SimpleRenderer simple;

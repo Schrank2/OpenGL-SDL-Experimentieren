@@ -49,8 +49,8 @@ struct RGBA_float {
 };
 
 struct RGBA_int {
-	int r, g, b, a;
-	RGBA_int(int r, int g, int b, int a) : r(CapColor_int(r)), g(CapColor_int(g)), b(CapColor_int(b)), a(CapColor_int(a)) {}
+	Uint8 r, g, b, a;
+	RGBA_int(Uint8 r, Uint8 g, Uint8 b, Uint8 a) : r(CapColor_int(r)), g(CapColor_int(g)), b(CapColor_int(b)), a(CapColor_int(a)) {}
 };
 
 struct Point {
