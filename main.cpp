@@ -61,8 +61,6 @@ int main(int argc, char* argv[])
 				Report.push_back("Rendering Performance: " + to_string(FPS) + "fps | " + to_string(Frametime) + "ms");
 			}
 		}
-
-		// Checking for Key inputs
 		if (SDL_PollEvent(&event) && event.type == SDL_EVENT_KEY_DOWN) {
 			if (event.key.key == SDLK_W) {
 				world.KeyBoard.w = true;

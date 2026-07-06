@@ -15,7 +15,6 @@ void SimpleRenderer::GetScreenData() {
 		cout << "Video query failed: " << SDL_GetError() << endl;
 		exit(1);
 	}
-	// Get Screen Information
 	ScreenWidthF = static_cast<float>(info->w * 0.75);
 	ScreenHeightF = static_cast<float>(info->h * 0.75);
 	ScreenWidth = static_cast<int>(ScreenWidthF);
@@ -26,10 +25,8 @@ SDL_Window* SimpleRenderer::Create_Window(string title) {
 	if (debug == true) { cout << "[DEBUG] function simple.Create_Window() from SimpleRenderer.cpp" << endl; }
 	string WindowTitle;
 	flags = SDL_WINDOW_RESIZABLE;
-	// creating the title for the application window
 	WindowTitle = title + " " + to_string(ScreenWidth) + "x" + to_string(ScreenHeight);
 	const char* WindowTitleChar = WindowTitle.c_str();
-	// creating the window
 	SDL_Window* window = SDL_CreateWindow(WindowTitleChar, ScreenWidth, ScreenHeight, static_cast<Uint32>(flags));
 	if (!window)
 	{
@@ -41,7 +38,6 @@ SDL_Window* SimpleRenderer::Create_Window(string title) {
 
 SDL_Renderer* SimpleRenderer::Create_Renderer(SDL_Window* window){
 	if (debug == true) { cout << "[DEBUG] function simple.Create_Renderer() from SimpleRenderer.cpp" << endl; }
-	// creating the renderer
 	SDL_Renderer* renderer = SDL_CreateRenderer(window,NULL);
 	if (!renderer)
 	{
@@ -72,17 +68,12 @@ void SimpleRenderer::Get_TTF_Fonts() {
 }
 
 void SimpleRenderer::init() {
-	// Get Screen Data for Window creation
 	simple.GetScreenData();
-	// Creating the Camera
-	// Creating the Main Window
 	simple.window = Create_Window("Simple Render Main");
 	simple.renderer = Create_Renderer(simple.window);
 	simple.canvas = SDL_CreateTexture(simple.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, ScreenWidth, ScreenHeight);
 	simple.pixels.resize(ScreenHeight * ScreenWidth, 0);
-	// Creating the Depth Buffer
 	simple.DepthBuffer.resize(ScreenHeight * ScreenWidth, 0);
-	// Creating the Text Renderer
 	simple.TextEngine = Create_TextEngine(simple.renderer);
 	simple.Get_TTF_Fonts();
 }
@@ -90,21 +81,16 @@ void SimpleRenderer::init() {
 void SimpleRenderer::render() {
 	if (debug == true) { cout << "[DEBUG] function simple.render() from SimpleRenderer.cpp" << endl; }
 	RenderStartTime = SDL_GetTicks();
-	// Clear the Main Window
 	SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
 	SDL_RenderClear(simple.renderer);
-	// Clear the Canvas Texture
-	SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
 	SDL_SetRenderTarget(simple.renderer, simple.canvas);
 	SDL_RenderClear(simple.renderer);
 	fill(pixels.begin(), pixels.end(), 0);
-	// Clear the Depth Buffer
 	fill(DepthBuffer.begin(), DepthBuffer.end(), 0);
 	DepthBufferMax = 0.0f;
 	DepthBufferMin = 1000000.0f;
-	// Draw the Main Window
 	simple.draw();
-	// Render the Depth Buffer
+	// Draw the Depth Buffer
 	if (DepthBufferShown == true) {
 		// Clear the Main Window
 		SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
