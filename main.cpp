@@ -59,7 +59,8 @@ int main(int argc, char* argv[])
 				int TTFVersion = TTF_Version();
 				Report.push_back("SDL Version: " + to_string(SDL_VERSIONNUM_MAJOR(SDLVersion)) + "." + to_string(SDL_VERSIONNUM_MINOR(SDLVersion)) + "." + to_string(SDL_VERSIONNUM_MICRO(SDLVersion)));
 				Report.push_back("TTF Version: " + to_string(SDL_VERSIONNUM_MAJOR(TTFVersion)) + "." + to_string(SDL_VERSIONNUM_MINOR(TTFVersion)) + "." + to_string(SDL_VERSIONNUM_MICRO(TTFVersion)));
-				Report.push_back("Camera Position x: " + std::format("{:.2f}",simple.Camera.pos.x) + " y: " + to_string(simple.Camera.pos.y) + " z: " + to_string(simple.Camera.pos.z));
+				Report.push_back("Camera Position x: " + std::format("{:.2f}",simple.Camera.pos.x) + " y: " + std::format("{:.2f}", simple.Camera.pos.y) + " z: " + std::format("{:.2f}", simple.Camera.pos.z));
+				Report.push_back("Camera Velocity x: " + std::format("{:.2f}", simple.Camera.velocity.x) + " y: " + std::format("{:.2f}", simple.Camera.velocity.y) + " z: " + std::format("{:.2f}", simple.Camera.velocity.z));
 				Report.push_back("Rendering Performance: " + to_string(FPS) + "fps | " + to_string(Frametime) + "ms");
 			}
 		}
