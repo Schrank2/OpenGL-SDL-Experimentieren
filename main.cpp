@@ -37,11 +37,10 @@ int main(int argc, char* argv[])
 
 	while (running) {
 		CurrentTime = SDL_GetTicks();
-
+		input.poll(&mainInput);
 		if (CurrentTime > TickStartTime + TickTimeTarget) {
 			Ticktime = CurrentTime - TickStartTime;
-			world.TickStrength = Ticktime / 1000.0f;
-			input.poll(&mainInput);
+			world.TickStrength = abs(Ticktime / 1000.0f);
 			world.tick();
 			TickStartTime = SDL_GetTicks();
 		}
@@ -63,7 +62,7 @@ int main(int argc, char* argv[])
 				Report.push_back("TTF Version: " + to_string(SDL_VERSIONNUM_MAJOR(TTFVersion)) + "." + to_string(SDL_VERSIONNUM_MINOR(TTFVersion)) + "." + to_string(SDL_VERSIONNUM_MICRO(TTFVersion)));
 				Report.push_back("Camera Position x: " + format("{:.1f}",simple.Camera.pos.x) + " y: " + format("{:.1f}", simple.Camera.pos.y) + " z: " + format("{:.1f}", simple.Camera.pos.z));
 				Report.push_back("Camera Rotation Yaw: " + format("{:.1f}", simple.CameraYaw) + " Pitch: " + format("{:.1f}", simple.CameraPitch));
-				Report.push_back("Camera Velocity x: " + format("{:.1f}", simple.Camera.velocity.x) + " y: " + format("{:.1f}", simple.Camera.velocity.y) + " z: " + format("{:.1f}", simple.Camera.velocity.z));
+				Report.push_back("Camera Velocity x: " + format("{:.3f}", simple.Camera.velocity.x) + " y: " + format("{:.3f}", simple.Camera.velocity.y) + " z: " + format("{:.3f}", simple.Camera.velocity.z));
 				Report.push_back("Rendering Performance: " + to_string(FPS) + "fps | " + to_string(Frametime) + "ms");
 			}
 		}

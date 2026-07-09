@@ -45,19 +45,19 @@ void WORLD::tick() {
 	if (simple.CameraPitch > 360.0f) simple.CameraPitch -= 360.0f;
 	if (simple.CameraPitch < 0.0f) simple.CameraPitch += 360.0f;
 	// Update Movement
-	if (mainInput[0].active == true) simple.Camera.velocity.z += 1.0f * world.TickStrength;
-	if (mainInput[1].active == true) simple.Camera.velocity.x -= 1.0f * world.TickStrength;
-	if (mainInput[2].active == true) simple.Camera.velocity.z -= 1.0f * world.TickStrength;
-	if (mainInput[3].active == true) simple.Camera.velocity.x += 1.0f * world.TickStrength;
-	if (mainInput[4].active == true) simple.Camera.velocity.y += 1.0f * world.TickStrength;
-	if (mainInput[5].active == true) simple.Camera.velocity.y -= 1.0f * world.TickStrength;
+	if (mainInput[0].active == true) simple.Camera.velocity.z += 10.0f * world.TickStrength;
+	if (mainInput[1].active == true) simple.Camera.velocity.x -= 10.0f * world.TickStrength;
+	if (mainInput[2].active == true) simple.Camera.velocity.z -= 10.0f * world.TickStrength;
+	if (mainInput[3].active == true) simple.Camera.velocity.x += 10.0f * world.TickStrength;
+	if (mainInput[4].active == true) simple.Camera.velocity.y += 10.0f * world.TickStrength;
+	if (mainInput[5].active == true) simple.Camera.velocity.y -= 10.0f * world.TickStrength;
 	// Update Physics, later for all physics objects in the world
-	simple.Camera.pos.x += simple.Camera.velocity.x * 0.3f * TickStrength;
-	simple.Camera.pos.y += simple.Camera.velocity.y * 0.3f * TickStrength;
-	simple.Camera.pos.z += simple.Camera.velocity.z * 0.3f * TickStrength;
-	simple.Camera.velocity.x -= simple.Camera.velocity.x * 0.01f * TickStrength;
-	simple.Camera.velocity.y -= simple.Camera.velocity.y * 0.01f * TickStrength;
-	simple.Camera.velocity.z -= simple.Camera.velocity.z * 0.01f * TickStrength;
+	simple.Camera.pos.x += simple.Camera.velocity.x * TickStrength;
+	simple.Camera.pos.y += simple.Camera.velocity.y * TickStrength;
+	simple.Camera.pos.z += simple.Camera.velocity.z * TickStrength;
+	simple.Camera.velocity.x *= 0.9f;
+	simple.Camera.velocity.y *= 0.9f;
+	simple.Camera.velocity.z *= 0.9f;
 }
 
 WORLD world;
