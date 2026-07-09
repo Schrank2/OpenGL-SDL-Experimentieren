@@ -37,6 +37,7 @@ int main(int argc, char* argv[])
 	bool wasPaused = false;
 	float PauseStartTime = 0;
 	float PauseTime = 0;
+	SDL_SetWindowMouseGrab(simple.window, true);
 
 	while (running) {
 		CurrentTime = SDL_GetTicks();
@@ -46,9 +47,11 @@ int main(int argc, char* argv[])
 			wasPaused = true;
 			if (!wasPaused) { // pause starts
 				PauseStartTime = CurrentTime;
+				SDL_SetWindowMouseGrab(simple.window, false);
 			}
 		}
 		else {
+			SDL_SetWindowMouseGrab(simple.window, true);
 			if (wasPaused) { // pause ends
 				PauseTime = CurrentTime - PauseStartTime; 
 			}
@@ -64,19 +67,19 @@ int main(int argc, char* argv[])
 			TickStartTime = SDL_GetTicks();
 		}
 		// Rendering and Showing a Plane
-		if (!mainInput[6].active && CurrentTime > FrameStartTime + FrameTimeTarget) {
+		if (CurrentTime > FrameStartTime + FrameTimeTarget) {
 			Frametime = CurrentTime - FrameStartTime;
 			simple.render();
 			FrameStartTime = CurrentTime;
 		}
-		if (!mainInput[6].active && CurrentTime >= LastReportTime + TickRateTarget) {
+		if (CurrentTime >= LastReportTime + TickRateTarget) {
 			LastReportTime = CurrentTime;
 			if (report == true) {
 				FPS = 1000.0f / Frametime;
 				Report.clear();
 				int SDLVersion = SDL_GetVersion();
 				int TTFVersion = TTF_Version();
-				if (mainInput[6].active) Report.push_back("---GAME PAUSED---");
+				if (mainInput[6].active) Report.push_back("---GAME TICKING PAUSED---");
 				Report.push_back("SDL Version: " + to_string(SDL_VERSIONNUM_MAJOR(SDLVersion)) + "." + to_string(SDL_VERSIONNUM_MINOR(SDLVersion)) + "." + to_string(SDL_VERSIONNUM_MICRO(SDLVersion)));
 				Report.push_back("TTF Version: " + to_string(SDL_VERSIONNUM_MAJOR(TTFVersion)) + "." + to_string(SDL_VERSIONNUM_MINOR(TTFVersion)) + "." + to_string(SDL_VERSIONNUM_MICRO(TTFVersion)));
 				Report.push_back("Camera Position x: " + format("{:.1f}",simple.Camera.pos.x) + " y: " + format("{:.1f}", simple.Camera.pos.y) + " z: " + format("{:.1f}", simple.Camera.pos.z));
