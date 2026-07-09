@@ -39,13 +39,25 @@ void WORLD::init() {
 
 void WORLD::tick() {
 	if (debug == true) { cout << "[DEBUG] function game.tick() from game.cpp" << endl; }
+	// Keep Rotation within 0.0f to 360.0f
+	if (simple.CameraYaw > 360.0f) simple.CameraYaw -= 360.0f;
+	if (simple.CameraYaw < 0.0f) simple.CameraYaw += 360.0f;
+	if (simple.CameraPitch > 360.0f) simple.CameraPitch -= 360.0f;
+	if (simple.CameraPitch < 0.0f) simple.CameraPitch += 360.0f;
+	// Update Movement
+	if (mainInput[0].active == true) simple.Camera.velocity.z += 1.0f * world.TickStrength;
+	if (mainInput[1].active == true) simple.Camera.velocity.x -= 1.0f * world.TickStrength;
+	if (mainInput[2].active == true) simple.Camera.velocity.z -= 1.0f * world.TickStrength;
+	if (mainInput[3].active == true) simple.Camera.velocity.x += 1.0f * world.TickStrength;
+	if (mainInput[4].active == true) simple.Camera.velocity.y += 1.0f * world.TickStrength;
+	if (mainInput[5].active == true) simple.Camera.velocity.y -= 1.0f * world.TickStrength;
 	// Update Physics, later for all physics objects in the world
-	simple.Camera.pos.x += simple.Camera.velocity.x * 0.0001f * TickStrength;
-	simple.Camera.pos.y += simple.Camera.velocity.y * 0.0001f * TickStrength;
-	simple.Camera.pos.z += simple.Camera.velocity.z * 0.0001f * TickStrength;
-	simple.Camera.velocity.x -= simple.Camera.velocity.x * 0.0002f * TickStrength;
-	simple.Camera.velocity.y -= simple.Camera.velocity.y * 0.0002f * TickStrength;
-	simple.Camera.velocity.z -= simple.Camera.velocity.z * 0.0002f * TickStrength;
+	simple.Camera.pos.x += simple.Camera.velocity.x * 0.3f * TickStrength;
+	simple.Camera.pos.y += simple.Camera.velocity.y * 0.3f * TickStrength;
+	simple.Camera.pos.z += simple.Camera.velocity.z * 0.3f * TickStrength;
+	simple.Camera.velocity.x -= simple.Camera.velocity.x * 0.01f * TickStrength;
+	simple.Camera.velocity.y -= simple.Camera.velocity.y * 0.01f * TickStrength;
+	simple.Camera.velocity.z -= simple.Camera.velocity.z * 0.01f * TickStrength;
 }
 
 WORLD world;

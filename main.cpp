@@ -20,14 +20,14 @@ int main(int argc, char* argv[])
 	simple.init();
 	bool running = true;
 	float Frametime = 0.0f;
-	float FrameRateTarget = 240.0f;
-	float FrameTimeTarget = static_cast<int>(1000 / FrameRateTarget);
+	float FrameRateTarget = 60.0f;
+	float FrameTimeTarget = 1000.0f / FrameRateTarget;
 	float FrameStartTime = 0.0f;
 	float CurrentTime = 0.0f;
 	float LastReportTime = 0.0f;
 	float FPS = 0.0f;
 	float Ticktime = 0.0f;
-	float TickRateTarget = 40.0f;
+	float TickRateTarget = 60.0f;
 	float TickTimeTarget = 1000.0f / TickRateTarget;
 	world.TickStrength = TickRateTarget / 1000.0f;
 	float TickStartTime = 0.0f;
@@ -41,12 +41,12 @@ int main(int argc, char* argv[])
 		if (CurrentTime > TickStartTime + TickTimeTarget) {
 			Ticktime = CurrentTime - TickStartTime;
 			world.TickStrength = Ticktime / 1000.0f;
+			input.poll(&mainInput);
 			world.tick();
 			TickStartTime = SDL_GetTicks();
 		}
-		world.tick();
 		// Rendering and Showing a Plane
-		if (CurrentTime> FrameStartTime + FrameTimeTarget) {
+		if (CurrentTime > FrameStartTime + FrameTimeTarget) {
 			simple.render();
 			Frametime = CurrentTime - FrameStartTime;
 			FrameStartTime = SDL_GetTicks();
@@ -67,22 +67,5 @@ int main(int argc, char* argv[])
 				Report.push_back("Rendering Performance: " + to_string(FPS) + "fps | " + to_string(Frametime) + "ms");
 			}
 		}
-
-		input.poll(&mainInput);
-		
-	
-		// Keep Rotation within 0.0f to 360.0f
-		if (simple.CameraYaw > 360.0f) simple.CameraYaw -= 360.0f;
-		if (simple.CameraYaw < 0.0f) simple.CameraYaw += 360.0f;
-		if (simple.CameraPitch > 360.0f) simple.CameraPitch -= 360.0f;
-		if (simple.CameraPitch < 0.0f) simple.CameraPitch += 360.0f;
-
-		// Movement
-		if (mainInput[0].active == true) simple.Camera.velocity.z += 0.001f * world.TickStrength;
-		if (mainInput[1].active == true) simple.Camera.velocity.x -= 0.001f * world.TickStrength;
-		if (mainInput[2].active == true) simple.Camera.velocity.z -= 0.001f * world.TickStrength;
-		if (mainInput[3].active == true) simple.Camera.velocity.x += 0.001f * world.TickStrength;
-		if (mainInput[4].active == true) simple.Camera.velocity.y += 0.001f * world.TickStrength;
-		if (mainInput[5].active == true) simple.Camera.velocity.y -= 0.001f * world.TickStrength;
 	}
 }
