@@ -5,7 +5,6 @@ using namespace std;
 #include <iostream>
 #include <SDL3/SDL.h>
 #include <vector>
-#include "defs.h"
 
 struct InputMK {
 	bool esc = false;
@@ -30,10 +29,12 @@ struct Button {
 	SDL_Keycode KeyCode;
 	// "Toggle" special behaviour
 	bool isToggle = false;
-	bool lastState = false;
+	bool currentToggle = false;
 	// "Delay" special behaviour
-	bool hasDelay = false; // if there is a Delay between Key Presses
-	int Delay = 0; // Delay in ms
+	bool hasDelay = false; 
+	int Delay = 0;
+	int lastPress = 0;
+	Button(SDL_Keycode KeyCode, bool isToggle, bool hasDelay, bool Delay) : KeyCode(KeyCode), isToggle(isToggle), hasDelay(hasDelay), Delay(Delay) {};
 };
 
 struct Mouse {
@@ -48,8 +49,8 @@ struct Mouse {
 
 class INPUTCLASS {
 	public:
-		void poll(InputMK *Input);
-		void pollButton(Button* Button);
+		void poll(vector<Button>* Input);
+		void pollButton(Button* Button, int tick);
 		void init(vector<Button>* Input);
 };
 

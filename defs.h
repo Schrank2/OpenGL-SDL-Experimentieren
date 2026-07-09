@@ -7,6 +7,7 @@ using namespace std;
 #include <SDL3_ttf/SDL_ttf.h>
 #include <string>
 #include <vector>
+#include "input.h"
 /* Information about the current video settings. */
 /* extern const SDL_VideoInfo; */
 /* Dimensions of our window. */
@@ -22,6 +23,7 @@ extern bool debug;
 // Text for the Report
 extern vector<string> Report;
 extern bool DoReport;
+extern vector<Button> mainInput;
 
 // declare the game objects
 struct Pos {

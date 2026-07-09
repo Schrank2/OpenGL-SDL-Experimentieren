@@ -10,6 +10,7 @@
 using namespace std;
 bool debug = false;
 bool report = true;
+vector<Button> mainInput;
 
 int main(int argc, char* argv[])
 {
@@ -32,7 +33,7 @@ int main(int argc, char* argv[])
 	float TickStartTime = 0.0f;
 	float TPS = 0.0f;
 	bool Pause = false;
-	InputMK mainInput;
+	input.init(&mainInput);
 
 	while (running) {
 		CurrentTime = SDL_GetTicks();
@@ -57,7 +58,7 @@ int main(int argc, char* argv[])
 				Report.clear();
 				int SDLVersion = SDL_GetVersion();
 				int TTFVersion = TTF_Version();
-				if (Pause) Report.push_back("---GAME PAUSED---");
+				if (mainInput[6].active) Report.push_back("---GAME PAUSED---");
 				Report.push_back("SDL Version: " + to_string(SDL_VERSIONNUM_MAJOR(SDLVersion)) + "." + to_string(SDL_VERSIONNUM_MINOR(SDLVersion)) + "." + to_string(SDL_VERSIONNUM_MICRO(SDLVersion)));
 				Report.push_back("TTF Version: " + to_string(SDL_VERSIONNUM_MAJOR(TTFVersion)) + "." + to_string(SDL_VERSIONNUM_MINOR(TTFVersion)) + "." + to_string(SDL_VERSIONNUM_MICRO(TTFVersion)));
 				Report.push_back("Camera Position x: " + format("{:.1f}",simple.Camera.pos.x) + " y: " + format("{:.1f}", simple.Camera.pos.y) + " z: " + format("{:.1f}", simple.Camera.pos.z));
@@ -76,37 +77,12 @@ int main(int argc, char* argv[])
 		if (simple.CameraPitch > 360.0f) simple.CameraPitch -= 360.0f;
 		if (simple.CameraPitch < 0.0f) simple.CameraPitch += 360.0f;
 
-		// Handle Reading Results of Key Inputs
-		CurrentTime = SDL_GetTicks();
-		if (CurrentTime > mainInput.o_LastTime + 100) {
-			if (mainInput.o == true) {
-				mainInput.o_LastTime = CurrentTime;
-				simple.DepthBufferShown = simple.DepthBufferShown ? false : true;
-			}
-		}
-		if (CurrentTime > mainInput.esc_LastTime + 100) {
-			if (mainInput.esc == true) {
-				mainInput.esc_LastTime = CurrentTime;
-				Pause = Pause ? false : true;
-			}
-		}
-		if (mainInput.f3 == true) {
-			if (mainInput.f3_lastState == false) {
-				mainInput.f3_lastState = true;
-				world.DebugMenuShown = world.DebugMenuShown ? false : true;
-			}
-		}
-		if (mainInput.f3 == false) {
-			if (mainInput.f3_lastState == true) {
-				mainInput.f3_lastState = false;
-			}
-		}
 		// Movement
-		if (mainInput.w == true) simple.Camera.velocity.z += 0.001f * world.TickStrength;
-		if (mainInput.a == true) simple.Camera.velocity.x -= 0.001f * world.TickStrength;
-		if (mainInput.s == true) simple.Camera.velocity.z -= 0.001f * world.TickStrength;
-		if (mainInput.d == true) simple.Camera.velocity.x += 0.001f * world.TickStrength;
-		if (mainInput.space == true) simple.Camera.velocity.y += 0.001f * world.TickStrength;
-		if (mainInput.lshift == true) simple.Camera.velocity.y -= 0.001f * world.TickStrength;
+		if (mainInput[0].active == true) simple.Camera.velocity.z += 0.001f * world.TickStrength;
+		if (mainInput[1].active == true) simple.Camera.velocity.x -= 0.001f * world.TickStrength;
+		if (mainInput[2].active == true) simple.Camera.velocity.z -= 0.001f * world.TickStrength;
+		if (mainInput[3].active == true) simple.Camera.velocity.x += 0.001f * world.TickStrength;
+		if (mainInput[4].active == true) simple.Camera.velocity.y += 0.001f * world.TickStrength;
+		if (mainInput[5].active == true) simple.Camera.velocity.y -= 0.001f * world.TickStrength;
 	}
 }

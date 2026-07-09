@@ -3,6 +3,7 @@
 #include "functions.h"
 #include "defs.h"
 #include "class.h"
+#include "input.h"
 #include <vector>
 #include <cmath>
 #include <iomanip> // basically settings for cout
@@ -91,7 +92,7 @@ void SimpleRenderer::render() {
 	DepthBufferMin = 1000000.0f;
 	simple.draw();
 	// Draw the Depth Buffer
-	if (DepthBufferShown == true) {
+	if (mainInput[7].active == true) {
 		// Clear the Main Window
 		SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
 		SDL_RenderClear(simple.renderer);
@@ -119,7 +120,7 @@ void SimpleRenderer::render() {
 		}
 	}
 	SDL_UpdateTexture(simple.canvas, 0, pixels.data(), ScreenWidth * sizeof(Uint32));
-	if (world.DebugMenuShown) simple.TextRender();
+	if (mainInput[8].active) simple.TextRender();
 	SDL_SetRenderTarget(simple.renderer, NULL);
 	SDL_RenderTexture(simple.renderer, simple.canvas, 0, 0);
 	SDL_RenderPresent(simple.renderer);

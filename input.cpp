@@ -4,85 +4,40 @@ using namespace std;
 
 SDL_Event event;
 
-void INPUTCLASS::poll(InputMK* Input) {
-	if (SDL_PollEvent(&event) && event.type == SDL_EVENT_KEY_DOWN) {
-		if (event.key.key == SDLK_ESCAPE) {
-			Input->esc = true;
-		}
-		if (event.key.key == SDLK_W) {
-			Input->w = true;
-		}
-		if (event.key.key == SDLK_A) {
-			Input->a = true;
-		}
-		if (event.key.key == SDLK_S) {
-			Input->s = true;
-		}
-		if (event.key.key == SDLK_D) {
-			Input->d = true;
-		}
-		if (event.key.key == SDLK_SPACE) {
-			Input->space = true;
-		}
-		if (event.key.key == SDLK_LSHIFT) {
-			Input->lshift = true;
-		}
-		if (event.key.key == SDLK_P) {
-			Input->p = true;
-		}
-		if (event.key.key == SDLK_O) {
-			Input->o = true;
-		}
-		if (event.key.key == SDLK_F3) {
-			Input->f3 = true;
-		}
-	}
-	if (event.type == SDL_EVENT_KEY_UP) {
-		if (event.key.key == SDLK_ESCAPE) {
-			Input->esc = false;
-		}
-		if (event.key.key == SDLK_W) {
-			Input->w = false;
-		}
-		if (event.key.key == SDLK_A) {
-			Input->a = false;
-		}
-		if (event.key.key == SDLK_S) {
-			Input->s = false;
-		}
-		if (event.key.key == SDLK_D) {
-			Input->d = false;
-		}
-		if (event.key.key == SDLK_SPACE) {
-			Input->space = false;
-		}
-		if (event.key.key == SDLK_LSHIFT) {
-			Input->lshift = false;
-		}
-		if (event.key.key == SDLK_P) {
-			Input->p = false;
-		}
-		if (event.key.key == SDLK_O) {
-			Input->o = false;
-		}
-		if (event.key.key == SDLK_F3) {
-			Input->f3 = false;
+void INPUTCLASS::poll(vector<Button>* Input) {
+	if (SDL_PollEvent(&event)) {
+		int tick = SDL_GetTicks();
+		int i = 0;
+		for (i = 0; i < Input->size(); i++) {
+			pollButton(&(*Input)[i], tick);
 		}
 	}
 }
 
 void INPUTCLASS::init(vector<Button>* Input) {
-	cout << "TEST" << endl;
+	Input->push_back(Button(SDLK_W, false, false, 0));
+	Input->push_back(Button(SDLK_A, false, false, 0));
+	Input->push_back(Button(SDLK_S, false, false, 0));
+	Input->push_back(Button(SDLK_D, false, false, 0));
+	Input->push_back(Button(SDLK_SPACE, false, false, 0));
+	Input->push_back(Button(SDLK_LSHIFT, false, false, 0));
+	Input->push_back(Button(SDLK_ESCAPE, true, false, 0));
+	Input->push_back(Button(SDLK_O, true, false, 0));
+	Input->push_back(Button(SDLK_F3, true, false, 0));
 }
 
-void INPUTCLASS::pollButton(Button* Button) {
+void INPUTCLASS::pollButton(Button* Button, int tick) {
+	if (Button->hasDelay == true && tick < tick + Button->Delay) {
+		return;
+	}
+	Button->lastPress = tick;
 
 	if (event.type == SDL_EVENT_KEY_UP) {
 		if (event.key.key == Button->KeyCode) {
 			Button->pressed = false;
 		}
 	}
-	if (event.type == SDL_EVENT_KEY_UP) {
+	if (event.type == SDL_EVENT_KEY_DOWN) {
 		if (event.key.key == Button->KeyCode) {
 			Button->pressed = true;
 		}
@@ -92,15 +47,15 @@ void INPUTCLASS::pollButton(Button* Button) {
 		return;
 	}
 
-	if (Button->active == true) {
-		if (Button->lastState == false) {
-			Button->lastState = true;
+	if (Button->pressed == true) {
+		if (Button->currentToggle == false) {
+			Button->currentToggle = true;
 			Button->active = Button->active ? false : true;
 		}
 	}
-	if (Button->active == false) {
-		if (Button->lastState == true) {
-			Button->lastState = false;
+	if (Button->pressed == false) {
+		if (Button->currentToggle == true) {
+			Button->currentToggle = false;
 		}
 	}
 
