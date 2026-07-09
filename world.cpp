@@ -51,10 +51,31 @@ void WORLD::tick() {
 	if (simple.CameraPitch > 360.0f) simple.CameraPitch -= 360.0f;
 	if (simple.CameraPitch < 0.0f) simple.CameraPitch += 360.0f;
 	// Update Movement
-	if (mainInput[0].active == true) simple.Camera.velocity.z += 10.0f * world.TickStrength;
-	if (mainInput[1].active == true) simple.Camera.velocity.x -= 10.0f * world.TickStrength;
-	if (mainInput[2].active == true) simple.Camera.velocity.z -= 10.0f * world.TickStrength;
-	if (mainInput[3].active == true) simple.Camera.velocity.x += 10.0f * world.TickStrength;
+	float Yaw = simple.CameraYaw * (3.14 / 180.0f);
+	float Pitch = simple.CameraPitch * (3.14 / 180.0f);
+	float x = cos(Yaw) - sin(Yaw);
+	float z = cos(Yaw) + sin(Yaw);
+	// W
+	if (mainInput[0].active == true) {
+		simple.Camera.velocity.z += 10.0f * world.TickStrength * cos(Yaw);
+		simple.Camera.velocity.x += 10.0f * world.TickStrength * sin(Yaw);
+	}
+	// A
+	if (mainInput[1].active == true) {
+		simple.Camera.velocity.x -= 10.0f * world.TickStrength * cos(Yaw);
+		simple.Camera.velocity.z += 10.0f * world.TickStrength * sin(Yaw);
+	}
+	// S
+	if (mainInput[2].active == true) {
+		simple.Camera.velocity.z -= 10.0f * world.TickStrength * cos(Yaw);
+		simple.Camera.velocity.x -= 10.0f * world.TickStrength * sin(Yaw);
+	}
+	// D
+	if (mainInput[3].active == true) {
+		simple.Camera.velocity.x += 10.0f * world.TickStrength * cos(Yaw);
+		simple.Camera.velocity.z -= 10.0f * world.TickStrength * sin(Yaw);
+	}
+
 	if (mainInput[4].active == true) simple.Camera.velocity.y += 10.0f * world.TickStrength;
 	if (mainInput[5].active == true) simple.Camera.velocity.y -= 10.0f * world.TickStrength;
 	// Update Physics, later for all physics objects in the world
