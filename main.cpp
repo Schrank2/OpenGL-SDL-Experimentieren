@@ -34,23 +34,38 @@ int main(int argc, char* argv[])
 	float TPS = 0.0f;
 	bool Pause = false;
 	input.init(&mainInput);
+	bool wasPaused = false;
+	float PauseStartTime = 0;
+	float PauseTime = 0;
 
 	while (running) {
 		CurrentTime = SDL_GetTicks();
 		input.poll(&mainInput);
-		if (CurrentTime > TickStartTime + TickTimeTarget) {
-			Ticktime = CurrentTime - TickStartTime;
+		PauseTime = 0;
+		if (mainInput[6].active) {
+			wasPaused = true;
+			if (!wasPaused) PauseStartTime = CurrentTime;
+		}
+		else {
+			if (wasPaused) PauseTime = CurrentTime - PauseStartTime;
+			wasPaused = false;
+		}
+		
+
+		if (!mainInput[6].active && CurrentTime > TickStartTime + TickTimeTarget - PauseTime) {
+			Ticktime = CurrentTime - PauseTime - TickStartTime;
+			if (Ticktime < 0.0f) Ticktime = 0.0f;
 			world.TickStrength = abs(Ticktime / 1000.0f);
 			world.tick();
 			TickStartTime = SDL_GetTicks();
 		}
 		// Rendering and Showing a Plane
-		if (CurrentTime > FrameStartTime + FrameTimeTarget) {
+		if (!mainInput[6].active && CurrentTime > FrameStartTime + FrameTimeTarget) {
 			simple.render();
 			Frametime = CurrentTime - FrameStartTime;
 			FrameStartTime = SDL_GetTicks();
 		}
-		if (CurrentTime >= LastReportTime + TickRateTarget) {
+		if (!mainInput[6].active && CurrentTime >= LastReportTime + TickRateTarget) {
 			LastReportTime = CurrentTime;
 			if (report == true) {
 				FPS = 1000.0f / Frametime;
