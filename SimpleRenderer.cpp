@@ -100,6 +100,8 @@ void SimpleRenderer::render() {
 		float a;
 		for (i = 0; i < ScreenWidth; i++) {
 			for (j=0; j< ScreenHeight; j++) {
+				if (DepthBufferMax == NULL) DepthBufferMax = 0.0f;
+				if (DepthBufferMin == NULL) DepthBufferMin = 1000.0f;
 				a = (DepthBuffer[j * ScreenWidth + i] - DepthBufferMin) / (DepthBufferMax - DepthBufferMin);
 				//cout << fixed << setprecision(3) << a << " " << DepthBuffer[i][j] << endl;
 				if (a < 0.0f) { a = 1.0f; }
@@ -225,8 +227,8 @@ ScreenPos SimpleRenderer::Projection(Pos A) {
 	float x = A.x - simple.Camera.pos.x; 
 	float y = A.y - simple.Camera.pos.y;
 	float z = A.z - simple.Camera.pos.z;
-	x += x * sin(CameraYaw) - x * cos(CameraYaw);
-	z += z * sin(CameraYaw) - z * cos(CameraYaw);
+	//x += x * sin(CameraYaw) - x * cos(CameraYaw);
+	//z += z * sin(CameraYaw) - z * cos(CameraYaw);
 
 	if (z <= 0.1) return ScreenPos(0,0,0,false);
 	y *= -1;
@@ -366,8 +368,8 @@ bool SimpleRenderer::DepthBufferPoint(ScreenPos A) {
 	int y = static_cast<int>(A.y);
 	if (x < 0 or y < 0 or x >= ScreenWidth or y >= ScreenHeight) return false; // Check if Point is on screen
 	if (DepthBuffer[y * ScreenWidth + x] == NULL or DepthBuffer[y * ScreenWidth + x] > A.z) {
-		if (A.z > DepthBufferMax) DepthBufferMax = A.z;
-		if (A.z < DepthBufferMin) DepthBufferMin = A.z;
+		if (A.z > DepthBufferMax or DepthBufferMax == NULL) DepthBufferMax = A.z;
+		if (A.z < DepthBufferMin or DepthBufferMin == NULL) DepthBufferMin = A.z;
 		DepthBuffer[y * ScreenWidth + x] = A.z;
 		return true;
 	}

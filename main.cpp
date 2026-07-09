@@ -3,6 +3,7 @@
 #include "functions.h"
 #include "defs.h"
 #include "class.h"
+#include "input.h"
 #include <iomanip> // for more precise floats in cout
 #include <thread>
 #include <format> // for to_string floats to not show too many decimal numbers
@@ -16,43 +17,47 @@ int main(int argc, char* argv[])
 	world.init();
 	init_libs();
 	simple.init();
-	SDL_Event event;
 	bool running = true;
-	int Frametime = 0;
-	int FrameRateTarget = 240;
-	int FrameStartTime = 0;
-	int CurrentTime = 0;
-	int LastReportTime = 0;
-	int FPS = 0;
-	int Ticktime = 0;
-	float TickRateTarget = 40;
+	float Frametime = 0.0f;
+	float FrameRateTarget = 240.0f;
+	float FrameTimeTarget = static_cast<int>(1000 / FrameRateTarget);
+	float FrameStartTime = 0.0f;
+	float CurrentTime = 0.0f;
+	float LastReportTime = 0.0f;
+	float FPS = 0.0f;
+	float Ticktime = 0.0f;
+	float TickRateTarget = 40.0f;
+	float TickTimeTarget = 1000.0f / TickRateTarget;
 	world.TickStrength = TickRateTarget / 1000.0f;
-	int TickStartTime = 0;
+	float TickStartTime = 0.0f;
 	float TPS = 0.0f;
+	bool Pause = false;
+	InputMK KEYBOARD;
 
 	while (running) {
 		CurrentTime = SDL_GetTicks();
 
-		if (CurrentTime > TickStartTime + (1000 / TickRateTarget)) {
+		if (CurrentTime > TickStartTime + TickTimeTarget) {
 			Ticktime = CurrentTime - TickStartTime;
-			world.TickStrength = static_cast<float>(Ticktime) / 1000.0f;
+			world.TickStrength = Ticktime / 1000.0f;
 			world.tick();
 			TickStartTime = SDL_GetTicks();
 		}
 		world.tick();
 		// Rendering and Showing a Plane
-		if (CurrentTime> FrameStartTime + (1000 / FrameRateTarget)) {
+		if (CurrentTime> FrameStartTime + FrameTimeTarget) {
 			simple.render();
 			Frametime = CurrentTime - FrameStartTime;
 			FrameStartTime = SDL_GetTicks();
 		}
-		if (CurrentTime >= LastReportTime + 1000) {
+		if (CurrentTime >= LastReportTime + TickRateTarget) {
 			LastReportTime = CurrentTime;
 			if (report == true) {
-				FPS = 1000.0f / static_cast<float>(Frametime);
+				FPS = 1000.0f / Frametime;
 				Report.clear();
 				int SDLVersion = SDL_GetVersion();
 				int TTFVersion = TTF_Version();
+				if (Pause) Report.push_back("---GAME PAUSED---");
 				Report.push_back("SDL Version: " + to_string(SDL_VERSIONNUM_MAJOR(SDLVersion)) + "." + to_string(SDL_VERSIONNUM_MINOR(SDLVersion)) + "." + to_string(SDL_VERSIONNUM_MICRO(SDLVersion)));
 				Report.push_back("TTF Version: " + to_string(SDL_VERSIONNUM_MAJOR(TTFVersion)) + "." + to_string(SDL_VERSIONNUM_MINOR(TTFVersion)) + "." + to_string(SDL_VERSIONNUM_MICRO(TTFVersion)));
 				Report.push_back("Camera Position x: " + format("{:.1f}",simple.Camera.pos.x) + " y: " + format("{:.1f}", simple.Camera.pos.y) + " z: " + format("{:.1f}", simple.Camera.pos.z));
@@ -61,77 +66,52 @@ int main(int argc, char* argv[])
 				Report.push_back("Rendering Performance: " + to_string(FPS) + "fps | " + to_string(Frametime) + "ms");
 			}
 		}
-		if (SDL_PollEvent(&event) && event.type == SDL_EVENT_KEY_DOWN) {
-			if (event.key.key == SDLK_W) {
-				world.KeyBoard.w = true;
-			}
-			if (event.key.key == SDLK_A) {
-				world.KeyBoard.a = true;
-			}
-			if (event.key.key == SDLK_S) {
-				world.KeyBoard.s = true;
-			}
-			if (event.key.key == SDLK_D) {
-				world.KeyBoard.d = true;
-			}
-			if (event.key.key == SDLK_SPACE) {
-				world.KeyBoard.space = true;
-			}
-			if (event.key.key == SDLK_LSHIFT) {
-				world.KeyBoard.lshift = true;
-			}
-			if (event.key.key == SDLK_P) {
-				world.KeyBoard.p = true;
-			}
-			if (event.key.key == SDLK_O) {
-				world.KeyBoard.o = true;
-			}
-			if (event.key.key == SDLK_F3) {
-				world.KeyBoard.f3 = true;
-			}
-		}
-		if (event.type == SDL_EVENT_KEY_UP) {
-			if (event.key.key == SDLK_W) {
-				world.KeyBoard.w = false;
-			}
-			if (event.key.key == SDLK_A) {
-				world.KeyBoard.a = false;
-			}
-			if (event.key.key == SDLK_S) {
-				world.KeyBoard.s = false;
-			}
-			if (event.key.key == SDLK_D) {
-				world.KeyBoard.d = false;
-			}
-			if (event.key.key == SDLK_SPACE) {
-				world.KeyBoard.space = false;
-			}
-			if (event.key.key == SDLK_LSHIFT) {
-				world.KeyBoard.lshift = false;
-			}
-			if (event.key.key == SDLK_P) {
-				world.KeyBoard.p = false;
-			}
-			if (event.key.key == SDLK_O) {
-				world.KeyBoard.o = false;
-			}
-			if (event.key.key == SDLK_F3) {
-				world.KeyBoard.f3 = false;
-			}
-		}
+
+		input.pollInput(&KEYBOARD);
+		
+		// Get Mouse Data
+		//SDL_GetMouseState(&world.Input0.MouseX, &world.Input0.MouseY);
+		//simple.CameraYaw += (world.Input0.LastMouseX - world.Input0.MouseX) / ScreenWidthF * world.Input0.MouseSensitivity;
+		//world.Input0.LastMouseX = world.Input0.MouseX;
+		//world.Input0.LastMouseY = world.Input0.MouseY;
+	
+		// Keep Rotation within 0.0f to 360.0f
+		if (simple.CameraYaw > 360.0f) simple.CameraYaw -= 360.0f;
+		if (simple.CameraYaw < 0.0f) simple.CameraYaw += 360.0f;
+		if (simple.CameraPitch > 360.0f) simple.CameraPitch -= 360.0f;
+		if (simple.CameraPitch < 0.0f) simple.CameraPitch += 360.0f;
+
 		// Handle Reading Results of Key Inputs
-		if (world.KeyBoard.o == true) {
-			if (simple.DepthBufferShown == true) simple.DepthBufferShown = false;
-			else simple.DepthBufferShown = true;
+		CurrentTime = SDL_GetTicks();
+		if (CurrentTime > KEYBOARD.o_LastTime + 100) {
+			if (KEYBOARD.o == true) {
+				KEYBOARD.o_LastTime = CurrentTime;
+				simple.DepthBufferShown = simple.DepthBufferShown ? false : true;
+			}
 		}
-		if (world.KeyBoard.f3 == true) world.DebugMenuShown = true;
-		else world.DebugMenuShown = false;
+		if (CurrentTime > KEYBOARD.esc_LastTime + 100) {
+			if (KEYBOARD.esc == true) {
+				KEYBOARD.esc_LastTime = CurrentTime;
+				Pause = Pause ? false : true;
+			}
+		}
+		if (KEYBOARD.f3 == true) {
+			if (KEYBOARD.f3_lastState == false) {
+				KEYBOARD.f3_lastState = true;
+				world.DebugMenuShown = world.DebugMenuShown ? false : true;
+			}
+		}
+		if (KEYBOARD.f3 == false) {
+			if (KEYBOARD.f3_lastState == true) {
+				KEYBOARD.f3_lastState = false;
+			}
+		}
 		// Movement
-		if (world.KeyBoard.w == true) simple.Camera.velocity.z += 0.001f * world.TickStrength;
-		if (world.KeyBoard.a == true) simple.Camera.velocity.x -= 0.001f * world.TickStrength;
-		if (world.KeyBoard.s == true) simple.Camera.velocity.z -= 0.001f * world.TickStrength;
-		if (world.KeyBoard.d == true) simple.Camera.velocity.x += 0.001f * world.TickStrength;
-		if (world.KeyBoard.space == true) simple.Camera.velocity.y += 0.001f * world.TickStrength;
-		if (world.KeyBoard.lshift == true) simple.Camera.velocity.y -= 0.001f * world.TickStrength;
+		if (KEYBOARD.w == true) simple.Camera.velocity.z += 0.001f * world.TickStrength;
+		if (KEYBOARD.a == true) simple.Camera.velocity.x -= 0.001f * world.TickStrength;
+		if (KEYBOARD.s == true) simple.Camera.velocity.z -= 0.001f * world.TickStrength;
+		if (KEYBOARD.d == true) simple.Camera.velocity.x += 0.001f * world.TickStrength;
+		if (KEYBOARD.space == true) simple.Camera.velocity.y += 0.001f * world.TickStrength;
+		if (KEYBOARD.lshift == true) simple.Camera.velocity.y -= 0.001f * world.TickStrength;
 	}
 }

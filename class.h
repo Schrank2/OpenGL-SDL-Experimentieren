@@ -21,7 +21,8 @@ public:
 	PhysicsObject Camera = PhysicsObject(Pos(2.0f, 1.0f, -3.0f), Pos(0.0f, 0.0f, 0.0f), 1.0f);
 	float CameraPitch = 0.0f;
 	float CameraYaw = 45.0f;
-	float DepthBufferMax, DepthBufferMin;
+	float DepthBufferMax = NULL;
+	float DepthBufferMin = NULL;
 	SDL_Renderer* Create_Renderer(SDL_Window* window);
 	SDL_Window* Create_Window(string title);
 	TTF_TextEngine* Create_TextEngine(SDL_Renderer* renderer);
@@ -61,7 +62,6 @@ public:
 	vector<Plane> Planes;
 	void init();
 	void tick();
-	KeyBoardState KeyBoard;
 	float TickStrength = 0.0f;
 	bool DebugMenuShown = false;
 };

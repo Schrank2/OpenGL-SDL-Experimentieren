@@ -112,17 +112,6 @@ struct PhysicsObject {
 	PhysicsObject(Pos pos, Pos velocity, float mass) : pos(pos), velocity(velocity), mass(mass) {}
 };
 
-struct KeyBoardState {
-	bool w = false;
-	bool a = false;
-	bool s = false;
-	bool d = false;
-	bool space = false;
-	bool lshift = false;
-	bool p = false;
-	bool o = false;
-	bool f3 = false;
-};
 
 
 #endif // DEFS_H
