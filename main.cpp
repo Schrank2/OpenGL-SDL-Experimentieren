@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 	bool wasPaused = false;
 	float PauseStartTime = 0;
 	float PauseTime = 0;
-	SDL_SetWindowMouseGrab(simple.window, true);
+	SDL_SetWindowMouseGrab(simple.window, true);;
 
 	while (running) {
 		CurrentTime = SDL_GetTicks();
@@ -47,13 +47,14 @@ int main(int argc, char* argv[])
 		PauseTime = 0;
 		if (mainInput[6].active) {
 			wasPaused = true;
+			SDL_Rect MouseSpace = { ScreenWidth / 2,ScreenHeight / 2, 1 , 1 };
 			SDL_SetWindowMouseGrab(simple.window, false);
 			if (!wasPaused) { // pause starts
 				PauseStartTime = CurrentTime;
 			}
 		}
 		else {
-			SDL_SetWindowMouseGrab(simple.window, true);
+			SDL_SetWindowMouseGrab(simple.window, true);;
 			if (wasPaused) { // pause ends
 				PauseTime = CurrentTime - PauseStartTime; 
 			}
