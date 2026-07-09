@@ -4,7 +4,7 @@ using namespace std;
 
 SDL_Event event;
 
-void INPUTCLASS::pollInput(InputMK* Input) {
+void INPUTCLASS::poll(InputMK* Input) {
 	if (SDL_PollEvent(&event) && event.type == SDL_EVENT_KEY_DOWN) {
 		if (event.key.key == SDLK_ESCAPE) {
 			Input->esc = true;
@@ -69,6 +69,41 @@ void INPUTCLASS::pollInput(InputMK* Input) {
 			Input->f3 = false;
 		}
 	}
+}
+
+void INPUTCLASS::init(vector<Button>* Input) {
+	cout << "TEST" << endl;
+}
+
+void INPUTCLASS::pollButton(Button* Button) {
+
+	if (event.type == SDL_EVENT_KEY_UP) {
+		if (event.key.key == Button->KeyCode) {
+			Button->pressed = false;
+		}
+	}
+	if (event.type == SDL_EVENT_KEY_UP) {
+		if (event.key.key == Button->KeyCode) {
+			Button->pressed = true;
+		}
+	}
+	if (Button->isToggle == false) {
+		Button->active = Button->pressed ? true : false;
+		return;
+	}
+
+	if (Button->active == true) {
+		if (Button->lastState == false) {
+			Button->lastState = true;
+			Button->active = Button->active ? false : true;
+		}
+	}
+	if (Button->active == false) {
+		if (Button->lastState == true) {
+			Button->lastState = false;
+		}
+	}
+
 }
 
 INPUTCLASS input;

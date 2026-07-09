@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
 			}
 		}
 
-		input.pollInput(&mainInput);
+		input.poll(&mainInput);
 		
 	
 		// Keep Rotation within 0.0f to 360.0f
