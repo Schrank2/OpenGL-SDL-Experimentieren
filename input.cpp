@@ -61,12 +61,18 @@ void INPUTCLASS::pollButton(Button* Button, int tick) {
 
 }
 
-void INPUTCLASS::pollMouse(Mouse* Mouse) {
+void INPUTCLASS::pollMouse(Mouse* Mouse, SDL_Window* Window, bool autoCenter, float ScreenW, float ScreenH) {
 	SDL_GetMouseState(&Mouse->x, &Mouse->y);
-	Mouse->movex += Mouse->x - Mouse->lastx;
-	Mouse->movey += Mouse->y - Mouse->lasty;
+	Mouse->movex += (Mouse->x - Mouse->lastx);
+	Mouse->movey += (Mouse->y - Mouse->lasty);
 	Mouse->lastx = Mouse->x;
 	Mouse->lasty = Mouse->y;
+	if (!autoCenter) return;
+	if (Mouse->x <= 10.0f || Mouse->x >= ScreenW - 10.0f || Mouse->y <= 10.0f || Mouse->y >= ScreenH - 10.0f) {
+		SDL_WarpMouseInWindow(Window, ScreenW / 2.0f, ScreenH / 2.0f);
+		Mouse->lastx = ScreenW / 2.0f;
+		Mouse->lasty = ScreenH / 2.0f;
+	}
 }
 
 

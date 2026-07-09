@@ -24,7 +24,7 @@ void SimpleRenderer::GetScreenData() {
 SDL_Window* SimpleRenderer::Create_Window(string title) {
 	if (debug == true) { cout << "[DEBUG] function simple.Create_Window() from SimpleRenderer.cpp" << endl; }
 	string WindowTitle;
-	flags = SDL_WINDOW_RESIZABLE;
+	flags = SDL_WINDOW_ALWAYS_ON_TOP;
 	WindowTitle = title + " " + to_string(ScreenWidth) + "x" + to_string(ScreenHeight);
 	const char* WindowTitleChar = WindowTitle.c_str();
 	SDL_Window* window = SDL_CreateWindow(WindowTitleChar, ScreenWidth, ScreenHeight, static_cast<Uint32>(flags));

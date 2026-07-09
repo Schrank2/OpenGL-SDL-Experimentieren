@@ -50,6 +50,8 @@ void WORLD::tick() {
 	if (simple.CameraYaw < 0.0f) simple.CameraYaw += 360.0f;
 	if (simple.CameraPitch > 360.0f) simple.CameraPitch -= 360.0f;
 	if (simple.CameraPitch < 0.0f) simple.CameraPitch += 360.0f;
+	if (simple.CameraYaw > 1000.0f or simple.CameraYaw <= -1000.0f) simple.CameraYaw = 0.0f;
+	if (simple.CameraPitch > 1000.0f or simple.CameraPitch <= -1000.0f) simple.CameraPitch = 0.0f;
 	// Update Movement
 	float Yaw = simple.CameraYaw * (3.14 / 180.0f);
 	float Pitch = simple.CameraPitch * (3.14 / 180.0f);

@@ -38,12 +38,11 @@ int main(int argc, char* argv[])
 	bool wasPaused = false;
 	float PauseStartTime = 0;
 	float PauseTime = 0;
-	SDL_SetWindowMouseGrab(simple.window, true);;
+	SDL_SetWindowMouseGrab(simple.window, true);
 
 	while (running) {
 		CurrentTime = SDL_GetTicks();
 		input.poll(&mainInput);
-		input.pollMouse(&mainMouse);
 		PauseTime = 0;
 		if (mainInput[6].active) {
 			wasPaused = true;
@@ -53,13 +52,13 @@ int main(int argc, char* argv[])
 			}
 		}
 		else {
-			SDL_SetWindowMouseGrab(simple.window, true);;
+			SDL_SetWindowMouseGrab(simple.window, true);
 			if (wasPaused) { // pause ends
 				PauseTime = CurrentTime - PauseStartTime; 
 			}
 			wasPaused = false;
 		}
-		
+		input.pollMouse(&mainMouse, simple.window, !mainInput[6].active, ScreenWidthF, ScreenHeightF);
 
 		if (!mainInput[6].active && CurrentTime > TickStartTime + TickTimeTarget - PauseTime) {
 			Ticktime = CurrentTime - PauseTime - TickStartTime;
