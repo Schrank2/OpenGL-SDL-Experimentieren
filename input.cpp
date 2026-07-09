@@ -61,4 +61,13 @@ void INPUTCLASS::pollButton(Button* Button, int tick) {
 
 }
 
+void INPUTCLASS::pollMouse(Mouse* Mouse) {
+	SDL_GetMouseState(&Mouse->x, &Mouse->y);
+	Mouse->lastx = Mouse->x;
+	Mouse->lasty = Mouse->y;
+	Mouse->movex = Mouse->x - Mouse->lastx;
+	Mouse->movey = Mouse->y - Mouse->lasty;
+}
+
+
 INPUTCLASS input;

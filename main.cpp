@@ -11,6 +11,7 @@ using namespace std;
 bool debug = false;
 bool report = true;
 vector<Button> mainInput;
+Mouse mainMouse;
 
 int main(int argc, char* argv[])
 {
@@ -42,6 +43,7 @@ int main(int argc, char* argv[])
 	while (running) {
 		CurrentTime = SDL_GetTicks();
 		input.poll(&mainInput);
+		input.pollMouse(&mainMouse);
 		PauseTime = 0;
 		if (mainInput[6].active) {
 			wasPaused = true;

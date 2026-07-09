@@ -38,19 +38,20 @@ struct Button {
 };
 
 struct Mouse {
-	float MouseX = 0.0f;
-	float MouseY = 0.0f;
-	float LastMouseX = 0.0f;
-	float LastMouseY = 0.0f;
-	float MouseMovementX = 0.0f;
-	float MouseMovementY = 0.0f;
-	float MouseSensitivity = 10.0f;
+	float x = 0.0f;
+	float y = 0.0f;
+	float lastx = 0.0f;
+	float lasty = 0.0f;
+	float movex = 0.0f;
+	float movey = 0.0f;
+	float sens = 10.0f;
 };
 
 class INPUTCLASS {
 	public:
 		void poll(vector<Button>* Input);
 		void pollButton(Button* Button, int tick);
+		void pollMouse(Mouse* Mouse);
 		void init(vector<Button>* Input);
 };
 

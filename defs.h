@@ -24,6 +24,7 @@ extern bool debug;
 extern vector<string> Report;
 extern bool DoReport;
 extern vector<Button> mainInput;
+extern Mouse mainMouse;
 
 // declare the game objects
 struct Pos {
