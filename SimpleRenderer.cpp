@@ -162,10 +162,8 @@ void SimpleRenderer::draw() {
 }
 
 void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
-	// dont draw if behind camera
-	if (A.z - Camera.pos.z - 0.3 <= r) return;
-
 	ScreenPos As = Projection(A);
+	if (As.z + 0.3 <= r) return;
 	float FrontDepth = A.z - simple.Camera.pos.z - r;
 	// weirdly adjusting the radius for depth of A
 	ScreenPos Temp = Projection({ A.y, r + A.y, A.z });
@@ -389,7 +387,7 @@ void SimpleRenderer::DrawPoint(Point A) {
 	ScreenPos ScreenA = Projection(A.pos);
 	RGBA_int Color = FloatToIntColor(A.color);
 	if (debug == true) { cout << "[DEBUG] Drawing Point: " << A.letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl; }
-	simple.DrawSphere(A.pos, 0.05f, Color);
+	//simple.DrawSphere(A.pos, 0.05f, Color);
 }
 
 SimpleRenderer simple;
