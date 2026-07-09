@@ -44,10 +44,14 @@ int main(int argc, char* argv[])
 		PauseTime = 0;
 		if (mainInput[6].active) {
 			wasPaused = true;
-			if (!wasPaused) PauseStartTime = CurrentTime;
+			if (!wasPaused) { // pause starts
+				PauseStartTime = CurrentTime;
+			}
 		}
 		else {
-			if (wasPaused) PauseTime = CurrentTime - PauseStartTime;
+			if (wasPaused) { // pause ends
+				PauseTime = CurrentTime - PauseStartTime; 
+			}
 			wasPaused = false;
 		}
 		
