@@ -21,16 +21,21 @@ struct InputMK {
 	bool f3 = false;
 	int f3_LastTime = 0;
 	bool f3_lastState = false;
+};
+
+struct Mouse {
 	float MouseX = 0.0f;
 	float MouseY = 0.0f;
 	float LastMouseX = 0.0f;
 	float LastMouseY = 0.0f;
+	float MouseMovementX = 0.0f;
+	float MouseMovementY = 0.0f;
 	float MouseSensitivity = 10.0f;
 };
 
 class INPUTCLASS {
 	public:
-		void pollInput(InputMK* Input);
+		void pollInput(InputMK *Input);
 };
 
 extern INPUTCLASS input;

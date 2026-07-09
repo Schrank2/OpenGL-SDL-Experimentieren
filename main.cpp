@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 	float TickStartTime = 0.0f;
 	float TPS = 0.0f;
 	bool Pause = false;
-	InputMK KEYBOARD;
+	InputMK mainInput;
 
 	while (running) {
 		CurrentTime = SDL_GetTicks();
@@ -67,13 +67,8 @@ int main(int argc, char* argv[])
 			}
 		}
 
-		input.pollInput(&KEYBOARD);
+		input.pollInput(&mainInput);
 		
-		// Get Mouse Data
-		//SDL_GetMouseState(&world.Input0.MouseX, &world.Input0.MouseY);
-		//simple.CameraYaw += (world.Input0.LastMouseX - world.Input0.MouseX) / ScreenWidthF * world.Input0.MouseSensitivity;
-		//world.Input0.LastMouseX = world.Input0.MouseX;
-		//world.Input0.LastMouseY = world.Input0.MouseY;
 	
 		// Keep Rotation within 0.0f to 360.0f
 		if (simple.CameraYaw > 360.0f) simple.CameraYaw -= 360.0f;
@@ -83,35 +78,35 @@ int main(int argc, char* argv[])
 
 		// Handle Reading Results of Key Inputs
 		CurrentTime = SDL_GetTicks();
-		if (CurrentTime > KEYBOARD.o_LastTime + 100) {
-			if (KEYBOARD.o == true) {
-				KEYBOARD.o_LastTime = CurrentTime;
+		if (CurrentTime > mainInput.o_LastTime + 100) {
+			if (mainInput.o == true) {
+				mainInput.o_LastTime = CurrentTime;
 				simple.DepthBufferShown = simple.DepthBufferShown ? false : true;
 			}
 		}
-		if (CurrentTime > KEYBOARD.esc_LastTime + 100) {
-			if (KEYBOARD.esc == true) {
-				KEYBOARD.esc_LastTime = CurrentTime;
+		if (CurrentTime > mainInput.esc_LastTime + 100) {
+			if (mainInput.esc == true) {
+				mainInput.esc_LastTime = CurrentTime;
 				Pause = Pause ? false : true;
 			}
 		}
-		if (KEYBOARD.f3 == true) {
-			if (KEYBOARD.f3_lastState == false) {
-				KEYBOARD.f3_lastState = true;
+		if (mainInput.f3 == true) {
+			if (mainInput.f3_lastState == false) {
+				mainInput.f3_lastState = true;
 				world.DebugMenuShown = world.DebugMenuShown ? false : true;
 			}
 		}
-		if (KEYBOARD.f3 == false) {
-			if (KEYBOARD.f3_lastState == true) {
-				KEYBOARD.f3_lastState = false;
+		if (mainInput.f3 == false) {
+			if (mainInput.f3_lastState == true) {
+				mainInput.f3_lastState = false;
 			}
 		}
 		// Movement
-		if (KEYBOARD.w == true) simple.Camera.velocity.z += 0.001f * world.TickStrength;
-		if (KEYBOARD.a == true) simple.Camera.velocity.x -= 0.001f * world.TickStrength;
-		if (KEYBOARD.s == true) simple.Camera.velocity.z -= 0.001f * world.TickStrength;
-		if (KEYBOARD.d == true) simple.Camera.velocity.x += 0.001f * world.TickStrength;
-		if (KEYBOARD.space == true) simple.Camera.velocity.y += 0.001f * world.TickStrength;
-		if (KEYBOARD.lshift == true) simple.Camera.velocity.y -= 0.001f * world.TickStrength;
+		if (mainInput.w == true) simple.Camera.velocity.z += 0.001f * world.TickStrength;
+		if (mainInput.a == true) simple.Camera.velocity.x -= 0.001f * world.TickStrength;
+		if (mainInput.s == true) simple.Camera.velocity.z -= 0.001f * world.TickStrength;
+		if (mainInput.d == true) simple.Camera.velocity.x += 0.001f * world.TickStrength;
+		if (mainInput.space == true) simple.Camera.velocity.y += 0.001f * world.TickStrength;
+		if (mainInput.lshift == true) simple.Camera.velocity.y -= 0.001f * world.TickStrength;
 	}
 }
