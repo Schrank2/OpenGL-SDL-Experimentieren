@@ -44,7 +44,7 @@ struct Mouse {
 	float lasty = 0.0f;
 	float movex = 0.0f;
 	float movey = 0.0f;
-	float sens = 10.0f;
+	float sens = 1.0f;
 };
 
 class INPUTCLASS {

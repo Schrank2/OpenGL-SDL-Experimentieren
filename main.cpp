@@ -47,7 +47,6 @@ int main(int argc, char* argv[])
 		PauseTime = 0;
 		if (mainInput[6].active) {
 			wasPaused = true;
-			SDL_Rect MouseSpace = { ScreenWidth / 2,ScreenHeight / 2, 1 , 1 };
 			SDL_SetWindowMouseGrab(simple.window, false);
 			if (!wasPaused) { // pause starts
 				PauseStartTime = CurrentTime;

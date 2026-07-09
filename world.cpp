@@ -40,8 +40,8 @@ void WORLD::init() {
 void WORLD::tick() {
 	if (debug == true) { cout << "[DEBUG] function game.tick() from game.cpp" << endl; }
 	// Update Camera Rotation
-	simple.CameraYaw += mainMouse.movex * mainMouse.sens;
-	simple.CameraPitch += mainMouse.movey * mainMouse.sens;
+	simple.CameraYaw += 360.0f * (mainMouse.movex / ScreenWidthF) * mainMouse.sens;
+	simple.CameraPitch += 360.0f * (mainMouse.movey / ScreenHeightF) * mainMouse.sens;
 	mainMouse.movex = 0.0f;
 	mainMouse.movey = 0.0f;
 	
