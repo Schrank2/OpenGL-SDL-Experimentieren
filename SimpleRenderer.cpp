@@ -228,8 +228,11 @@ ScreenPos SimpleRenderer::Projection(Pos A) {
 	float x = A.x - simple.Camera.pos.x; 
 	float y = A.y - simple.Camera.pos.y;
 	float z = A.z - simple.Camera.pos.z;
-	//x += x * sin(CameraYaw) - x * cos(CameraYaw);
-	//z += z * sin(CameraYaw) - z * cos(CameraYaw);
+	float Yaw = CameraYaw / 360.0f;
+	float Pitch = CameraPitch / 360.0f;
+	float h = sqrt(x * x + z * z);
+	//x += sin(Yaw) * x;
+	//z -= sin(Yaw) * z;
 
 	if (z <= 0.1) return ScreenPos(0,0,0,false);
 	y *= -1;

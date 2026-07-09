@@ -88,6 +88,8 @@ int main(int argc, char* argv[])
 				Report.push_back("Camera Rotation Yaw: " + format("{:.1f}", simple.CameraYaw) + " Pitch: " + format("{:.1f}", simple.CameraPitch));
 				Report.push_back("Camera Velocity x: " + format("{:.3f}", simple.Camera.velocity.x) + " y: " + format("{:.3f}", simple.Camera.velocity.y) + " z: " + format("{:.3f}", simple.Camera.velocity.z));
 				Report.push_back("Rendering Performance: " + format("{:.1f}", FPS) + "fps | " + format("{:.1f}", Frametime) + "ms");
+				Report.push_back("Sin(Yaw): " + format("{:.2f}", sin(simple.CameraYaw)));
+				Report.push_back("Cos(Yaw): " + format("{:.2f}", cos(simple.CameraYaw)));
 			}
 		}
 	}

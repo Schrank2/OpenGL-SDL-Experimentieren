@@ -20,7 +20,7 @@ public:
 	vector<float> DepthBuffer;
 	PhysicsObject Camera = PhysicsObject(Pos(2.0f, 1.0f, -3.0f), Pos(0.0f, 0.0f, 0.0f), 1.0f);
 	float CameraPitch = 0.0f;
-	float CameraYaw = 45.0f;
+	float CameraYaw = 0.0f;
 	float DepthBufferMax = NULL;
 	float DepthBufferMin = NULL;
 	SDL_Renderer* Create_Renderer(SDL_Window* window);
