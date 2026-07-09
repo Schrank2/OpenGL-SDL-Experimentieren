@@ -5,7 +5,6 @@
 #include "class.h"
 #include "input.h"
 #include <vector>
-#include <cmath>
 #include <iomanip> // basically settings for cout
 #include <algorithm> // for clamp()
 
@@ -225,20 +224,20 @@ float SimpleRenderer::ScreenDist(ScreenPos A, ScreenPos B) {
 }
 
 ScreenPos SimpleRenderer::Projection(Pos A) {
-	float x = A.x - simple.Camera.pos.x; 
-	float y = A.y - simple.Camera.pos.y;
-	float z = A.z - simple.Camera.pos.z;
-	float Yaw = CameraYaw / 360.0f;
-	float Pitch = CameraPitch / 360.0f;
-	float h = sqrt(x * x + z * z);
-	//x += sin(Yaw) * x;
-	//z -= sin(Yaw) * z;
-
-	if (z <= 0.1) return ScreenPos(0,0,0,false);
-	y *= -1;
-	float screenx = (x / z) * simple.RenderScale + ScreenWidthF / 2.0f;
-	float screeny = (y / z) * simple.RenderScale + ScreenHeightF / 2.0f;
-	return ScreenPos(screenx, screeny, z, true);
+	float pi = 3.14f;
+	float x1 = A.x - simple.Camera.pos.x; 
+	float y1 = A.y - simple.Camera.pos.y;
+	float z1 = A.z - simple.Camera.pos.z;
+	float Yaw = CameraYaw * (pi / 180.0f);
+	float Pitch = CameraPitch * (pi / 180.0f);
+	float x2 = cos(Yaw) * x1 - sin(Yaw) * z1;
+	float z2 = cos(Yaw) * z1 + sin(Yaw) * x1;
+	float y2 = y1;
+	if (z2 <= 0.1) return ScreenPos(0,0,0,false);
+	y2 *= -1;
+	float screenx = (x2 / z2) * simple.RenderScale + ScreenWidthF / 2.0f;
+	float screeny = (y2 / z2) * simple.RenderScale + ScreenHeightF / 2.0f;
+	return ScreenPos(screenx, screeny, z2, true);
 }
 
 bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
