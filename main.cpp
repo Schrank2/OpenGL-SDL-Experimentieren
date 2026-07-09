@@ -45,9 +45,9 @@ int main(int argc, char* argv[])
 		PauseTime = 0;
 		if (mainInput[6].active) {
 			wasPaused = true;
+			SDL_SetWindowMouseGrab(simple.window, false);
 			if (!wasPaused) { // pause starts
 				PauseStartTime = CurrentTime;
-				SDL_SetWindowMouseGrab(simple.window, false);
 			}
 		}
 		else {
