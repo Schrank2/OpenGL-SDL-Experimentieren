@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 	simple.init();
 	bool running = true;
 	float Frametime = 0.0f;
-	float FrameRateTarget = 60.0f;
+	float FrameRateTarget = 240.0f;
 	float FrameTimeTarget = 1000.0f / FrameRateTarget;
 	float FrameStartTime = 0.0f;
 	float CurrentTime = 0.0f;
@@ -61,9 +61,9 @@ int main(int argc, char* argv[])
 		}
 		// Rendering and Showing a Plane
 		if (!mainInput[6].active && CurrentTime > FrameStartTime + FrameTimeTarget) {
-			simple.render();
 			Frametime = CurrentTime - FrameStartTime;
-			FrameStartTime = SDL_GetTicks();
+			simple.render();
+			FrameStartTime = CurrentTime;
 		}
 		if (!mainInput[6].active && CurrentTime >= LastReportTime + TickRateTarget) {
 			LastReportTime = CurrentTime;
@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
 				Report.push_back("Camera Position x: " + format("{:.1f}",simple.Camera.pos.x) + " y: " + format("{:.1f}", simple.Camera.pos.y) + " z: " + format("{:.1f}", simple.Camera.pos.z));
 				Report.push_back("Camera Rotation Yaw: " + format("{:.1f}", simple.CameraYaw) + " Pitch: " + format("{:.1f}", simple.CameraPitch));
 				Report.push_back("Camera Velocity x: " + format("{:.3f}", simple.Camera.velocity.x) + " y: " + format("{:.3f}", simple.Camera.velocity.y) + " z: " + format("{:.3f}", simple.Camera.velocity.z));
-				Report.push_back("Rendering Performance: " + to_string(FPS) + "fps | " + to_string(Frametime) + "ms");
+				Report.push_back("Rendering Performance: " + format("{:.1f}", FPS) + "fps | " + format("{:.1f}", Frametime) + "ms");
 			}
 		}
 	}
