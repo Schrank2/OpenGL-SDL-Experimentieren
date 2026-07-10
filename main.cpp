@@ -20,6 +20,7 @@ int main(int argc, char* argv[])
 	init_libs();
 	simple.init();
 	bool running = true;
+
 	float Frametime = 0.0f;
 	float FrameRateTarget = 240.0f;
 	float FrameTimeTarget = 1000.0f / FrameRateTarget;
@@ -27,12 +28,14 @@ int main(int argc, char* argv[])
 	float CurrentTime = 0.0f;
 	float LastReportTime = 0.0f;
 	float FPS = 0.0f;
+
 	float Ticktime = 0.0f;
 	float TickRateTarget = 60.0f;
 	float TickTimeTarget = 1000.0f / TickRateTarget;
 	world.TickStrength = TickRateTarget / 1000.0f;
 	float TickStartTime = 0.0f;
 	float TPS = 0.0f;
+
 	bool Pause = false;
 	input.init(&mainInput);
 	bool wasPaused = false;
@@ -42,6 +45,7 @@ int main(int argc, char* argv[])
 
 	while (running) {
 		CurrentTime = SDL_GetTicks();
+		input.pollMouse(&mainMouse);
 		input.poll(&mainInput);
 		PauseTime = 0;
 		if (mainInput[6].active) {
@@ -58,7 +62,6 @@ int main(int argc, char* argv[])
 			}
 			wasPaused = false;
 		}
-		input.pollMouse(&mainMouse);
 
 		if (!mainInput[6].active && CurrentTime > TickStartTime + TickTimeTarget - PauseTime) {
 			Ticktime = CurrentTime - PauseTime - TickStartTime;
