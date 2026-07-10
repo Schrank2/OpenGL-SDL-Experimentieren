@@ -329,29 +329,23 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 }
 
 void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
-	// Direction Vector AB
-	ScreenPos DV = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z, true);
-	//Step Count
-	float r = max(abs(DV.x), abs(DV.y));
-	// Step Size
-	float s = 1.0f / r;
-	// Current Position
-	ScreenPos C = A;
-	// Just Draw a point if steps == 0;
-	if (s == 0) {
-		if (DepthBufferPoint(C)) DrawPixel(C.x, C.y, c);
+	ScreenPos DirectionVectorAB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z, true);
+	float StepCount = max(abs(DirectionVectorAB.x), abs(DirectionVectorAB.y));
+	float StepSize = 1.0f / StepCount;
+	ScreenPos CurrentPos = A;
+	if (StepSize == 0) {
+		if (DepthBufferPoint(CurrentPos)) DrawPixel(CurrentPos.x, CurrentPos.y, c);
 		return;
 	}
-	// Vector to add Between each step (SV Stepvector)
-	ScreenPos SV = ScreenPos(DV.x * s, DV.y * s, DV.z * s, true);
+	ScreenPos StepVector = ScreenPos(DirectionVectorAB.x * StepSize, DirectionVectorAB.y * StepSize, DirectionVectorAB.z * StepSize, true);
 
-	for (float i = 0; i <= r; i++) {
-		if (DepthBufferPoint(C)) {
-			DrawPixel(C.x, C.y, c);
+	for (float i = 0; i <= StepCount; i++) {
+		if (DepthBufferPoint(CurrentPos)) {
+			DrawPixel(CurrentPos.x, CurrentPos.y, c);
 		}
-		C.x += SV.x;
-		C.y += SV.y;
-		C.z += SV.z;
+		CurrentPos.x += StepVector.x;
+		CurrentPos.y += StepVector.y;
+		CurrentPos.z += StepVector.z;
 	}
 	
 }
