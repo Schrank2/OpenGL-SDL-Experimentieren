@@ -41,16 +41,16 @@ void WORLD::init() {
 	Planes.push_back(Plane(Triangles[0], bright_blue));
 
 	// add Lines to World
-	Lines.push_back(Line(Points[0], Points[6], 'x', dark_blue));
-	Lines.push_back(Line(Points[0], Points[7], 'y', dark_red));
-	Lines.push_back(Line(Points[0], Points[8], 'z', dark_green));
+	//Lines.push_back(Line(Points[0], Points[6], 'x', dark_blue));
+	//Lines.push_back(Line(Points[0], Points[7], 'y', dark_red));
+	//Lines.push_back(Line(Points[0], Points[8], 'z', dark_green));
 }
 
 void WORLD::tick() {
 	if (debug == true) { cout << "[DEBUG] function game.tick() from game.cpp" << endl; }
 	// Update Camera Rotation
-	simple.CameraYaw += 90.0f * (mainMouse.x / ScreenWidthF) * mainMouse.sens;
-	simple.CameraPitch += 90.0f * (mainMouse.y / ScreenHeightF) * mainMouse.sens;
+	simple.CameraYaw += 90.0f * (mainMouse.movex / ScreenWidthF) * mainMouse.sens;
+	simple.CameraPitch += 90.0f * (mainMouse.movey / ScreenHeightF) * mainMouse.sens;
 	mainMouse.movex = 0.0f;
 	mainMouse.movey = 0.0f;
 	

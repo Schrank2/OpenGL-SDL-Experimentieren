@@ -40,8 +40,6 @@ struct Button {
 struct Mouse {
 	float x = 0.0f;
 	float y = 0.0f;
-	float lastx = 0.0f;
-	float lasty = 0.0f;
 	float movex = 0.0f;
 	float movey = 0.0f;
 	float sens = 1.0f;
