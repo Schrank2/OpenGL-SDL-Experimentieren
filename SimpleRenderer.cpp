@@ -246,8 +246,7 @@ bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
 }
 
 void SimpleRenderer::DrawTriangle(Triangle T) {
-	RGBA_int ColorInt = FloatToIntColor(T.color);
-	SDL_SetRenderDrawColor(simple.renderer, ColorInt.r, ColorInt.g, ColorInt.b, ColorInt.a);
+	SDL_SetRenderDrawColor(simple.renderer, T.color.r, T.color.g, T.color.b, T.color.a);
 	// Get Screen Coordinates
 	ScreenPos A = Projection(T.p1.pos);
 	ScreenPos B = Projection(T.p2.pos);
@@ -272,7 +271,7 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 	float diffZ = maxZ-minZ;
 	float shade;
 	float shadeIntensity = 0.4f;
-	RGBA_int LocalColor = ColorInt;
+	RGBA_int LocalColor = T.color;
 
 	// Vectors
 	ScreenPos AB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z, true);
@@ -320,7 +319,7 @@ void SimpleRenderer::DrawTriangle(Triangle T) {
 			P.z = lz + r * (rz - lz);
 			if (DepthBufferPoint(P)) {
 				shade = static_cast<float>(P.z - minZ) / static_cast<float>(diffZ);
-				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, ColorInt);
+				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, T.color);
 				LocalColor.a = 255;
 				DrawPixel(P.x, P.y, LocalColor);
 			}
@@ -377,11 +376,9 @@ float SimpleRenderer::DistBetweenPoints(Pos a, Pos b) {
 }
 
 void SimpleRenderer::DrawPoint(Point A) {
-	// calculating the screen coordinates for the point
 	ScreenPos ScreenA = Projection(A.pos);
-	RGBA_int Color = FloatToIntColor(A.color);
 	if (debug == true) { cout << "[DEBUG] Drawing Point: " << A.letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl; }
-	//simple.DrawSphere(A.pos, 0.05f, Color);
+	simple.DrawSphere(A.pos, 0.05f, A.color);
 }
 
 SimpleRenderer simple;

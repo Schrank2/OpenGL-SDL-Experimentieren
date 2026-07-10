@@ -11,14 +11,14 @@ vector<Line> Lines;
 vector<Triangle> Triangles;
 vector<Plane> Planes;
 // bright RGB colors
-RGBA_float bright_red(255.0f, 0.0f, 0.0f, 255.0f);
-RGBA_float bright_blue(100.0f, 100.0f, 200.0f, 255.0f);
-RGBA_float bright_green(0.0f, 255.0f, 0.0f, 255.0f);
+RGBA_int bright_red(255, 0, 0, 255);
+RGBA_int bright_blue(100, 100, 200, 255);
+RGBA_int bright_green(0, 255, 0, 255);
 // dark RGB colors
-RGBA_float dark_red(128.0f, 0.0f, 0.0f, 255.0f);
-RGBA_float dark_green(0.0f, 128.0f, 0.0f, 255.0f);
-RGBA_float dark_blue(0.0f, 0.0f, 128.0f, 255.0f);
-RGBA_float black(75.0f, 75.0f, 75.0f, 255.0f);
+RGBA_int dark_red(128, 0, 0, 255);
+RGBA_int dark_green(0, 128, 0, 255);
+RGBA_int dark_blue(0, 0, 128, 255);
+RGBA_int black(75, 75, 75, 255);
 
 void WORLD::init() {
 	if (debug == true) { cout << "[DEBUG] function world.init() from world.cpp" << endl; }
