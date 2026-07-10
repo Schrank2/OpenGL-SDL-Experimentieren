@@ -285,7 +285,7 @@ void SimpleRenderer::DrawTriangle(Pos A3D, Pos B3D, Pos C3D, RGBA_int Color) {
 	int a = 0;
 	// Drawing the Triangle
 	int x, maxX;
-	int y = A.y > 0 ? A.y : 0; // Clipping if minY < 0
+	int y = A.y > 1 ? A.y + 1 : 1; // Clipping if minY < 0
 	int lx, rx, dx;
 	float lz, rz;
 	ScreenPos P = A; // Current Position to Draw
