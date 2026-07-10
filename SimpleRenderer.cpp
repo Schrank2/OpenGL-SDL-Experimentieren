@@ -157,7 +157,7 @@ void SimpleRenderer::draw() {
 	}
 	// Draw all triangles from world
 	for (int j = 0; j < static_cast<int>(world.Triangles.size()); j++) {
-		simple.DrawTriangle(world.Triangles[j]);
+		simple.DrawTriangle(world.Triangles[j].p1.pos,world.Triangles[j].p2.pos,world.Triangles[j].p3.pos, world.Triangles[j].color);
 	}
 }
 
@@ -248,12 +248,10 @@ bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
 	return true;
 }
 
-void SimpleRenderer::DrawTriangle(ScreenPos A, ScreenPos B, ScreenPos C, RGBA_int Color) {
-	SDL_SetRenderDrawColor(simple.renderer, T.color.r, T.color.g, T.color.b, T.color.a);
-	// Get Screen Coordinates
-	ScreenPos A = Projection(T.p1.pos);
-	ScreenPos B = Projection(T.p2.pos);
-	ScreenPos C = Projection(T.p3.pos);
+void SimpleRenderer::DrawTriangle(Pos A3D, Pos B3D, Pos C3D, RGBA_int Color) {
+	ScreenPos A = Projection(A3D);
+	ScreenPos B = Projection(B3D);
+	ScreenPos C = Projection(C3D);
 	// Culling if fully behind camera
 	if (!A.valid and !B.valid and !C.valid) return;
 	// Sort by smallest y
@@ -274,7 +272,7 @@ void SimpleRenderer::DrawTriangle(ScreenPos A, ScreenPos B, ScreenPos C, RGBA_in
 	float diffZ = maxZ-minZ;
 	float shade;
 	float shadeIntensity = 0.4f;
-	RGBA_int LocalColor = T.color;
+	RGBA_int LocalColor = Color;
 
 	// Vectors
 	ScreenPos AB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z, true);
@@ -322,7 +320,7 @@ void SimpleRenderer::DrawTriangle(ScreenPos A, ScreenPos B, ScreenPos C, RGBA_in
 			P.z = lz + r * (rz - lz);
 			if (DepthBufferPoint(P)) {
 				shade = static_cast<float>(P.z - minZ) / static_cast<float>(diffZ);
-				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, T.color);
+				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, Color);
 				LocalColor.a = 255;
 				DrawPixel(P.x, P.y, LocalColor);
 			}

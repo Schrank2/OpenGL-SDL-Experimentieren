@@ -34,7 +34,7 @@ public:
 	void DrawPoint(Point point);
 	void TextRender();
 	void DrawLine(ScreenPos A, ScreenPos B, RGBA_int c);
-	void DrawTriangle(Triangle A);
+	void DrawTriangle(Pos A, Pos B, Pos C, RGBA_int Color);
 	float DistBetweenPoints(Pos a, Pos b);
 	float RenderScale;
 	float ScreenDist(ScreenPos A, ScreenPos B);
