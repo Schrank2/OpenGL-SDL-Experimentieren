@@ -41,23 +41,24 @@ int main(int argc, char* argv[])
 	bool wasPaused = false;
 	float PauseStartTime = 0;
 	float PauseTime = 0;
-	//SDL_SetWindowRelativeMouseMode(simple.window, true);
+	SDL_SetWindowRelativeMouseMode(simple.window, true);
 
 	while (running) {
 		CurrentTime = SDL_GetTicks();
 		input.poll(&mainInput);
+		input.pollMouse(&mainMouse);
 		PauseTime = 0;
 		if (mainInput[6].active) {
-			wasPaused = true;
 			if (!wasPaused) { // pause starts
 				PauseStartTime = CurrentTime;
-				//SDL_SetWindowRelativeMouseMode(simple.window, false);
+				SDL_SetWindowRelativeMouseMode(simple.window, false);
 			}
+			wasPaused = true;
 		}
 		else {
 			if (wasPaused) { // pause ends
 				PauseTime = CurrentTime - PauseStartTime; 
-				//SDL_SetWindowRelativeMouseMode(simple.window, true);
+				SDL_SetWindowRelativeMouseMode(simple.window, true);
 			}
 			wasPaused = false;
 		}
@@ -72,7 +73,6 @@ int main(int argc, char* argv[])
 		// Rendering and Showing a Plane
 		if (CurrentTime > FrameStartTime + FrameTimeTarget) {
 			Frametime = CurrentTime - FrameStartTime;
-			input.pollMouse(&mainMouse);
 			simple.render();
 			FrameStartTime = CurrentTime;
 		}
