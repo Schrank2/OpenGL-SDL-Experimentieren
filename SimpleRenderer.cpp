@@ -164,10 +164,13 @@ void SimpleRenderer::draw() {
 void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
 	ScreenPos As = Projection(A);
 	if (As.z + 0.3 <= r) return;
-	float FrontDepth = A.z - simple.Camera.pos.z - r;
+	Pos Front = Pos(A.x, A.y, A.z - r);
+	ScreenPos ScreenFront = Projection(Front);
+	float FrontDepth = ScreenFront.z;
 	// weirdly adjusting the radius for depth of A
 	ScreenPos Temp = Projection({ A.y, r + A.y, A.z });
 	float R = As.y - Temp.y;
+	cout << R << endl;
 	// where the sphere is lit most brightly (temporary, will later be replaced)
 	ScreenPos Light = ScreenPos(As.x - (R/2), As.y - (R/2), As.z, true);
 
@@ -245,7 +248,7 @@ bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
 	return true;
 }
 
-void SimpleRenderer::DrawTriangle(Triangle T) {
+void SimpleRenderer::DrawTriangle(ScreenPos A, ScreenPos B, ScreenPos C, RGBA_int Color) {
 	SDL_SetRenderDrawColor(simple.renderer, T.color.r, T.color.g, T.color.b, T.color.a);
 	// Get Screen Coordinates
 	ScreenPos A = Projection(T.p1.pos);
