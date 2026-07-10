@@ -27,8 +27,11 @@ void WORLD::init() {
 	Points.push_back(Point('A', Pos(2.0f, 2.0f, 2.0f), bright_red));
 	Points.push_back(Point('B', Pos(2.0f, 0.0f, 0.0f), bright_green));
 	Points.push_back(Point('C', Pos(0.0f, 0.0f, 2.0f), bright_blue));
-	Points.push_back(Point('D', Pos(4.0f, 4.0f, -3.0f), dark_red));
-	Points.push_back(Point('E', Pos(0.0f, 0.05f, 0.0f), dark_green));
+	Points.push_back(Point('D', Pos(4.0f, 4.0f, -3.0f), bright_red));
+	Points.push_back(Point('E', Pos(0.0f, 0.05f, 0.0f), bright_green));
+	Points.push_back(Point('X', Pos(1.0f, 0.0f, 0.0f), dark_blue));
+	Points.push_back(Point('Y', Pos(0.0f, 1.0f, 0.0f), dark_red));
+	Points.push_back(Point('Z', Pos(0.0f, 0.0f, 1.0f), dark_green));
 
 	// add Triangles to World
 	Triangles.push_back(Triangle(Points[1], Points[2], Points[3], bright_red));
@@ -37,7 +40,9 @@ void WORLD::init() {
 	Planes.push_back(Plane(Triangles[0], bright_blue));
 
 	// add Lines to World
-
+	Lines.push_back(Line(Points[0], Points[6], 'x', dark_blue));
+	Lines.push_back(Line(Points[0], Points[7], 'y', dark_red));
+	Lines.push_back(Line(Points[0], Points[8], 'z', dark_green));
 }
 
 void WORLD::tick() {

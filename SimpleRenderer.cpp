@@ -143,14 +143,7 @@ void SimpleRenderer::TextRender() {
 
 void SimpleRenderer::draw() {
 	if (debug == true) { cout << "[DEBUG] function simple.draw() from SimpleRenderer.cpp" << endl; }
-	// Draw coordinate system lines
-	float temp = 1.5f;
-	Pos Origin = Pos(0.0f, 0.0f, 0.0f);
-	if(0.0f > Camera.pos.z + 0.25f) {
-		simple.DrawLine(Origin, Pos(temp, 0.0f, 0.0f), RGBA_int(255,0,0,255));
-		simple.DrawLine(Origin, Pos(0.0f, temp, 0.0f), RGBA_int(0,255,0,255));
-		simple.DrawLine(Origin, Pos(0.0f, 0.0f, temp), RGBA_int(0,0,255,255));
-	}
+	// Draw all Lines from world
 	for (int i = 0; i < static_cast<int>(world.Lines.size()); i++) {
 		simple.DrawLine(world.Lines[i].p1.pos, world.Lines[i].p2.pos, world.Lines[i].color );
 	}
