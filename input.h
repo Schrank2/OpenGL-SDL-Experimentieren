@@ -50,7 +50,7 @@ struct Mouse {
 class INPUTCLASS {
 	public:
 		void poll(vector<Button>* Input);
-		void pollButton(Button* Button, int tick);
+		void pollButton(Button* Button, SDL_Event* event, int tick);
 		void pollMouse(Mouse* Mouse);
 		void init(vector<Button>* Input);
 };

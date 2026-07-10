@@ -2,15 +2,13 @@
 #include "input.h"
 using namespace std;
 
-SDL_Event event;
+SDL_Event InputEvent;
 
 void INPUTCLASS::poll(vector<Button>* Input) {
-	if (SDL_PollEvent(&event)) {
-		int tick = SDL_GetTicks();
-		int i = 0;
-		for (i = 0; i < Input->size(); i++) {
-			pollButton(&(*Input)[i], tick);
-		}
+	int tick = SDL_GetTicks();
+	int i = 0;
+	while (SDL_PollEvent(&InputEvent) && i <= Input->size()) {
+		pollButton(&(*Input)[i], &InputEvent, tick);
 	}
 }
 
@@ -26,19 +24,19 @@ void INPUTCLASS::init(vector<Button>* Input) {
 	Input->push_back(Button(SDLK_F3, true, false, 0));
 }
 
-void INPUTCLASS::pollButton(Button* Button, int tick) {
+void INPUTCLASS::pollButton(Button* Button, SDL_Event* event, int tick ) {
 	if (Button->hasDelay == true && tick < tick + Button->Delay) {
 		return;
 	}
 	Button->lastPress = tick;
 
-	if (event.type == SDL_EVENT_KEY_UP) {
-		if (event.key.key == Button->KeyCode) {
+	if (event->type == SDL_EVENT_KEY_UP) {
+		if (event->key.key == Button->KeyCode) {
 			Button->pressed = false;
 		}
 	}
-	if (event.type == SDL_EVENT_KEY_DOWN) {
-		if (event.key.key == Button->KeyCode) {
+	if (event->type == SDL_EVENT_KEY_DOWN) {
+		if (event->key.key == Button->KeyCode) {
 			Button->pressed = true;
 		}
 	}
