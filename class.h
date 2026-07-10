@@ -33,7 +33,7 @@ public:
 	bool DepthBufferPoint(ScreenPos A);
 	void DrawPoint(Point point);
 	void TextRender();
-	void DrawLine(ScreenPos A, ScreenPos B, RGBA_int c);
+	void DrawLine(Pos A3D, Pos B3D, RGBA_int c);
 	void DrawTriangle(Pos A, Pos B, Pos C, RGBA_int Color);
 	float DistBetweenPoints(Pos a, Pos b);
 	float RenderScale;

@@ -35,6 +35,9 @@ void WORLD::init() {
 	Triangles.push_back(Triangle(Points[0], Points[2], Points[3], bright_blue));
 	// add Planes to World
 	Planes.push_back(Plane(Triangles[0], bright_blue));
+
+	// add Lines to World
+
 }
 
 void WORLD::tick() {

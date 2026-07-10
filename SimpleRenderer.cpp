@@ -145,11 +145,11 @@ void SimpleRenderer::draw() {
 	if (debug == true) { cout << "[DEBUG] function simple.draw() from SimpleRenderer.cpp" << endl; }
 	// Draw coordinate system lines
 	float temp = 1.5f;
-	ScreenPos Origin = Projection(Pos(0.0f, 0.0f, 0.0f));
+	Pos Origin = Pos(0.0f, 0.0f, 0.0f);
 	if(0.0f > Camera.pos.z + 0.25f) {
-		simple.DrawLine(Origin, Projection(Pos(temp, 0.0f, 0.0f)), RGBA_int(255,0,0,255));
-		simple.DrawLine(Origin, Projection(Pos(0.0f, temp, 0.0f)), RGBA_int(0,255,0,255));
-		simple.DrawLine(Origin, Projection(Pos(0.0f, 0.0f, temp)), RGBA_int(0,0,255,255));
+		simple.DrawLine(Origin, Pos(temp, 0.0f, 0.0f), RGBA_int(255,0,0,255));
+		simple.DrawLine(Origin, Pos(0.0f, temp, 0.0f), RGBA_int(0,255,0,255));
+		simple.DrawLine(Origin, Pos(0.0f, 0.0f, temp), RGBA_int(0,0,255,255));
 	}
 	// Draw all points from world
 	for (int i = 0; i < static_cast<int>(world.Points.size()); i++) {
@@ -328,7 +328,9 @@ void SimpleRenderer::DrawTriangle(Pos A3D, Pos B3D, Pos C3D, RGBA_int Color) {
 	}
 }
 
-void SimpleRenderer::DrawLine(ScreenPos A, ScreenPos B, RGBA_int c) {
+void SimpleRenderer::DrawLine(Pos A3D, Pos B3D, RGBA_int c) {
+	ScreenPos A = Projection(A3D);
+	ScreenPos B = Projection(B3D);
 	ScreenPos DirectionVectorAB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z, true);
 	float StepCount = max(abs(DirectionVectorAB.x), abs(DirectionVectorAB.y));
 	float StepSize = 1.0f / StepCount;
