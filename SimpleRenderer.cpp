@@ -151,6 +151,9 @@ void SimpleRenderer::draw() {
 		simple.DrawLine(Origin, Pos(0.0f, temp, 0.0f), RGBA_int(0,255,0,255));
 		simple.DrawLine(Origin, Pos(0.0f, 0.0f, temp), RGBA_int(0,0,255,255));
 	}
+	for (int i = 0; i < static_cast<int>(world.Lines.size()); i++) {
+		simple.DrawLine(world.Lines[i].p1.pos, world.Lines[i].p2.pos, world.Lines[i].color );
+	}
 	// Draw all points from world
 	for (int i = 0; i < static_cast<int>(world.Points.size()); i++) {
 		simple.DrawPoint(world.Points[i]);
