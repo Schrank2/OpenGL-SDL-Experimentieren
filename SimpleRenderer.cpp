@@ -286,7 +286,7 @@ void SimpleRenderer::DrawTriangle(Pos A3D, Pos B3D, Pos C3D, RGBA_int Color) {
 	// Drawing the Triangle
 	int x, maxX;
 	int y = A.y > 1 ? A.y + 1 : 1; // Clipping if minY < 0
-	int lx, rx, dx;
+	int lx, rx, dx, dz;
 	float lz, rz;
 	ScreenPos P = A; // Current Position to Draw
 	int maxY = C.y < ScreenHeight ? C.y : ScreenHeight; // Clipping if maxY > ScreenHeight
@@ -307,7 +307,7 @@ void SimpleRenderer::DrawTriangle(Pos A3D, Pos B3D, Pos C3D, RGBA_int Color) {
 			rz = g0.z + r * g.z;
 		}
 		else { rx = g0.x; rz = g0.z; }
-		if (lx > rx) { dx = lx; lx = rx; rx = dx; }
+		if (lx > rx) { dx = lx; lx = rx; rx = dx; dz = lz; lz = rz; rz = dz; }
 		maxX = rx < ScreenWidth ? rx : ScreenWidth; // Clipping if maxX > ScreenWidth
 		for (x = lx > 0 ? lx : 0; x < maxX; x++) { // Clipping if minX < 0
 			P.x = x;
@@ -315,7 +315,7 @@ void SimpleRenderer::DrawTriangle(Pos A3D, Pos B3D, Pos C3D, RGBA_int Color) {
 			r = static_cast<float>(x - lx) / static_cast<float>(rx - lx);
 			P.z = lz + r * (rz - lz);
 			if (DepthBufferPoint(P)) {
-				shade = static_cast<float>(P.z - minZ) / static_cast<float>(diffZ);
+				shade = abs(P.z - minZ) / diffZ;
 				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, Color);
 				LocalColor.a = 255;
 				DrawPixel(&P.x, &P.y, &LocalColor);
