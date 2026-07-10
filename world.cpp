@@ -61,21 +61,25 @@ void WORLD::tick() {
 	if (mainInput[0].active == true) {
 		simple.Camera.velocity.z += 10.0f * world.TickStrength * cos(Yaw);
 		simple.Camera.velocity.x += 10.0f * world.TickStrength * sin(Yaw);
+		//simple.Camera.velocity.z += 10.0f * world.TickStrength;
 	}
 	// A
 	if (mainInput[1].active == true) {
 		simple.Camera.velocity.x -= 10.0f * world.TickStrength * cos(Yaw);
 		simple.Camera.velocity.z += 10.0f * world.TickStrength * sin(Yaw);
+		//simple.Camera.velocity.x -= 10.0f * world.TickStrength;
 	}
 	// S
 	if (mainInput[2].active == true) {
 		simple.Camera.velocity.z -= 10.0f * world.TickStrength * cos(Yaw);
 		simple.Camera.velocity.x -= 10.0f * world.TickStrength * sin(Yaw);
+		//simple.Camera.velocity.z -= 10.0f * world.TickStrength;
 	}
 	// D
 	if (mainInput[3].active == true) {
 		simple.Camera.velocity.x += 10.0f * world.TickStrength * cos(Yaw);
 		simple.Camera.velocity.z -= 10.0f * world.TickStrength * sin(Yaw);
+		//simple.Camera.velocity.x += 10.0f * world.TickStrength;
 	}
 
 	if (mainInput[4].active == true) simple.Camera.velocity.y += 10.0f * world.TickStrength;

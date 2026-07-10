@@ -59,7 +59,7 @@ void INPUTCLASS::pollButton(Button* Button, SDL_Event* event, int tick ) {
 }
 
 void INPUTCLASS::pollMouse(Mouse* Mouse) {
-	SDL_GetRelativeMouseState(&Mouse->x, &Mouse->y);
+	//SDL_GetRelativeMouseState(&Mouse->x, &Mouse->y);
 	Mouse->movex += Mouse->x - Mouse->lastx;
 	Mouse->movey += Mouse->y - Mouse->lasty;
 	Mouse->lastx = Mouse->x;
