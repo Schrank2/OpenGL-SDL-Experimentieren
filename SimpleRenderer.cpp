@@ -164,7 +164,7 @@ void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
 	ScreenPos ScreenFront = Projection(Front);
 	float FrontDepth = ScreenFront.z;
 	// weirdly adjusting the radius for depth of A
-	ScreenPos Temp = Projection({ A.y, r + A.y, A.z });
+	ScreenPos Temp = Projection({ A.x, A.y - r, A.z });
 	float R = As.y - Temp.y;
 	cout << R << endl;
 	// where the sphere is lit most brightly (temporary, will later be replaced)
@@ -377,7 +377,7 @@ float SimpleRenderer::DistBetweenPoints(Pos a, Pos b) {
 void SimpleRenderer::DrawPoint(Point A) {
 	ScreenPos ScreenA = Projection(A.pos);
 	if (debug == true) { cout << "[DEBUG] Drawing Point: " << A.letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl; }
-	simple.DrawSphere(A.pos, 0.05f, A.color);
+	//simple.DrawSphere(A.pos, 0.05f, A.color);
 }
 
 SimpleRenderer simple;
