@@ -7,8 +7,10 @@ SDL_Event InputEvent;
 void INPUTCLASS::poll(vector<Button>* Input) {
 	int tick = SDL_GetTicks();
 	int i = 0;
-	while (SDL_PollEvent(&InputEvent) && i <= Input->size()) {
-		pollButton(&(*Input)[i], &InputEvent, tick);
+	while (SDL_PollEvent(&InputEvent)) {
+		for (Button& button : *Input) {
+			pollButton(&button, &InputEvent, tick);
+		}
 	}
 }
 
@@ -59,7 +61,7 @@ void INPUTCLASS::pollButton(Button* Button, SDL_Event* event, int tick ) {
 }
 
 void INPUTCLASS::pollMouse(Mouse* Mouse) {
-	//SDL_GetRelativeMouseState(&Mouse->x, &Mouse->y);
+	SDL_GetRelativeMouseState(&Mouse->x, &Mouse->y);
 	Mouse->movex += Mouse->x - Mouse->lastx;
 	Mouse->movey += Mouse->y - Mouse->lasty;
 	Mouse->lastx = Mouse->x;
