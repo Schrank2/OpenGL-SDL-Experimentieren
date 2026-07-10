@@ -51,7 +51,7 @@ class INPUTCLASS {
 	public:
 		void poll(vector<Button>* Input);
 		void pollButton(Button* Button, int tick);
-		void pollMouse(Mouse* Mouse, SDL_Window* Window, bool autoCenter, float ScreenW, float ScreenH);
+		void pollMouse(Mouse* Mouse);
 		void init(vector<Button>* Input);
 };
 
