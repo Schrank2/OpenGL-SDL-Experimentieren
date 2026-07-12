@@ -17,9 +17,15 @@ Mouse mainMouse;
 int main(int argc, char* argv[])
 {
 	if (debug == true) { cout << "[DEBUG] function main() from main.cpp" << endl; }
-	world.init();
+	float ScreenPercentage = 0.75;
+	int MonitorWidth = 0;
+	int MonitorHeight = 0;
 	init_libs();
-	simple.init();
+	simple.GetScreenData(&MonitorWidth, &MonitorHeight);
+	int ScreenWidth = MonitorWidth * 0.75;
+	int ScreenHeight = MonitorHeight * 0.75;
+	simple.init(&ScreenWidth, &ScreenHeight);
+	world.init(&ScreenWidth, &ScreenHeight);
 	bool running = true;
 
 	float Frametime = 0.0f;

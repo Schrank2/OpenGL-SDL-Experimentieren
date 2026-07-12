@@ -16,10 +16,14 @@ public:
 	vector<Line> Lines;
 	vector<Triangle> Triangles;
 	vector<Plane> Planes;
-	void init();
+	void init(int* ScreenWidth, int* ScreenHeight);
 	void tick();
 	float TickStrength = 0.0f;
 	bool DebugMenuShown = false;
+	int ScreenWidth;
+	int ScreenHeight;
+	float ScreenWidthF;
+	float ScreenHeightF;
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern WORLD world;

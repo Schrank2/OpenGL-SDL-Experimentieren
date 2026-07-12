@@ -10,11 +10,6 @@ using namespace std;
 #include "input.h"
 /* Information about the current video settings. */
 /* extern const SDL_VideoInfo; */
-/* Dimensions of our window. */
-extern int ScreenWidth;
-extern int ScreenHeight;
-extern float ScreenWidthF;
-extern float ScreenHeightF;
 /* Color depth in bits of our window. */
 extern int bpp;
 /* Flags we will pass into SDL_SetVideoMode. */

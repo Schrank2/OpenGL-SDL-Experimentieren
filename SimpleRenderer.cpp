@@ -9,17 +9,15 @@
 #include <iomanip> // basically settings for cout
 #include <algorithm> // for clamp()
 
-void SimpleRenderer::GetScreenData() {
+void SimpleRenderer::GetScreenData(int* ScreenWidth, int* ScreenHeight) {
 	const SDL_DisplayMode* info = SDL_GetDesktopDisplayMode(1);
 	if (!info)
 	{
 		cout << "Video query failed: " << SDL_GetError() << endl;
 		exit(1);
 	}
-	ScreenWidthF = static_cast<float>(info->w * 0.75);
-	ScreenHeightF = static_cast<float>(info->h * 0.75);
-	ScreenWidth = static_cast<int>(ScreenWidthF);
-	ScreenHeight = static_cast<int>(ScreenHeightF);
+	*ScreenWidth = info->w;
+	*ScreenHeight = info->h;
 }
 
 SDL_Window* SimpleRenderer::Create_Window(string title) {
@@ -68,13 +66,16 @@ void SimpleRenderer::Get_TTF_Fonts() {
 	}
 }
 
-void SimpleRenderer::init() {
-	simple.GetScreenData();
+void SimpleRenderer::init(int* ScreenWidth, int* ScreenHeight) {
+	simple.ScreenWidth = *ScreenWidth;
+	simple.ScreenHeight = *ScreenHeight;
+	simple.ScreenWidthF = static_cast<float>(simple.ScreenWidth);
+	simple.ScreenHeightF = static_cast<float>(simple.ScreenHeight);
 	simple.window = Create_Window("Simple Render Main");
 	simple.renderer = Create_Renderer(simple.window);
-	simple.canvas = SDL_CreateTexture(simple.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, ScreenWidth, ScreenHeight);
-	simple.pixels.resize(ScreenHeight * ScreenWidth, 0);
-	simple.DepthBuffer.resize(ScreenHeight * ScreenWidth, 0);
+	simple.canvas = SDL_CreateTexture(simple.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, simple.ScreenWidth, simple.ScreenHeight);
+	simple.pixels.resize(simple.ScreenHeight * simple.ScreenWidth, 0);
+	simple.DepthBuffer.resize(simple.ScreenHeight * simple.ScreenWidth, 0);
 	simple.TextEngine = Create_TextEngine(simple.renderer);
 	simple.Get_TTF_Fonts();
 }

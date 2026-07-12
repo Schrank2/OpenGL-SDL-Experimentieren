@@ -12,7 +12,7 @@ using namespace std;
 // declare R1 so rastSdlRender.cpp can use it
 class SimpleRenderer {
 public:
-	void init();
+	void init(int* ScreenWidth, int* ScreenHeight);
 	bool DepthBufferShown = false;
 	void render(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue);
 	void Get_TTF_Fonts();
@@ -26,7 +26,7 @@ public:
 	SDL_Renderer* Create_Renderer(SDL_Window* window);
 	SDL_Window* Create_Window(string title);
 	TTF_TextEngine* Create_TextEngine(SDL_Renderer* renderer);
-	void GetScreenData();
+	void GetScreenData(int* ScreenWidth, int* ScreenHeight);
 	void draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue);
 	void DrawSphere(Pos A, float r, RGBA_int c);
 	ScreenPos Projection(Pos* A);
@@ -49,6 +49,10 @@ public:
 	bool CheckScreenPos(ScreenPos A);
 	vector<Uint32> pixels;
 	void DrawPixel(float* x, float* y, RGBA_int* c);
+	float ScreenWidth;
+	float ScreenHeight;
+	int ScreenWidthF;
+	int ScreenHeightF;
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;

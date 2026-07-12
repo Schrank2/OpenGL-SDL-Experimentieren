@@ -21,8 +21,12 @@ RGBA_int dark_green(0, 128, 0, 255);
 RGBA_int dark_blue(0, 0, 128, 255);
 RGBA_int black(75, 75, 75, 255);
 
-void WORLD::init() {
+void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	if (debug == true) { cout << "[DEBUG] function world.init() from world.cpp" << endl; }
+	world.ScreenWidth = *ScreenWidth;
+	world.ScreenHeight = *ScreenHeight;
+	world.ScreenWidthF = static_cast<float>(world.ScreenWidth);
+	world.ScreenHeightF = static_cast<float>(world.ScreenHeight);
 	// add Points to World
 	Points.push_back(Point('O', Pos(0.0f, 0.0f, 0.0f), black));
 	Points.push_back(Point('A', Pos(2.0f, 2.0f, 2.0f), bright_red));
@@ -50,8 +54,8 @@ void WORLD::init() {
 void WORLD::tick() {
 	if (debug == true) { cout << "[DEBUG] function game.tick() from game.cpp" << endl; }
 	// Update Camera Rotation
-	simple.CameraYaw += 90.0f * (mainMouse.movex / ScreenWidthF) * mainMouse.sens;
-	simple.CameraPitch += 90.0f * (mainMouse.movey / ScreenHeightF) * mainMouse.sens;
+	simple.CameraYaw += 90.0f * (mainMouse.movex / world.ScreenWidthF) * mainMouse.sens;
+	simple.CameraPitch += 90.0f * (mainMouse.movey / world.ScreenHeightF) * mainMouse.sens;
 	mainMouse.movex = 0.0f;
 	mainMouse.movey = 0.0f;
 	
