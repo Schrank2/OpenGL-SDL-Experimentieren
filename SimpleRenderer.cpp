@@ -159,13 +159,14 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 }
 
 void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
-	ScreenPos As = Projection(A);
+	ScreenPos As = Projection(&A);
 	if (As.z + 0.3 <= r) return;
 	Pos Front = Pos(A.x, A.y, A.z - r);
-	ScreenPos ScreenFront = Projection(Front);
+	ScreenPos ScreenFront = Projection(&Front);
 	float FrontDepth = ScreenFront.z;
 	// weirdly adjusting the radius for depth of A
-	ScreenPos Temp = Projection({ A.x, A.y - r, A.z });
+	Pos Temp3D = Pos(A.x, A.y - r, A.z);
+	ScreenPos Temp = Projection(&Temp3D);
 	float R = As.y - Temp.y;
 	cout << R << endl;
 	// where the sphere is lit most brightly (temporary, will later be replaced)
@@ -221,11 +222,11 @@ float SimpleRenderer::ScreenDist(ScreenPos A, ScreenPos B) {
 	return abs(sqrt(LineX * LineX + LineY * LineY));
 }
 
-ScreenPos SimpleRenderer::Projection(Pos A) {
+ScreenPos SimpleRenderer::Projection(Pos* A) {
 	float pi = 3.14f;
-	float x1 = A.x - simple.Camera.pos.x; 
-	float y1 = A.y - simple.Camera.pos.y;
-	float z1 = A.z - simple.Camera.pos.z;
+	float x1 = A->x - simple.Camera.pos.x; 
+	float y1 = A->y - simple.Camera.pos.y;
+	float z1 = A->z - simple.Camera.pos.z;
 	float Yaw = CameraYaw * (pi / 180.0f);
 	float Pitch = CameraPitch * (pi / 180.0f);
 	float x2 = cos(Yaw) * x1 - sin(Yaw) * z1;
@@ -246,9 +247,9 @@ bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
 }
 
 void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color) {
-	ScreenPos A = Projection(*A3D);
-	ScreenPos B = Projection(*B3D);
-	ScreenPos C = Projection(*C3D);
+	ScreenPos A = Projection(A3D);
+	ScreenPos B = Projection(B3D);
+	ScreenPos C = Projection(C3D);
 	// Culling if fully behind camera
 	if (!A.valid and !B.valid and !C.valid) return;
 	// Sort by smallest y
@@ -326,8 +327,8 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color)
 }
 
 void SimpleRenderer::DrawLine(Pos* A3D, Pos* B3D, RGBA_int* c) {
-	ScreenPos A = Projection(*A3D);
-	ScreenPos B = Projection(*B3D);
+	ScreenPos A = Projection(A3D);
+	ScreenPos B = Projection(B3D);
 	ScreenPos DirectionVectorAB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z, true);
 	float StepCount = max(abs(DirectionVectorAB.x), abs(DirectionVectorAB.y));
 	float StepSize = 1.0f / StepCount;
@@ -376,7 +377,7 @@ float SimpleRenderer::DistBetweenPoints(Pos a, Pos b) {
 }
 
 void SimpleRenderer::DrawPoint(Point* A) {
-	ScreenPos ScreenA = Projection(A->pos);
+	ScreenPos ScreenA = Projection(&A->pos);
 	if (debug == true) { cout << "[DEBUG] Drawing Point: " << A->letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl; }
 	//simple.DrawSphere(A.pos, 0.05f, A.color);
 }
