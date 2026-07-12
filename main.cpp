@@ -3,6 +3,7 @@
 #include "functions.h"
 #include "defs.h"
 #include "class.h"
+#include "world.h"
 #include "input.h"
 #include <iomanip> // for more precise floats in cout
 #include <thread>

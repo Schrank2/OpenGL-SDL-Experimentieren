@@ -4,6 +4,7 @@
 #include "functions.h"
 #include "defs.h"
 #include "class.h"
+#include "world.h"
 #include <vector>
 
 vector<Point> Points;

@@ -53,19 +53,4 @@ public:
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;
 
-// declare game so game.cpp can use it
-class WORLD {
-public:
-	vector<Point> Points;
-	vector<Line> Lines;
-	vector<Triangle> Triangles;
-	vector<Plane> Planes;
-	void init();
-	void tick();
-	float TickStrength = 0.0f;
-	bool DebugMenuShown = false;
-};
-// declare r1 so the R1 functions can be called elsewhere
-extern WORLD world;
-
 #endif // CLASS_H
