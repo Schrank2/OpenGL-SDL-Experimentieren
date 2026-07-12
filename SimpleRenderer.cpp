@@ -149,12 +149,12 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 		simple.DrawLine(&(*LineQueue)[i].p1.pos, &(*LineQueue)[i].p2.pos, &(*LineQueue)[i].color);
 	}
 	// Draw all points from world
-	for (int i = 0; i < static_cast<int>(world.Points.size()); i++) {
-		simple.DrawPoint(world.Points[i]);
+	for (int i = 0; i < static_cast<int>(PointQueue->size()); i++) {
+		simple.DrawPoint(&(*PointQueue)[i]);
 	}
 	// Draw all triangles from world
-	for (int j = 0; j < static_cast<int>(world.Triangles.size()); j++) {
-		simple.DrawTriangle(world.Triangles[j].p1.pos,world.Triangles[j].p2.pos,world.Triangles[j].p3.pos, world.Triangles[j].color);
+	for (int j = 0; j < static_cast<int>(TriangleQueue->size()); j++) {
+		simple.DrawTriangle(&(*TriangleQueue)[j].p1.pos, &(*TriangleQueue)[j].p2.pos, &(*TriangleQueue)[j].p3.pos, &(*TriangleQueue)[j].color);
 	}
 }
 
@@ -245,10 +245,10 @@ bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
 	return true;
 }
 
-void SimpleRenderer::DrawTriangle(Pos A3D, Pos B3D, Pos C3D, RGBA_int Color) {
-	ScreenPos A = Projection(A3D);
-	ScreenPos B = Projection(B3D);
-	ScreenPos C = Projection(C3D);
+void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color) {
+	ScreenPos A = Projection(*A3D);
+	ScreenPos B = Projection(*B3D);
+	ScreenPos C = Projection(*C3D);
 	// Culling if fully behind camera
 	if (!A.valid and !B.valid and !C.valid) return;
 	// Sort by smallest y
@@ -269,7 +269,7 @@ void SimpleRenderer::DrawTriangle(Pos A3D, Pos B3D, Pos C3D, RGBA_int Color) {
 	float diffZ = maxZ-minZ;
 	float shade;
 	float shadeIntensity = 0.4f;
-	RGBA_int LocalColor = Color;
+	RGBA_int LocalColor = *Color;
 
 	// Vectors
 	ScreenPos AB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z, true);
@@ -317,7 +317,7 @@ void SimpleRenderer::DrawTriangle(Pos A3D, Pos B3D, Pos C3D, RGBA_int Color) {
 			P.z = lz + r * (rz - lz);
 			if (DepthBufferPoint(P)) {
 				shade = abs(P.z - minZ) / diffZ;
-				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, Color);
+				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, *Color);
 				LocalColor.a = 255;
 				DrawPixel(&P.x, &P.y, &LocalColor);
 			}
@@ -375,9 +375,9 @@ float SimpleRenderer::DistBetweenPoints(Pos a, Pos b) {
 	return sqrt(v.x*v.x + v.y * v.y + v.z * v.z);
 }
 
-void SimpleRenderer::DrawPoint(Point A) {
-	ScreenPos ScreenA = Projection(A.pos);
-	if (debug == true) { cout << "[DEBUG] Drawing Point: " << A.letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl; }
+void SimpleRenderer::DrawPoint(Point* A) {
+	ScreenPos ScreenA = Projection(A->pos);
+	if (debug == true) { cout << "[DEBUG] Drawing Point: " << A->letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl; }
 	//simple.DrawSphere(A.pos, 0.05f, A.color);
 }
 

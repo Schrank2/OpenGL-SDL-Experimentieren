@@ -31,10 +31,10 @@ public:
 	void DrawSphere(Pos A, float r, RGBA_int c);
 	ScreenPos Projection(Pos A);
 	bool DepthBufferPoint(ScreenPos A);
-	void DrawPoint(Point point);
+	void DrawPoint(Point* point);
 	void TextRender();
 	void DrawLine(Pos* A3D, Pos* B3D, RGBA_int* c);
-	void DrawTriangle(Pos A, Pos B, Pos C, RGBA_int Color);
+	void DrawTriangle(Pos* A, Pos* B, Pos* C, RGBA_int* Color);
 	float DistBetweenPoints(Pos a, Pos b);
 	float RenderScale;
 	float ScreenDist(ScreenPos A, ScreenPos B);
