@@ -2,7 +2,7 @@
 #include <SDL3/SDL_opengl.h>
 #include "functions.h"
 #include "defs.h"
-#include "class.h"
+#include "SimpleRenderer.h"
 #include "world.h"
 #include "input.h"
 #include <iomanip> // for more precise floats in cout
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 		// Rendering and Showing a Plane
 		if (CurrentTime > FrameStartTime + FrameTimeTarget) {
 			Frametime = CurrentTime - FrameStartTime;
-			simple.render();
+			simple.render(&world.Lines, &world.Triangles, &world.Points);
 			FrameStartTime = CurrentTime;
 		}
 		if (CurrentTime >= LastReportTime + TickRateTarget) {

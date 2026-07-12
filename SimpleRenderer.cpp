@@ -2,7 +2,7 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include "functions.h"
 #include "defs.h"
-#include "class.h"
+#include "SimpleRenderer.h"
 #include "world.h"
 #include "input.h"
 #include <vector>
@@ -79,7 +79,7 @@ void SimpleRenderer::init() {
 	simple.Get_TTF_Fonts();
 }
 
-void SimpleRenderer::render() {
+void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue) {
 	if (debug == true) { cout << "[DEBUG] function simple.render() from SimpleRenderer.cpp" << endl; }
 	RenderStartTime = SDL_GetTicks();
 	SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
@@ -90,7 +90,7 @@ void SimpleRenderer::render() {
 	fill(DepthBuffer.begin(), DepthBuffer.end(), 0);
 	DepthBufferMax = 0.0f;
 	DepthBufferMin = 1000000.0f;
-	simple.draw();
+	simple.draw(LineQueue, TriangleQueue, PointQueue);
 	// Draw the Depth Buffer
 	if (mainInput[7].active == true) {
 		// Clear the Main Window
@@ -142,11 +142,11 @@ void SimpleRenderer::TextRender() {
 	}
 }
 
-void SimpleRenderer::draw() {
+void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue) {
 	if (debug == true) { cout << "[DEBUG] function simple.draw() from SimpleRenderer.cpp" << endl; }
 	// Draw all Lines from world
-	for (int i = 0; i < static_cast<int>(world.Lines.size()); i++) {
-		simple.DrawLine(world.Lines[i].p1.pos, world.Lines[i].p2.pos, world.Lines[i].color );
+	for (int i = 0; i < static_cast<int>(LineQueue->size()); i++) {
+		simple.DrawLine(&(*LineQueue)[i].p1.pos, &(*LineQueue)[i].p2.pos, &(*LineQueue)[i].color);
 	}
 	// Draw all points from world
 	for (int i = 0; i < static_cast<int>(world.Points.size()); i++) {
@@ -325,22 +325,22 @@ void SimpleRenderer::DrawTriangle(Pos A3D, Pos B3D, Pos C3D, RGBA_int Color) {
 	}
 }
 
-void SimpleRenderer::DrawLine(Pos A3D, Pos B3D, RGBA_int c) {
-	ScreenPos A = Projection(A3D);
-	ScreenPos B = Projection(B3D);
+void SimpleRenderer::DrawLine(Pos* A3D, Pos* B3D, RGBA_int* c) {
+	ScreenPos A = Projection(*A3D);
+	ScreenPos B = Projection(*B3D);
 	ScreenPos DirectionVectorAB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z, true);
 	float StepCount = max(abs(DirectionVectorAB.x), abs(DirectionVectorAB.y));
 	float StepSize = 1.0f / StepCount;
 	ScreenPos CurrentPos = A;
 	if (StepSize == 0) {
-		if (DepthBufferPoint(CurrentPos)) DrawPixel(&CurrentPos.x, &CurrentPos.y, &c);
+		if (DepthBufferPoint(CurrentPos)) DrawPixel(&CurrentPos.x, &CurrentPos.y, c);
 		return;
 	}
 	ScreenPos StepVector = ScreenPos(DirectionVectorAB.x * StepSize, DirectionVectorAB.y * StepSize, DirectionVectorAB.z * StepSize, true);
 
 	for (float i = 0; i <= StepCount; i++) {
 		if (DepthBufferPoint(CurrentPos)) {
-			DrawPixel(&CurrentPos.x, &CurrentPos.y, &c);
+			DrawPixel(&CurrentPos.x, &CurrentPos.y, c);
 		}
 		CurrentPos.x += StepVector.x;
 		CurrentPos.y += StepVector.y;

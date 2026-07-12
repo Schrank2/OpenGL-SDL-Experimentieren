@@ -41,7 +41,7 @@
     <ClInclude Include="defs.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="class.h">
+    <ClInclude Include="SimpleRenderer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="open.h">

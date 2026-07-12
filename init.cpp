@@ -3,7 +3,7 @@
 #include <SDL3/SDL_opengl.h>
 #include "functions.h"
 #include "defs.h"
-#include "class.h"
+#include "SimpleRenderer.h"
 #include <string>
 using namespace std;
 

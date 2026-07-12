@@ -1,5 +1,5 @@
-#ifndef CLASS_H // only defines if variable has not been defined yet
-#define CLASS_H
+#ifndef SIMPLERENDERER_H // only defines if variable has not been defined yet
+#define SIMPLERENDERER_H
 
 using namespace std;
 #include <iostream>
@@ -14,7 +14,7 @@ class SimpleRenderer {
 public:
 	void init();
 	bool DepthBufferShown = false;
-	void render();
+	void render(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue);
 	void Get_TTF_Fonts();
 	TTF_Font* ReportFont;
 	vector<float> DepthBuffer;
@@ -27,13 +27,13 @@ public:
 	SDL_Window* Create_Window(string title);
 	TTF_TextEngine* Create_TextEngine(SDL_Renderer* renderer);
 	void GetScreenData();
-	void draw();
+	void draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue);
 	void DrawSphere(Pos A, float r, RGBA_int c);
 	ScreenPos Projection(Pos A);
 	bool DepthBufferPoint(ScreenPos A);
 	void DrawPoint(Point point);
 	void TextRender();
-	void DrawLine(Pos A3D, Pos B3D, RGBA_int c);
+	void DrawLine(Pos* A3D, Pos* B3D, RGBA_int* c);
 	void DrawTriangle(Pos A, Pos B, Pos C, RGBA_int Color);
 	float DistBetweenPoints(Pos a, Pos b);
 	float RenderScale;
@@ -53,4 +53,4 @@ public:
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;
 
-#endif // CLASS_H
+#endif // SIMPLERENDERER_H

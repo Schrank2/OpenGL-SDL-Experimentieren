@@ -154,7 +154,7 @@
     <ClCompile Include="SimpleRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="class.h" />
+    <ClInclude Include="SimpleRenderer.h" />
     <ClInclude Include="defs.h" />
     <ClInclude Include="functions.h" />
     <ClInclude Include="input.h" />
