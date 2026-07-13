@@ -35,6 +35,7 @@ public:
 	void TextRender();
 	void DrawLine(Pos* A3D, Pos* B3D, RGBA_int* c);
 	void DrawTriangle(Pos* A, Pos* B, Pos* C, RGBA_int* Color);
+	void DrawScanLine(int* y, int* leftx, float* leftz, int* rightx, float* rightz, RGBA_int* Color, float* DiffZ, float* shadeIntensity);
 	float DistBetweenPoints(Pos a, Pos b);
 	float RenderScale;
 	float ScreenDist(ScreenPos A, ScreenPos B);

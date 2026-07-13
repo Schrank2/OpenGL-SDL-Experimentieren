@@ -286,7 +286,7 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color)
 
 	int a = 0;
 	// Drawing the Triangle
-	int x, maxX;
+	int x;
 	int y = A.y > 1 ? A.y + 1 : 1; // Clipping if minY < 0
 	int lx, rx, dx, dz;
 	float lz, rz;
@@ -310,20 +310,29 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color)
 		}
 		else { rx = g0.x; rz = g0.z; }
 		if (lx > rx) { dx = lx; lx = rx; rx = dx; dz = lz; lz = rz; rz = dz; }
-		maxX = rx < ScreenWidth ? rx : ScreenWidth; // Clipping if maxX > ScreenWidth
-		for (x = lx > 0 ? lx : 0; x < maxX; x++) { // Clipping if minX < 0
+		rx = rx < ScreenWidth ? rx : ScreenWidth; // Clipping if maxX > ScreenWidth
+		lx = lx > 0 ? lx : 0; // Clipping if minX < 0
+		DrawScanLine(&y, &lx, &lz, &rx, &rz, Color, &diffZ, &shadeIntensity);
+	}
+}
+
+void SimpleRenderer::DrawScanLine(int* y, int* leftx, float* leftz, int* rightx, float* rightz, RGBA_int* Color, float* DiffZ, float* shadeIntensity) {
+	int x;
+	float z,r, shade;
+	RGBA_int LocalColor = *Color;
+	ScreenPos P = ScreenPos(*leftx, *y, *leftz, true);
+	for (x = *leftx; x < *rightx; x++) {
 			P.x = x;
-			P.y = y;
-			r = static_cast<float>(x - lx) / static_cast<float>(rx - lx);
-			P.z = lz + r * (rz - lz);
+			P.y = *y;
+			r = static_cast<float>(x - *leftx) / static_cast<float>(*rightx - *leftx);
+			P.z = *leftz + r * (*rightz - *leftz);
 			if (DepthBufferPoint(P)) {
-				shade = abs(P.z - minZ) / diffZ;
-				LocalColor = ModifyColor(1.0f - shade, shadeIntensity, *Color);
+				shade = abs(P.z - *leftz) / *DiffZ;
+				LocalColor = ModifyColor(1.0f - shade, *shadeIntensity, *Color);
 				LocalColor.a = 255;
 				DrawPixel(&P.x, &P.y, &LocalColor);
 			}
 		}
-	}
 }
 
 void SimpleRenderer::DrawLine(Pos* A3D, Pos* B3D, RGBA_int* c) {
