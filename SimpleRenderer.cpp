@@ -236,7 +236,6 @@ ScreenPos SimpleRenderer::Projection(float* A[3]) {
 	float screeny = (y2 / z2) * simple.RenderScale + ScreenHeightF / 2.0f;
 	return ScreenPos(screenx, screeny, z2, true);
 }
-
 ScreenPos SimpleRenderer::Projection(Pos* A3D) {
 	float pi = 3.14f;
 	float x1 = A3D->x - simple.Camera.pos.x;
@@ -256,6 +255,12 @@ ScreenPos SimpleRenderer::Projection(Pos* A3D) {
 
 bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
 	if (A.x < 0.0f or A.x > ScreenWidthF or A.y < 0.0f or A.y > ScreenHeightF) {
+		return false;
+	}
+	return true;
+}
+bool SimpleRenderer::CheckScreenPos(float A[3]) {
+	if (A[0] < 0.0f or A[0] > ScreenWidthF or A[1] < 0.0f or A[1] > ScreenHeightF) {
 		return false;
 	}
 	return true;
@@ -390,6 +395,19 @@ bool SimpleRenderer::DepthBufferPoint(ScreenPos A) {
 		if (A.z > DepthBufferMax or DepthBufferMax == NULL) DepthBufferMax = A.z;
 		if (A.z < DepthBufferMin or DepthBufferMin == NULL) DepthBufferMin = A.z;
 		DepthBuffer[y * ScreenWidth + x] = A.z;
+		return true;
+	}
+	return false;
+}
+bool SimpleRenderer::DepthBufferPoint(float A[3]) {
+	if (!CheckScreenPos(A)) return false;
+	int x = static_cast<int>(A[0]);
+	int y = static_cast<int>(A[1]);
+	if (x < 0 or y < 0 or x >= ScreenWidth or y >= ScreenHeight) return false; // Check if Point is on screen
+	if (DepthBuffer[y * ScreenWidth + x] == NULL or DepthBuffer[y * ScreenWidth + x] > A[2]) {
+		if (A[2] > DepthBufferMax or DepthBufferMax == NULL) DepthBufferMax = A[2];
+		if (A[2] < DepthBufferMin or DepthBufferMin == NULL) DepthBufferMin = A[2];
+		DepthBuffer[y * ScreenWidth + x] = A[2];
 		return true;
 	}
 	return false;

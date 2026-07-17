@@ -32,6 +32,7 @@ public:
 	ScreenPos Projection(float* A[3]);
 	ScreenPos Projection(Pos* A3D);
 	bool DepthBufferPoint(ScreenPos A);
+	bool DepthBufferPoint(float A[3]);
 	void DrawPoint(Point* point);
 	void TextRender();
 	void DrawLine(Pos* A3D, Pos* B3D, RGBA_int* c);
@@ -49,6 +50,7 @@ public:
 	int RenderEndTime;
 	int RenderTime;
 	bool CheckScreenPos(ScreenPos A);
+	bool CheckScreenPos(float A[3]);
 	vector<Uint32> pixels;
 	void DrawPixel(float* x, float* y, RGBA_int* c);
 	float ScreenWidth;
