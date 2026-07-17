@@ -1,9 +1,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
-#include "functions.h"
 #include "defs.h"
 #include "SimpleRenderer.h"
-#include "input.h"
 #include <vector>
 #include <iomanip> // basically settings for cout
 #include <algorithm> // for clamp()
@@ -222,17 +220,34 @@ float SimpleRenderer::ScreenDist(ScreenPos A, ScreenPos B) {
 	return abs(sqrt(LineX * LineX + LineY * LineY));
 }
 
-ScreenPos SimpleRenderer::Projection(Pos* A) {
+ScreenPos SimpleRenderer::Projection(float* A[3]) {
 	float pi = 3.14f;
-	float x1 = A->x - simple.Camera.pos.x; 
-	float y1 = A->y - simple.Camera.pos.y;
-	float z1 = A->z - simple.Camera.pos.z;
+	float x1 = *A[0] - simple.Camera.pos.x;
+	float y1 = *A[1] - simple.Camera.pos.y;
+	float z1 = *A[2] - simple.Camera.pos.z;
 	float Yaw = CameraYaw * (pi / 180.0f);
 	float Pitch = CameraPitch * (pi / 180.0f);
 	float x2 = cos(Yaw) * x1 - sin(Yaw) * z1;
 	float z2 = cos(Yaw) * z1 + sin(Yaw) * x1;
 	float y2 = y1;
 	if (z2 <= 0.1) return ScreenPos(0,0,0,false);
+	y2 *= -1;
+	float screenx = (x2 / z2) * simple.RenderScale + ScreenWidthF / 2.0f;
+	float screeny = (y2 / z2) * simple.RenderScale + ScreenHeightF / 2.0f;
+	return ScreenPos(screenx, screeny, z2, true);
+}
+
+ScreenPos SimpleRenderer::Projection(Pos* A3D) {
+	float pi = 3.14f;
+	float x1 = A3D->x - simple.Camera.pos.x;
+	float y1 = A3D->y - simple.Camera.pos.y;
+	float z1 = A3D->z - simple.Camera.pos.z;
+	float Yaw = CameraYaw * (pi / 180.0f);
+	float Pitch = CameraPitch * (pi / 180.0f);
+	float x2 = cos(Yaw) * x1 - sin(Yaw) * z1;
+	float z2 = cos(Yaw) * z1 + sin(Yaw) * x1;
+	float y2 = y1;
+	if (z2 <= 0.1) return ScreenPos(0, 0, 0, false);
 	y2 *= -1;
 	float screenx = (x2 / z2) * simple.RenderScale + ScreenWidthF / 2.0f;
 	float screeny = (y2 / z2) * simple.RenderScale + ScreenHeightF / 2.0f;
