@@ -143,13 +143,13 @@ void SimpleRenderer::TextRender() {
 void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue) {
 	if (debug == true) { cout << "[DEBUG] function simple.draw() from SimpleRenderer.cpp" << endl; }
 	// Draw all Lines from world
-	for (int i = 0; i < static_cast<int>(LineQueue->size()); i++) {
-		simple.DrawLine(&(*LineQueue)[i].p1.pos, &(*LineQueue)[i].p2.pos, &(*LineQueue)[i].color);
-	}
+	//for (int i = 0; i < static_cast<int>(LineQueue->size()); i++) {
+	//	simple.DrawLine(&(*LineQueue)[i].p1.pos, &(*LineQueue)[i].p2.pos, &(*LineQueue)[i].color);
+	//}
 	// Draw all points from world
-	for (int i = 0; i < static_cast<int>(PointQueue->size()); i++) {
-		simple.DrawPoint(&(*PointQueue)[i]);
-	}
+	//for (int i = 0; i < static_cast<int>(PointQueue->size()); i++) {
+	//	simple.DrawPoint(&(*PointQueue)[i]);
+	//}
 	// Draw all triangles from world
 	for (int j = 0; j < static_cast<int>(TriangleQueue->size()); j++) {
 		simple.DrawTriangle(&(*TriangleQueue)[j].p1.pos, &(*TriangleQueue)[j].p2.pos, &(*TriangleQueue)[j].p3.pos, &(*TriangleQueue)[j].color);
@@ -220,11 +220,11 @@ float SimpleRenderer::ScreenDist(ScreenPos A, ScreenPos B) {
 	return abs(sqrt(LineX * LineX + LineY * LineY));
 }
 
-ScreenPos SimpleRenderer::Projection(float* A[3]) {
+ScreenPos SimpleRenderer::Projection(float A[3]) {
 	float pi = 3.14f;
-	float x1 = *A[0] - simple.Camera.pos.x;
-	float y1 = *A[1] - simple.Camera.pos.y;
-	float z1 = *A[2] - simple.Camera.pos.z;
+	float x1 = A[0] - simple.Camera.pos.x;
+	float y1 = A[1] - simple.Camera.pos.y;
+	float z1 = A[2] - simple.Camera.pos.z;
 	float Yaw = CameraYaw * (pi / 180.0f);
 	float Pitch = CameraPitch * (pi / 180.0f);
 	float x2 = cos(Yaw) * x1 - sin(Yaw) * z1;
@@ -335,22 +335,91 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color)
 		DrawScanLine(&y, &lx, &lz, &rx, &rz, Color, &diffZ, &shadeIntensity);
 	}
 }
+void SimpleRenderer::DrawTriangle(float A3D[3], float B3D[3], float C3D[3], RGBA_int* Color) {
+	ScreenPos A = Projection(A3D);
+	ScreenPos B = Projection(B3D);
+	ScreenPos C = Projection(C3D);
+	// Culling if fully behind camera
+	if (!A.valid and !B.valid and !C.valid) return;
+	// Sort by smallest y
+	ScreenPos temp = A;
+	if (B.y < A.y) { temp = B; B = A; A = temp; }
+	if (C.y < A.y) { temp = C; C = A; A = temp; }
+	if (C.y < B.y) { temp = C; C = B; B = temp; }
+	if (debug == true) cout << "sort result: " << A.y << " " << B.y << " " << C.y << endl;
+
+	// Drawing the WireFrame
+	// Get Direction Vectors for AB,BC and AC
+	ScreenPos DV_AB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z, true);
+	ScreenPos DV_BC = ScreenPos(C.x - B.x, C.y - B.y, C.z - B.z, true);
+	ScreenPos DV_AC = ScreenPos(C.x - A.x, C.y - A.y, C.z - A.z, true);
+	// SHADING PREREQUISITES
+	float maxZ = max(A.z, max(B.z, C.z));
+	float minZ = min(A.z, min(B.z, C.z));
+	float diffZ = maxZ - minZ;
+	float shade;
+	float shadeIntensity = 0.4f;
+	RGBA_int LocalColor = *Color;
+
+	// Vectors
+	ScreenPos AB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z, true);
+	ScreenPos AC = ScreenPos(C.x - A.x, C.y - A.y, C.z - A.z, true);
+	ScreenPos BC = ScreenPos(C.x - B.x, C.y - B.y, C.z - B.z, true);
+	ScreenPos f = AC;
+	ScreenPos f0 = A;
+	ScreenPos f1 = C;
+	ScreenPos g = AB;
+	ScreenPos g0 = A;
+	ScreenPos g1 = B;
+	float r; // parameter
+
+	int a = 0;
+	// Drawing the Triangle
+	int x;
+	int y = A.y > 1 ? A.y + 1 : 1; // Clipping if minY < 0
+	int lx, rx, dx, dz;
+	float lz, rz;
+	ScreenPos P = A; // Current Position to Draw
+	int maxY = C.y < ScreenHeight ? C.y : ScreenHeight; // Clipping if maxY > ScreenHeight
+	for (; y <= maxY; y++) {
+		if (y >= B.y) { g = BC; g0 = B; g1 = C; } // switch line g to BC
+		// get x and z for line f = AC
+		if (y - f0.y != 0) {
+			r = static_cast<float>(y - f0.y) / static_cast<float>(f1.y - f0.y);
+			lx = f0.x + r * f.x;
+			lz = f0.z + r * f.z;
+		}
+		else { lx = f0.x; lz = f0.z; }
+
+		// get x and z for line g = AB, later BC
+		if (y - g0.y != 0) {
+			r = static_cast<float>(y - g0.y) / static_cast<float>(g1.y - g0.y);
+			rx = g0.x + r * g.x;
+			rz = g0.z + r * g.z;
+		}
+		else { rx = g0.x; rz = g0.z; }
+		if (lx > rx) { dx = lx; lx = rx; rx = dx; dz = lz; lz = rz; rz = dz; }
+		rx = rx < ScreenWidth ? rx : ScreenWidth; // Clipping if maxX > ScreenWidth
+		lx = lx > 0 ? lx : 0; // Clipping if minX < 0
+		DrawScanLine(&y, &lx, &lz, &rx, &rz, Color, &diffZ, &shadeIntensity);
+	}
+}
 
 void SimpleRenderer::DrawScanLine(int* y, int* leftx, float* leftz, int* rightx, float* rightz, RGBA_int* Color, float* DiffZ, float* shadeIntensity) {
 	int x;
 	float z,r, shade;
 	RGBA_int LocalColor = *Color;
-	ScreenPos P = ScreenPos(*leftx, *y, *leftz, true);
+	float P[3];
 	for (x = *leftx; x < *rightx; x++) {
-			P.x = x;
-			P.y = *y;
+			P[0] = x;
+			P[1] = *y;
 			r = static_cast<float>(x - *leftx) / static_cast<float>(*rightx - *leftx);
-			P.z = *leftz + r * (*rightz - *leftz);
+			P[2] = *leftz + r * (*rightz - *leftz);
 			if (DepthBufferPoint(P)) {
-				shade = abs(P.z - *leftz) / *DiffZ;
+				shade = abs(P[2] - *leftz) / *DiffZ;
 				LocalColor = ModifyColor(1.0f - shade, *shadeIntensity, *Color);
 				LocalColor.a = 255;
-				DrawPixel(&P.x, &P.y, &LocalColor);
+				DrawPixel(&P[0], &P[1], &LocalColor);
 			}
 		}
 }
@@ -383,6 +452,12 @@ void SimpleRenderer::DrawPixel(float* x, float* y, RGBA_int* c) {
 	if (*y * ScreenWidth + *x < ScreenWidth * ScreenHeight) {
 		pixels[static_cast<int>(*y * ScreenWidth + *x)] = ((*c).r << 24U) | ((*c).g << 16U) | ((*c).b << 8U) | (*c).a;
 	}
+}
+
+void SimpleRenderer::GetVector(float Vector[3], float Start[3], float End[3]) {
+	Vector[0] = End[0] - Start[0];
+	Vector[1] = End[1] - Start[1];
+	Vector[2] = End[2] - Start[2];
 }
 
 

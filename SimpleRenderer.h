@@ -29,14 +29,16 @@ public:
 	void GetScreenData(int* ScreenWidth, int* ScreenHeight);
 	void draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue);
 	void DrawSphere(Pos A, float r, RGBA_int c);
-	ScreenPos Projection(float* A[3]);
+	ScreenPos Projection(float A[3]);
 	ScreenPos Projection(Pos* A3D);
 	bool DepthBufferPoint(ScreenPos A);
 	bool DepthBufferPoint(float A[3]);
 	void DrawPoint(Point* point);
 	void TextRender();
+	void GetVector(float Vector[3], float A[3], float B[3]); 
 	void DrawLine(Pos* A3D, Pos* B3D, RGBA_int* c);
 	void DrawTriangle(Pos* A, Pos* B, Pos* C, RGBA_int* Color);
+	void DrawTriangle(float A3D[3], float B3D[3], float C3D[3], RGBA_int* Color);
 	void DrawScanLine(int* y, int* leftx, float* leftz, int* rightx, float* rightz, RGBA_int* Color, float* DiffZ, float* shadeIntensity);
 	float DistBetweenPoints(Pos a, Pos b);
 	float RenderScale;

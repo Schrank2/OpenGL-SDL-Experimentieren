@@ -49,9 +49,9 @@ struct RGBA_int {
 
 struct Point {
 	char letter;
-	Pos pos;
+	float position[3];
 	RGBA_int color;
-	Point(char letter, Pos pos, RGBA_int color) : letter(letter), pos(pos), color(color) {}
+	Point(char letter, float position[3], RGBA_int color) : letter(letter), position(position[3]), color(color) {}
 };
 
 struct Line {

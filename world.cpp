@@ -28,15 +28,15 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	world.ScreenWidthF = static_cast<float>(world.ScreenWidth);
 	world.ScreenHeightF = static_cast<float>(world.ScreenHeight);
 	// add Points to World
-	Points.push_back(Point('O', Pos(0.0f, 0.0f, 0.0f), black));
-	Points.push_back(Point('A', Pos(2.0f, 2.0f, 2.0f), bright_red));
-	Points.push_back(Point('B', Pos(2.0f, 0.0f, 0.0f), bright_green));
-	Points.push_back(Point('C', Pos(0.0f, 0.0f, 2.0f), bright_blue));
-	Points.push_back(Point('D', Pos(4.0f, 4.0f, -3.0f), bright_red));
-	Points.push_back(Point('E', Pos(0.0f, 0.05f, 0.0f), bright_green));
-	Points.push_back(Point('X', Pos(1.0f, 0.0f, 0.0f), dark_blue));
-	Points.push_back(Point('Y', Pos(0.0f, 1.0f, 0.0f), dark_red));
-	Points.push_back(Point('Z', Pos(0.0f, 0.0f, 1.0f), dark_green));
+	Points.push_back(Point('O', { 0.0f, 0.0f, 0.0f }, black));
+	Points.push_back(Point('A', { 2.0f, 2.0f, 2.0f }, bright_red));
+	Points.push_back(Point('B', { 2.0f, 0.0f, 0.0f }, bright_green));
+	Points.push_back(Point('C', { 0.0f, 0.0f, 2.0f }, bright_blue));
+	Points.push_back(Point('D', { 4.0f, 4.0f, -3.0f }, bright_red));
+	Points.push_back(Point('E', { 0.0f, 0.05f, 0.0f }, bright_green));
+	Points.push_back(Point('X', { 1.0f, 0.0f, 0.0f }, dark_blue));
+	Points.push_back(Point('Y', { 0.0f, 1.0f, 0.0f }, dark_red));
+	Points.push_back(Point('Z', { 0.0f, 0.0f, 1.0f }, dark_green));
 
 	// add Triangles to World
 	Triangles.push_back(Triangle(Points[1], Points[2], Points[3], bright_red));
