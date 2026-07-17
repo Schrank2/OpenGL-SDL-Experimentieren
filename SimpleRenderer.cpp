@@ -152,7 +152,7 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	//}
 	// Draw all triangles from world
 	for (int j = 0; j < static_cast<int>(TriangleQueue->size()); j++) {
-		simple.DrawTriangle(&(*TriangleQueue)[j].p1.pos, &(*TriangleQueue)[j].p2.pos, &(*TriangleQueue)[j].p3.pos, &(*TriangleQueue)[j].color);
+		simple.DrawTriangle(&(*TriangleQueue)[j].p1.position, &(*TriangleQueue)[j].p2.position, &(*TriangleQueue)[j].p3.position, &(*TriangleQueue)[j].color);
 	}
 }
 

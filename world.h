@@ -15,7 +15,6 @@ public:
 	vector<Point> Points;
 	vector<Line> Lines;
 	vector<Triangle> Triangles;
-	vector<Plane> Planes;
 	void init(int* ScreenWidth, int* ScreenHeight);
 	void tick();
 	float TickStrength = 0.0f;

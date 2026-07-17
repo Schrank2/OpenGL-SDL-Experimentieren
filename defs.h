@@ -49,9 +49,9 @@ struct RGBA_int {
 
 struct Point {
 	char letter;
-	float position[3];
+	Pos position;
 	RGBA_int color;
-	Point(char letter, float position[3], RGBA_int color) : letter(letter), position(position[3]), color(color) {}
+	Point(char letter, Pos position, RGBA_int color) : letter(letter), position(position), color(color) {}
 };
 
 struct Line {
@@ -73,29 +73,6 @@ struct Triangle {
 		return name;
 	}
 	Triangle(Point p1, Point p2, Point p3, RGBA_int color) : p1(p1), p2(p2), p3(p3), name(triangle_getname()), color(color) {}
-};
-
-struct Plane {
-	Triangle triangle;
-	string name;
-	RGBA_int color;
-	Pos SupportV;
-	Pos Span1V;
-	Pos Span2V;
-	// get vectors of the plane
-	Pos GetVector(Pos start, Pos end) {
-		return Pos(end.x - start.x, end.y - start.y, end.z - start.z);
-	}
-	// get name of the plane
-	const string plane_getname() {
-		string name = "Plane ";
-		name += triangle.p1.letter;
-		name += triangle.p2.letter;
-		name += triangle.p3.letter;
-		return name;
-	}
-	// constructor
-	Plane(Triangle triangle, RGBA_int color) : SupportV(GetVector(Pos(0,0,0), triangle.p1.pos)), Span1V(GetVector(triangle.p1.pos, triangle.p2.pos)), Span2V(GetVector(triangle.p1.pos, triangle.p3.pos)), triangle(triangle), name(plane_getname()), color(color) {}
 };
 
 struct PhysicsObject {
