@@ -494,7 +494,7 @@ float SimpleRenderer::DistBetweenPoints(Pos a, Pos b) {
 }
 
 void SimpleRenderer::DrawPoint(Point* A) {
-	ScreenPos ScreenA = Projection(&A->pos);
+	ScreenPos ScreenA = Projection(&A->position);
 	if (debug == true) { cout << "[DEBUG] Drawing Point: " << A->letter << " on Canvas at (" << ScreenA.x << ", " << ScreenA.y << ")" << endl; }
 	//simple.DrawSphere(A.pos, 0.05f, A.color);
 }
