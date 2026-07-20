@@ -1,7 +1,20 @@
 #include <SDL3/SDL.h>
-#include "functions.h"
-#include "defs.h"
-#include <vector>
-#include <cmath>
-#include <iomanip> // basically settings for cout
-#include <algorithm> // for clamp()
+#include "open.h"
+
+void OpenGLRenderer::init(int* ScreenWidth, int* ScreenHeight) {
+	cout << "init" << endl;
+	open_window();
+	create_renderer();
+}
+
+void OpenGLRenderer::render() {
+	cout << "render" << endl;
+}
+
+void OpenGLRenderer::open_window() {
+	cout << "open_window" << endl;
+}
+
+void OpenGLRenderer::create_renderer() {
+	cout << "create_renderer" << endl;
+}

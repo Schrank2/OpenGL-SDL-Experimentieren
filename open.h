@@ -12,7 +12,11 @@ using namespace std;
 // declare OpenGLRenderer so open.cpp can use it
 class OpenGLRenderer {
 public:
-	
+	void init(int* ScreenWidth, int* ScreenHeight);
+	void render();
+private:
+	void open_window();
+	void create_renderer();
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern OpenGLRenderer open;

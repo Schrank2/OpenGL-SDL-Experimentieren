@@ -5,6 +5,7 @@
 #include "SimpleRenderer.h"
 #include "world.h"
 #include "input.h"
+#include "open.h"
 #include <iomanip> // for more precise floats in cout
 #include <thread>
 #include <format> // for to_string floats to not show too many decimal numbers
@@ -25,6 +26,7 @@ int main(int argc, char* argv[])
 	int ScreenWidth = MonitorWidth * 0.75;
 	int ScreenHeight = MonitorHeight * 0.75;
 	simple.init(&ScreenWidth, &ScreenHeight);
+	open.init(&ScreenWidth, &ScreenHeight);
 	world.init(&ScreenWidth, &ScreenHeight);
 	bool running = true;
 
