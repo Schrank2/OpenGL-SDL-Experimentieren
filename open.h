@@ -11,9 +11,14 @@ class OpenGLRenderer {
 public:
 	void init(int* ScreenWidth, int* ScreenHeight);
 	void render();
+	int WindowHeight;
+	int WindowWidth;
+	SDL_Window* Window = nullptr;
+	SDL_GLContext GLContext = nullptr;
 private:
 	void open_window();
 	void create_renderer();
+	void create_GLContext(SDL_Window* Window);
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern OpenGLRenderer open;

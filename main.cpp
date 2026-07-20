@@ -18,6 +18,7 @@ Mouse mainMouse;
 int main(int argc, char* argv[])
 {
 	if (debug == true) { cout << "[DEBUG] function main() from main.cpp" << endl; }
+	simple.run = false; // temporarily disables simple renderer
 	float ScreenPercentage = 0.75;
 	int MonitorWidth = 0;
 	int MonitorHeight = 0;
@@ -25,7 +26,7 @@ int main(int argc, char* argv[])
 	simple.GetScreenData(&MonitorWidth, &MonitorHeight);
 	int ScreenWidth = MonitorWidth * 0.75;
 	int ScreenHeight = MonitorHeight * 0.75;
-	simple.init(&ScreenWidth, &ScreenHeight);
+	if(simple.run) simple.init(&ScreenWidth, &ScreenHeight);
 	open.init(&ScreenWidth, &ScreenHeight);
 	world.init(&ScreenWidth, &ScreenHeight);
 	bool running = true;
@@ -82,7 +83,7 @@ int main(int argc, char* argv[])
 		// Rendering and Showing a Plane
 		if (CurrentTime > FrameStartTime + FrameTimeTarget) {
 			Frametime = CurrentTime - FrameStartTime;
-			simple.render(&world.Lines, &world.Triangles, &world.Points);
+			if(simple.run) simple.render(&world.Lines, &world.Triangles, &world.Points);
 			FrameStartTime = CurrentTime;
 		}
 		if (CurrentTime >= LastReportTime + TickRateTarget) {
