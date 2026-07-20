@@ -5,9 +5,6 @@ using namespace std;
 #include <iostream>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_opengl.h>
-#include <string>
-#include <vector>
-#include "defs.h"
 
 // declare OpenGLRenderer so open.cpp can use it
 class OpenGLRenderer {

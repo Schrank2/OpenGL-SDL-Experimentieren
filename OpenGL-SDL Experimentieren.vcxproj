@@ -76,12 +76,16 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <SourcePath>$(SourcePath)</SourcePath>
-    <LibraryPath>C:\GL\glew-2.3.1\lib\Release\x64;C:\GL\SDLbin\lib\x86;$(LibraryPath)</LibraryPath>
-    <ExecutablePath>C:\GL\SDLbin\lib\x64;$(ExecutablePath)</ExecutablePath>
+    <LibraryPath>C:\GL\glew-2.3.1\lib\Release\x64;C:\GL\SDLbin\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\GL\SDL3_ttf-3.1.0\include;C:\GL\SDLbin\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>C:\GL\SDL3_ttf-3.1.0\include;C:\GL\SDLbin\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\GL\SDL3_ttf-3.1.0\lib\x86;C:\GL\SDLbin\lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\GL\SDL3_ttf-3.1.0\include;C:\GL\SDLbin\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\GL\SDL3_ttf-3.1.0\lib\x64;C:\GL\SDLbin\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -123,10 +127,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\GL\SDL3_ttf-3.1.0\include;C:\GL\SDLbin\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL3.lib;SDL3_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\GL\SDL3_ttf-3.1.0\lib\x64;C:\GL\SDLbin\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -137,12 +144,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\GL\glew-2.3.1\include\GL;C:\GL\SDLbin\include\SDL3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\GL\SDLbin\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\GL\SDLbin\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\GL\SDL3_ttf-3.1.0\lib\x64;C:\GL\SDLbin\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL3.lib;SDL3_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -95,12 +95,12 @@ int main(int argc, char* argv[])
 				if (mainInput[6].active) Report.push_back("---GAME TICKING PAUSED---");
 				Report.push_back("SDL Version: " + to_string(SDL_VERSIONNUM_MAJOR(SDLVersion)) + "." + to_string(SDL_VERSIONNUM_MINOR(SDLVersion)) + "." + to_string(SDL_VERSIONNUM_MICRO(SDLVersion)));
 				Report.push_back("TTF Version: " + to_string(SDL_VERSIONNUM_MAJOR(TTFVersion)) + "." + to_string(SDL_VERSIONNUM_MINOR(TTFVersion)) + "." + to_string(SDL_VERSIONNUM_MICRO(TTFVersion)));
-				Report.push_back("Camera Position x: " + format("{:.1f}",simple.Camera.pos.x) + " y: " + format("{:.1f}", simple.Camera.pos.y) + " z: " + format("{:.1f}", simple.Camera.pos.z));
-				Report.push_back("Camera Rotation Yaw: " + format("{:.1f}", simple.CameraYaw) + " Pitch: " + format("{:.1f}", simple.CameraPitch));
-				Report.push_back("Camera Velocity x: " + format("{:.3f}", simple.Camera.velocity.x) + " y: " + format("{:.3f}", simple.Camera.velocity.y) + " z: " + format("{:.3f}", simple.Camera.velocity.z));
-				Report.push_back("Rendering Performance: " + format("{:.1f}", FPS) + "fps | " + format("{:.1f}", Frametime) + "ms");
-				Report.push_back("Sin(Yaw): " + format("{:.2f}", sin(simple.CameraYaw*(3.14/180.0f))));
-				Report.push_back("Cos(Yaw): " + format("{:.2f}", cos(simple.CameraYaw * (3.14 / 180.0f))));
+				//Report.push_back("Camera Position x: " + format("{:.1f}",simple.Camera.pos.x) + " y: " + format("{:.1f}", simple.Camera.pos.y) + " z: " + format("{:.1f}", simple.Camera.pos.z));
+				//Report.push_back("Camera Rotation Yaw: " + format("{:.1f}", simple.CameraYaw) + " Pitch: " + format("{:.1f}", simple.CameraPitch));
+				//Report.push_back("Camera Velocity x: " + format("{:.3f}", simple.Camera.velocity.x) + " y: " + format("{:.3f}", simple.Camera.velocity.y) + " z: " + format("{:.3f}", simple.Camera.velocity.z));
+				//Report.push_back("Rendering Performance: " + format("{:.1f}", FPS) + "fps | " + format("{:.1f}", Frametime) + "ms");
+				//Report.push_back("Sin(Yaw): " + format("{:.2f}", sin(simple.CameraYaw*(3.14/180.0f))));
+				//Report.push_back("Cos(Yaw): " + format("{:.2f}", cos(simple.CameraYaw * (3.14 / 180.0f))));
 			}
 		}
 	}
