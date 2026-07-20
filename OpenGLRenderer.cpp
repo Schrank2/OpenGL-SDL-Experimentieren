@@ -17,10 +17,7 @@ void OpenGLRenderer::init(int* ScreenWidth, int* ScreenHeight) {
 	open_window();
 	create_GLContext(Window);
 	create_renderer();
-}
-
-void OpenGLRenderer::render() {
-	std::cout << "render" << endl;
+	std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
 }
 
 void OpenGLRenderer::open_window() {
@@ -47,6 +44,30 @@ void OpenGLRenderer::create_renderer() {
 
 void OpenGLRenderer::CleanUp() {
 	SDL_DestroyWindow(Window);
+}
+
+
+void OpenGLRenderer::render() {
+	std::cout << "render" << endl;
+	Input();
+
+	preDraw();
+
+	Draw();
+
+	SDL_GL_SwapWindow(Window);
+}
+
+void OpenGLRenderer::Input() {
+
+}
+
+void OpenGLRenderer::preDraw() {
+
+}
+
+void OpenGLRenderer::Draw() {
+
 }
 
 OpenGLRenderer open;
