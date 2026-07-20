@@ -11,6 +11,7 @@ class OpenGLRenderer {
 public:
 	void init(int* ScreenWidth, int* ScreenHeight);
 	void render();
+	void CleanUp();
 	int WindowHeight;
 	int WindowWidth;
 	SDL_Window* Window = nullptr;

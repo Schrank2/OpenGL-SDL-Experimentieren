@@ -7,6 +7,13 @@ void OpenGLRenderer::init(int* ScreenWidth, int* ScreenHeight) {
 	std::cout << "init" << endl;
 	WindowHeight = *ScreenHeight;
 	WindowWidth = *ScreenWidth;
+	// OPENGL Attributes
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
 	open_window();
 	create_GLContext(Window);
 	create_renderer();
@@ -36,6 +43,10 @@ void OpenGLRenderer::create_GLContext(SDL_Window* Window) {
 
 void OpenGLRenderer::create_renderer() {
 	std::cout << "create_renderer" << endl;
+}
+
+void OpenGLRenderer::CleanUp() {
+	SDL_DestroyWindow(Window);
 }
 
 OpenGLRenderer open;
