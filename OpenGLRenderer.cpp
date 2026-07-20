@@ -18,3 +18,5 @@ void OpenGLRenderer::open_window() {
 void OpenGLRenderer::create_renderer() {
 	cout << "create_renderer" << endl;
 }
+
+OpenGLRenderer open;
