@@ -1,4 +1,5 @@
 #include <iostream>
+#include <glad/glad.h>
 #include <SDL3/SDL.h>
 #include "functions.h"
 #include "defs.h"
@@ -41,6 +42,7 @@ void init_libs()	{
 		cout << "SDL_ttf initialization failed: " << SDL_GetError() << endl;
 		exit(1);
 	}
+
 
 	// Display Versions of Libraries
 	cout << "SDL Version: " << SDL_GetVersion() << endl;
