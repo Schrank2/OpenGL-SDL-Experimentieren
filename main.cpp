@@ -106,3 +106,19 @@ int main(int argc, char* argv[])
 		}
 	}
 }
+
+static vector<float> convert(vector<Triangle>* &Triangles) {
+	vector<float> Output;
+	for (int i = 0; i < (*Triangles).size(); i++) {
+		Output.push_back((*Triangles)[i].p1.position.x);
+		Output.push_back((*Triangles)[i].p1.position.y);
+		Output.push_back((*Triangles)[i].p1.position.z);
+		Output.push_back((*Triangles)[i].p2.position.x);
+		Output.push_back((*Triangles)[i].p2.position.y);
+		Output.push_back((*Triangles)[i].p2.position.z);
+		Output.push_back((*Triangles)[i].p3.position.x);
+		Output.push_back((*Triangles)[i].p3.position.y);
+		Output.push_back((*Triangles)[i].p3.position.z);
+	}
+	return Output;
+}
