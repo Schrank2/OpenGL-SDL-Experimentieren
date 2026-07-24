@@ -83,6 +83,7 @@ int main(int argc, char* argv[])
 		if (CurrentTime > FrameStartTime + FrameTimeTarget) {
 			Frametime = CurrentTime - FrameStartTime;
 			if(simple.run) simple.render(&world.Lines, &world.Triangles, &world.Points);
+			open.render();
 			FrameStartTime = CurrentTime;
 		}
 		if (CurrentTime >= LastReportTime + TickRateTarget) {
