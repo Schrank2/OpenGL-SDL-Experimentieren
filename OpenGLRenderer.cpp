@@ -10,21 +10,6 @@ GLuint gVertexArrayObject = 0;
 GLuint gVertexBufferObject = 0;
 GLuint gShaderPipeline = 0;
 
-const std::string gVertexShaderSource =
-"#version 410 core\n"
-"in vec4 position; \n"
-"void main()\n"
-"{\n"
-"gl_Position = vec4(position.x, position.y, position.z, position.w);\n"
-"}\n";
-const std::string gFragmentShaderSource =
-"#version 410 core\n"
-"out vec4 color;\n"
-"void main()\n"
-"{\n"
-"color = vec4(1.0f, 0.5f, 0.0f, 1.0f);\n"
-"}\n";
-
 std::string OpenGLRenderer::LoadShaderFile(const std::string& directory) {
 	std::string result = "";
 
@@ -111,7 +96,11 @@ GLuint OpenGLRenderer::CreateShaderProgram(const std::string& VertexShaderSource
 }
 
 void OpenGLRenderer::CreateGraphicsPipeline() {
-	gShaderPipeline = CreateShaderProgram(gVertexShaderSource, gFragmentShaderSource);
+
+	std::string VertexShaderSource = LoadShaderFile(".shaders/vertex.glsl");
+	std::string FragmentShaderSource = LoadShaderFile(".shaders/fragment.glsl");
+
+	gShaderPipeline = CreateShaderProgram(VertexShaderSource, FragmentShaderSource);
 }
 
 void OpenGLRenderer::render() {
