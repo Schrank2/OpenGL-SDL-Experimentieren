@@ -23,8 +23,8 @@ int main(int argc, char* argv[])
 	int MonitorHeight = 0;
 	init_libs();
 	simple.GetScreenData(&MonitorWidth, &MonitorHeight);
-	int ScreenWidth = MonitorWidth * 0.75;
-	int ScreenHeight = MonitorHeight * 0.75;
+	int ScreenWidth = static_cast<int>(MonitorWidth * 0.75);
+	int ScreenHeight = static_cast<int>(MonitorHeight * 0.75);
 	if(simple.run) simple.init(&ScreenWidth, &ScreenHeight);
 	open.init(&ScreenWidth, &ScreenHeight);
 	world.init(&ScreenWidth, &ScreenHeight);
@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 	SDL_SetWindowRelativeMouseMode(simple.window, true);
 
 	while (running) {
-		CurrentTime = SDL_GetTicks();
+		CurrentTime = static_cast<float>(SDL_GetTicks());
 		input.poll(&mainInput);
 		input.pollMouse(&mainMouse);
 		PauseTime = 0;
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
 			if (Ticktime < 0.0f) Ticktime = 0.0f;
 			world.TickStrength = abs(Ticktime / 1000.0f);
 			world.tick();
-			TickStartTime = SDL_GetTicks();
+			TickStartTime = static_cast<float>(SDL_GetTicks());
 		}
 		// Rendering and Showing a Plane
 		if (CurrentTime > FrameStartTime + FrameTimeTarget) {

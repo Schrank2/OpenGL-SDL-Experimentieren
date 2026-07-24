@@ -23,7 +23,9 @@ private:
 	void Input();
 	void preDraw();
 	void Draw();
+	GLuint CompileShader(GLuint type, const std::string& source);
 	void CreateGraphicsPipeline();
+	GLuint CreateShaderProgram(const std::string& VertexShaderSource, const std::string& FragmentShaderSource);
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern OpenGLRenderer open;
