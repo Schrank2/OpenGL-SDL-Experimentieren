@@ -16,6 +16,13 @@ void OpenGLRenderer::init(int* ScreenWidth, int* ScreenHeight) {
 
 	open_window();
 	create_GLContext(Window);
+
+	// Initialise glad (importantly, after Context Creation
+	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+		std::cout << "glad was not initialized" << std::endl;
+		exit(1);
+	}
+
 	create_renderer();
 	std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
 }
