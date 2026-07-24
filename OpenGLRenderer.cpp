@@ -1,6 +1,8 @@
 #include <glad/glad.h>
 #include <SDL3/SDL.h>
 #include <iostream>
+#include <fstream>
+#include <string>
 #include "OpenGLRenderer.h"
 #include <vector>
 
@@ -22,6 +24,22 @@ const std::string gFragmentShaderSource =
 "{\n"
 "color = vec4(1.0f, 0.5f, 0.0f, 1.0f);\n"
 "}\n";
+
+std::string OpenGLRenderer::LoadShaderFile(const std::string& directory) {
+	std::string result = "";
+
+	std::string line = "";
+	std::ifstream FileStream(directory.c_str());
+
+	if (FileStream.is_open()) {
+		while (std::getline(FileStream, line)) {
+			result += line + "\n";
+		}
+		FileStream.close();
+	}
+	
+	return result;
+}
 
 void OpenGLRenderer::init(int* ScreenWidth, int* ScreenHeight) {
 	WindowHeight = *ScreenHeight;
@@ -95,7 +113,6 @@ GLuint OpenGLRenderer::CreateShaderProgram(const std::string& VertexShaderSource
 void OpenGLRenderer::CreateGraphicsPipeline() {
 	gShaderPipeline = CreateShaderProgram(gVertexShaderSource, gFragmentShaderSource);
 }
-
 
 void OpenGLRenderer::render() {
 	

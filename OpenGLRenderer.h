@@ -23,6 +23,7 @@ private:
 	void Input();
 	void preDraw();
 	void Draw();
+	string LoadShaderFile(const std::string& directory);
 	GLuint CompileShader(GLuint type, const std::string& source);
 	void CreateGraphicsPipeline();
 	GLuint CreateShaderProgram(const std::string& VertexShaderSource, const std::string& FragmentShaderSource);
