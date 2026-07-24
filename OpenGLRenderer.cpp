@@ -9,6 +9,7 @@
 GLuint gVertexArrayObject = 0;
 GLuint gVertexBufferObject = 0;
 GLuint gShaderPipeline = 0;
+GLuint gVertexBufferSize = 0;
 
 std::string OpenGLRenderer::LoadShaderFile(const std::string& directory) {
 	std::string result = "";
@@ -93,10 +94,8 @@ GLuint OpenGLRenderer::CreateShaderProgram(const std::string& VertexShaderSource
 }
 
 void OpenGLRenderer::CreateGraphicsPipeline() {
-	std::string VertexShaderDirectory = "./shaders/vertex.glsl";
-	std::string FragmentShaderDirectory = "./shaders/fragment.glsl";
-	std::string VertexShaderSource = LoadShaderFile(VertexShaderDirectory);
-	std::string FragmentShaderSource = LoadShaderFile(FragmentShaderDirectory);
+	std::string VertexShaderSource = LoadShaderFile("./shaders/vertex.glsl");
+	std::string FragmentShaderSource = LoadShaderFile("./shaders/fragment.glsl");
 
 	gShaderPipeline = CreateShaderProgram(VertexShaderSource, FragmentShaderSource);
 }
@@ -114,11 +113,15 @@ void OpenGLRenderer::render() {
 
 void OpenGLRenderer::Input() {
 	// create vertex data on the CPU
+	gVertexBufferSize = 6;
 	const std::vector<GLfloat> vertexPosition{
 		// x y z
 		-0.8f, -0.8f, 0.0f,
 		0.8f, -0.8f, 0.0f,
-		0.0f, 0.8f, 0.0f
+		0.0f, 0.8f, 0.0f,
+		-1.0f, -0.1f, 0.0f,
+		0.1f, -0.1f, 0.0f,
+		0.0f, 0.1f, 0.0f
 	};
 	// bind vertex Data to the GPU
 	glGenVertexArrays(1, &gVertexArrayObject);
@@ -141,7 +144,7 @@ void OpenGLRenderer::preDraw() {
 	glDisable(GL_CULL_FACE);
 
 	glViewport(0, 0, WindowWidth, WindowHeight);
-	glClearColor(1.0f, 1.0f, 0.1f, 1.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
@@ -151,7 +154,7 @@ void OpenGLRenderer::preDraw() {
 void OpenGLRenderer::Draw() {
 	glBindVertexArray(gVertexArrayObject);
 	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawArrays(GL_TRIANGLES, 0, gVertexBufferSize);
 }
 
 OpenGLRenderer open;
