@@ -113,7 +113,6 @@ void OpenGLRenderer::render() {
 
 void OpenGLRenderer::Input() {
 	// create vertex data on the CPU
-	gVertexBufferSize = 6;
 	const std::vector<GLfloat> vertexPosition{
 		// x y z
 		-0.8f, -0.8f, 0.0f,
@@ -123,6 +122,7 @@ void OpenGLRenderer::Input() {
 		0.1f, -0.1f, 0.0f,
 		0.0f, 0.1f, 0.0f
 	};
+	gVertexBufferSize = vertexPosition.size();
 	// bind vertex Data to the GPU
 	glGenVertexArrays(1, &gVertexArrayObject);
 	glBindVertexArray(gVertexArrayObject);
