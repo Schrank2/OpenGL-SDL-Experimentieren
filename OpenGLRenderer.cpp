@@ -12,17 +12,14 @@ GLuint gShaderPipeline = 0;
 
 std::string OpenGLRenderer::LoadShaderFile(const std::string& directory) {
 	std::string result = "";
-
 	std::string line = "";
 	std::ifstream FileStream(directory.c_str());
-
 	if (FileStream.is_open()) {
 		while (std::getline(FileStream, line)) {
 			result += line + "\n";
 		}
 		FileStream.close();
-	}
-	
+	} 
 	return result;
 }
 
@@ -69,7 +66,7 @@ void OpenGLRenderer::CleanUp() {
 }
 
 GLuint OpenGLRenderer::CompileShader(GLuint type, const std::string& source) {
-	GLuint shaderObject;
+	GLuint shaderObject = 0;
 
 	if (type == GL_VERTEX_SHADER) {
 		shaderObject = glCreateShader(GL_VERTEX_SHADER);
@@ -96,9 +93,10 @@ GLuint OpenGLRenderer::CreateShaderProgram(const std::string& VertexShaderSource
 }
 
 void OpenGLRenderer::CreateGraphicsPipeline() {
-
-	std::string VertexShaderSource = LoadShaderFile(".shaders/vertex.glsl");
-	std::string FragmentShaderSource = LoadShaderFile(".shaders/fragment.glsl");
+	std::string VertexShaderDirectory = "./shaders/vertex.glsl";
+	std::string FragmentShaderDirectory = "./shaders/fragment.glsl";
+	std::string VertexShaderSource = LoadShaderFile(VertexShaderDirectory);
+	std::string FragmentShaderSource = LoadShaderFile(FragmentShaderDirectory);
 
 	gShaderPipeline = CreateShaderProgram(VertexShaderSource, FragmentShaderSource);
 }
