@@ -23,6 +23,7 @@ private:
 	void Input();
 	void preDraw();
 	void Draw();
+	void CreateGraphicsPipeline();
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern OpenGLRenderer open;
