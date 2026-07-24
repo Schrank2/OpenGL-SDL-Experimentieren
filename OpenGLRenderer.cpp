@@ -133,7 +133,6 @@ void OpenGLRenderer::Input() {
 }
 
 void OpenGLRenderer::preDraw() {
-	cout << "preDraw" << endl;
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 
