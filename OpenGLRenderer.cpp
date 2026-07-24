@@ -4,7 +4,6 @@
 #include "OpenGLRenderer.h"
 
 void OpenGLRenderer::init(int* ScreenWidth, int* ScreenHeight) {
-	std::cout << "init" << endl;
 	WindowHeight = *ScreenHeight;
 	WindowWidth = *ScreenWidth;
 	// OPENGL Attributes
@@ -19,34 +18,26 @@ void OpenGLRenderer::init(int* ScreenWidth, int* ScreenHeight) {
 
 	// Initialise glad (importantly, after Context Creation
 	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-		std::cout << "glad was not initialized" << std::endl;
+		std::cout << "[OPENGLRENDERER] glad was not initialized" << std::endl;
 		exit(1);
 	}
-
-	create_renderer();
-	std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
+	std::cout << "[OPENGLRENDERER] OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
 }
 
 void OpenGLRenderer::open_window() {
-	std::cout << "open_window" << endl;
 	Window = SDL_CreateWindow("OpenGL Window", WindowWidth, WindowHeight, SDL_WINDOW_OPENGL);
 	if (!Window) {
-		std::cout << "open.open_window was unsuccessful in creating the Window" << endl;
+		std::cout << "[OPENGLRENDERER] open.open_window was unsuccessful in creating the Window" << endl;
 		exit(1);
 	}
 }
 
 void OpenGLRenderer::create_GLContext(SDL_Window* Window) {
-	std::cout << "create_GLContext" << endl;
 	GLContext = SDL_GL_CreateContext(Window);
 	if (!GLContext) {
-		std::cout << "open.create_GLContext was unsuccessful in creating the OpenGL Context" << endl;
+		std::cout << "[OPENGLRENDERER] open.create_GLContext was unsuccessful in creating the OpenGL Context" << endl;
 		exit(1);
 	}
-}
-
-void OpenGLRenderer::create_renderer() {
-	std::cout << "create_renderer" << endl;
 }
 
 void OpenGLRenderer::CleanUp() {
@@ -55,7 +46,6 @@ void OpenGLRenderer::CleanUp() {
 
 
 void OpenGLRenderer::render() {
-	std::cout << "render" << endl;
 	Input();
 
 	preDraw();

@@ -19,7 +19,6 @@ public:
 	SDL_GLContext GLContext = nullptr;
 private:
 	void open_window();
-	void create_renderer();
 	void create_GLContext(SDL_Window* Window);
 	void Input();
 	void preDraw();

@@ -1,5 +1,4 @@
 #include <iostream>
-#include <glad/glad.h>
 #include <SDL3/SDL.h>
 #include "functions.h"
 #include "defs.h"
