@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_opengl.h>
 #include "defs.h"
 using namespace std;
 void init_libs();

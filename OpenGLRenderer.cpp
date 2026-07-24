@@ -1,7 +1,7 @@
+#include <glad/glad.h>
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_opengl.h>
 #include <iostream>
-#include "open.h"
+#include "OpenGLRenderer.h"
 
 void OpenGLRenderer::init(int* ScreenWidth, int* ScreenHeight) {
 	std::cout << "init" << endl;

@@ -1,11 +1,10 @@
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_opengl.h>
 #include "functions.h"
 #include "defs.h"
 #include "SimpleRenderer.h"
 #include "world.h"
 #include "input.h"
-#include "open.h"
+#include "OpenGLRenderer.h"
 #include <iomanip> // for more precise floats in cout
 #include <thread>
 #include <format> // for to_string floats to not show too many decimal numbers

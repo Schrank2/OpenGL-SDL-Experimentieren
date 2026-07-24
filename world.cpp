@@ -1,6 +1,5 @@
 #include <iostream>
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_opengl.h>
 #include "functions.h"
 #include "defs.h"
 #include "SimpleRenderer.h"
