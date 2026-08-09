@@ -337,6 +337,7 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color,
 	float maxZ = max(A.z, max(B.z, C.z));
 	float minZ = min(A.z, min(B.z, C.z));
 	float diffZ = maxZ-minZ;
+	diffZ = diffZ <= 0.0f ? 0.000001f : diffZ;
 	float shade;
 	float shadeIntensity = 0.4f;
 	RGBA_int LocalColor = *Color;
