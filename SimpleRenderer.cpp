@@ -164,7 +164,7 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	// Draw all triangles from world
 	int ThreadsUsed = TriangleQueue->size() < ThreadAllocation ? TriangleQueue->size() : ThreadAllocation;
 	cout << "ThreadsUsed: " << ThreadsUsed << endl;
-	int TrianglesPerThread = TriangleQueue->size() / ThreadAllocation;
+	int TrianglesPerThread = TriangleQueue->size() / ThreadsUsed;
 	int start = 0;
 	int end = 0;
 	for (int i = 0; i < ThreadsUsed; i++) {
