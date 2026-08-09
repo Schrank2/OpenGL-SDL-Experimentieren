@@ -154,6 +154,8 @@ void SimpleRenderer::TriangleRenderThread(int thread, vector<Triangle> TriangleQ
 	for (int j = 0; j < TriangleQueue.size(); j++) {
 		simple.DrawTriangle(&TriangleQueue[j].p1.position, &TriangleQueue[j].p2.position, &TriangleQueue[j].p3.position, &TriangleQueue[j].color, &ThreadPixels, &ThreadDepthBuffer);
 	}
+	ThreadedPixels[thread] = ThreadPixels;
+	ThreadedDepthBuffer[thread] = ThreadDepthBuffer;
 }
 
 void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue) {
@@ -165,6 +167,9 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	int start = 0;
 	int end = 0;
 	for (int i = 0; i < ThreadsUsed; i++) {
+		ThreadedPixels.push_back(vector<Uint32>(ScreenHeight * ScreenWidth, 0));
+		ThreadedDepthBuffer.push_back(vector<float>(ScreenHeight * ScreenWidth, 0));
+
 		start = i * TrianglesPerThread;
 		end = (i + 1) * TrianglesPerThread;
 		// special case for the last thread to take any remaining triangles
@@ -182,6 +187,8 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 		t.join();
 	}
 	threads.clear();
+	ThreadedPixels.clear();
+	ThreadedDepthBuffer.clear();
 }
 
 void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
