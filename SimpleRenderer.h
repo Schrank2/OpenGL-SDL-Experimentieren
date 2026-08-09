@@ -59,7 +59,7 @@ public:
 	float ScreenHeight;
 	int ScreenWidthF;
 	int ScreenHeightF;
-	bool run = true;
+	bool active = true;
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;

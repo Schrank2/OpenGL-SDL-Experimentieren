@@ -17,6 +17,7 @@ public:
 	int WindowWidth = 0;
 	SDL_Window* Window = nullptr;
 	SDL_GLContext GLContext = nullptr;
+	bool active = true;
 private:
 	void open_window();
 	void create_GLContext(SDL_Window* Window);
