@@ -163,10 +163,10 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	
 	// Draw all triangles from world
 	int ThreadsUsed = TriangleQueue->size() < ThreadAllocation ? TriangleQueue->size() : ThreadAllocation;
-	cout << "ThreadsUsed: " << ThreadsUsed << endl;
 	int TrianglesPerThread = TriangleQueue->size() / ThreadsUsed;
 	int start = 0;
 	int end = 0;
+	vector<Triangle> ThreadTriangles;
 	for (int i = 0; i < ThreadsUsed; i++) {
 		ThreadedPixels.push_back(vector<Uint32>(ScreenHeight * ScreenWidth, 0));
 		ThreadedDepthBuffer.push_back(vector<float>(ScreenHeight * ScreenWidth, 0));
@@ -177,7 +177,7 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 		end = end > TriangleQueue->size() ? TriangleQueue->size() : end;
 		start = start > end ? end : start;
 	
-		vector<Triangle> ThreadTriangles;
+		ThreadTriangles.clear();
 		for (int j = start; j < end; j++) {
 			ThreadTriangles.push_back((*TriangleQueue)[j]);
 		}

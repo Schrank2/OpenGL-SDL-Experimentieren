@@ -23,6 +23,7 @@ public:
 	int ScreenHeight;
 	float ScreenWidthF;
 	float ScreenHeightF;
+	vector<vector<Uint32>> Voxels;
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern WORLD world;

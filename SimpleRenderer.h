@@ -47,9 +47,9 @@ public:
 	SDL_Renderer* renderer;
 	SDL_Texture* canvas;
 	TTF_TextEngine* TextEngine;
-	int RenderStartTime;
-	int RenderEndTime;
-	int RenderTime;
+	int RenderStartTime = 0;
+	int RenderEndTime = 0;
+	int RenderTime = 0;
 	bool CheckScreenPos(ScreenPos A);
 	bool CheckScreenPos(float A[3]);
 	vector<Uint32> pixels;
