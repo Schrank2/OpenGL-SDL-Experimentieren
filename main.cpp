@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 	simple.active = true;
 	open.active = false;
 
-	simple.ThreadAllocation = _Thrd_hardware_concurrency() - 2;
+	simple.ThreadAllocation = thread::hardware_concurrency() - 2;
 	simple.ThreadAllocation = simple.ThreadAllocation < 1 ? 1 : simple.ThreadAllocation;
 
 	float ScreenPercentage = 0.75;

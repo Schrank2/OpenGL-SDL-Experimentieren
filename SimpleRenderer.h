@@ -32,15 +32,13 @@ public:
 	void DrawSphere(Pos A, float r, RGBA_int c);
 	ScreenPos Projection(float A[3]);
 	ScreenPos Projection(Pos* A3D);
-	bool DepthBufferPoint(ScreenPos A);
-	bool DepthBufferPoint(float A[3]);
+	bool DepthBufferPoint(ScreenPos A, vector<float>* ThreadDepthBuffer);
 	void DrawPoint(Point* point);
 	void TextRender();
 	void GetVector(float Vector[3], float A[3], float B[3]); 
 	void DrawLine(Pos* A3D, Pos* B3D, RGBA_int* c);
-	void DrawTriangle(Pos* A, Pos* B, Pos* C, RGBA_int* Color);
-	void DrawTriangle(float A3D[3], float B3D[3], float C3D[3], RGBA_int* Color);
-	void DrawScanLine(int* y, int* leftx, float* leftz, int* rightx, float* rightz, RGBA_int* Color, float* DiffZ, float* shadeIntensity);
+	void DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer);
+	void DrawScanLine(int* y, int* leftx, float* leftz, int* rightx, float* rightz, RGBA_int* Color, float* DiffZ, float* shadeIntensity, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer);
 	float DistBetweenPoints(Pos a, Pos b);
 	float RenderScale;
 	float ScreenDist(ScreenPos A, ScreenPos B);
@@ -57,7 +55,7 @@ public:
 	vector<Uint32> pixels;
 	vector<vector<Uint32>> ThreadedPixels;
 	vector<vector<float>> ThreadedDepthBuffer;
-	void DrawPixel(float* x, float* y, RGBA_int* c);
+	void DrawPixel(float* x, float* y, RGBA_int* c, vector<Uint32>* ThreadPixels);
 	float ScreenWidth;
 	float ScreenHeight;
 	int ScreenWidthF;
@@ -65,7 +63,7 @@ public:
 	bool active = true;
 	int ThreadAllocation = 1;
 	vector<thread> threads;
-	bool TriangleRenderThread(int thread, vector<Triangle>* TriangleQueue, int start, int stop);
+	void TriangleRenderThread(int thread, vector<Triangle>* TriangleQueue, int start, int stop);
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;
