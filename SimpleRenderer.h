@@ -63,7 +63,7 @@ public:
 	bool active = true;
 	int ThreadAllocation = 1;
 	vector<thread> threads;
-	void TriangleRenderThread(int thread, vector<Triangle>* TriangleQueue, int start, int stop);
+	void TriangleRenderThread(int thread, vector<Triangle> TriangleQueue);
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;

@@ -148,6 +148,14 @@ void SimpleRenderer::TextRender() {
 	}
 }
 
+void SimpleRenderer::TriangleRenderThread(int thread, vector<Triangle> TriangleQueue) {
+	vector<Uint32> ThreadPixels(simple.ScreenHeight * simple.ScreenWidth, 0);
+	vector<float> ThreadDepthBuffer(simple.ScreenHeight * simple.ScreenWidth, 0);
+	for (int j = 0; j < TriangleQueue.size(); j++) {
+		simple.DrawTriangle(&TriangleQueue[j].p1.position, &TriangleQueue[j].p2.position, &TriangleQueue[j].p3.position, &TriangleQueue[j].color, &ThreadPixels, &ThreadDepthBuffer);
+	}
+}
+
 void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue) {
 	if (debug == true) { cout << "[DEBUG] function simple.draw() from SimpleRenderer.cpp" << endl; }
 	
@@ -156,7 +164,6 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	int TrianglesPerThread = TriangleQueue->size() / ThreadAllocation;
 	int start = 0;
 	int end = 0;
-	vector<vector<Triangle>> ThreadTriangles;
 	for (int i = 0; i < ThreadsUsed; i++) {
 		start = i * TrianglesPerThread;
 		end = (i + 1) * TrianglesPerThread;
@@ -164,21 +171,17 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 		end = end > TriangleQueue->size() ? TriangleQueue->size() : end;
 		start = start > end ? end : start;
 	
-		vector<Triangle> ThreadTrianglesTemp;
+		vector<Triangle> ThreadTriangles;
 		for (int j = start; j < end; j++) {
-			ThreadTrianglesTemp.push_back((*TriangleQueue)[j]);
+			ThreadTriangles.push_back((*TriangleQueue)[j]);
 		}
-		ThreadTriangles.push_back(ThreadTrianglesTemp);
+		threads.emplace_back(&SimpleRenderer::TriangleRenderThread, this, i, ThreadTriangles);
 	}
 
-	for (int i = 0; i < ThreadsUsed ; i++) {
-		threads.emplace_back(TriangleRenderThread, i, TriangleQueue, ThreadTriangles);
-	}
 	for(thread& t: threads) {
 		t.join();
 	}
 	threads.clear();
-	ThreadTriangles.clear();
 }
 
 void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
@@ -289,14 +292,6 @@ bool SimpleRenderer::CheckScreenPos(float A[3]) {
 		return false;
 	}
 	return true;
-}
-
-void SimpleRenderer::TriangleRenderThread(int thread, vector<Triangle>* TriangleQueue, int start, int stop) {
-	vector<Uint32> ThreadPixels(simple.ScreenHeight * simple.ScreenWidth, 0);
-	vector<float> ThreadDepthBuffer(simple.ScreenHeight * simple.ScreenWidth, 0);
-	for (int j = start; j < stop; j++) {
-		simple.DrawTriangle(&(*TriangleQueue)[j].p1.position, &(*TriangleQueue)[j].p2.position, &(*TriangleQueue)[j].p3.position, &(*TriangleQueue)[j].color, &ThreadPixels, &ThreadDepthBuffer);
-	}
 }
 
 void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer) {
