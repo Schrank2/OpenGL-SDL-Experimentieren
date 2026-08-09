@@ -150,12 +150,12 @@ void SimpleRenderer::TextRender() {
 
 void SimpleRenderer::TriangleRenderThread(int thread, vector<Triangle> ThreadedTriangleQueue) {
 	vector<Uint32> ThreadPixels(simple.ScreenHeight * simple.ScreenWidth, 0);
-	vector<float> ThreadDepthBuffer(simple.ScreenHeight * simple.ScreenWidth, 0);
+	vector<float> ThreadDepthBuffer(simple.ScreenHeight * simple.ScreenWidth, 0.0f);
 	for (int j = 0; j < ThreadedTriangleQueue.size(); j++) {
 		simple.DrawTriangle(&ThreadedTriangleQueue[j].p1.position, &ThreadedTriangleQueue[j].p2.position, &ThreadedTriangleQueue[j].p3.position, &ThreadedTriangleQueue[j].color, &ThreadPixels, &ThreadDepthBuffer);
 	}
-	ThreadedPixels[thread] = ThreadPixels;
-	ThreadedDepthBuffer[thread] = ThreadDepthBuffer;
+	ThreadedPixels[thread] = std::move(ThreadPixels);
+	ThreadedDepthBuffer[thread] = std::move(ThreadDepthBuffer);
 }
 
 void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue) {
@@ -429,8 +429,9 @@ void SimpleRenderer::DrawLine(Pos* A3D, Pos* B3D, RGBA_int* c) {
 }
 
 void SimpleRenderer::DrawPixel(float* x, float* y, RGBA_int* c, vector<Uint32>* ThreadPixels) {
-	if (*y * ScreenWidth + *x < ScreenWidth * ScreenHeight) {
-		(*ThreadPixels)[static_cast<int>(*y * ScreenWidth + *x)] = ((*c).r << 24U) | ((*c).g << 16U) | ((*c).b << 8U) | (*c).a;
+	int index = static_cast<int>(*y * ScreenWidth + *x);
+	if (index < ScreenWidth * ScreenHeight and index >= 0) {
+		(*ThreadPixels)[index] = ((*c).r << 24U) | ((*c).g << 16U) | ((*c).b << 8U) | (*c).a;
 	}
 }
 
@@ -445,11 +446,10 @@ bool SimpleRenderer::DepthBufferPoint(ScreenPos A, vector<float>* ThreadDepthBuf
 	if (!A.valid) return false;
 	int x = static_cast<int>(A.x);
 	int y = static_cast<int>(A.y);
+	int index = y * ScreenWidth + x;
 	if (x < 0 or y < 0 or x >= ScreenWidth or y >= ScreenHeight) return false; // Check if Point is on screen
-	if ((*ThreadDepthBuffer)[y * ScreenWidth + x] == NULL or (*ThreadDepthBuffer)[y * ScreenWidth + x] > A.z) {
-		if (A.z > DepthBufferMax or DepthBufferMax == NULL) DepthBufferMax = A.z;
-		if (A.z < DepthBufferMin or DepthBufferMin == NULL) DepthBufferMin = A.z;
-		(*ThreadDepthBuffer)[y * ScreenWidth + x] = A.z;
+	if ((*ThreadDepthBuffer)[index] == NULL or (*ThreadDepthBuffer)[index] > A.z) {
+		(*ThreadDepthBuffer)[index] = A.z;
 		return true;
 	}
 	return false;
