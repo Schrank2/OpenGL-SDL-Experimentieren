@@ -166,6 +166,7 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	int TrianglesPerThread = TriangleQueue->size() / ThreadsUsed;
 	int start = 0;
 	int end = 0;
+	cout << ThreadsUsed << endl;
 	vector<Triangle> ThreadTriangles;
 	for (int i = 0; i < ThreadsUsed; i++) {
 		ThreadedPixels.push_back(vector<Uint32>(ScreenHeight * ScreenWidth, 0));
@@ -193,9 +194,11 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 		for(int j = 0; j < ScreenHeight; j++) {
 			int index = j * ScreenWidth + i;
 			for(int t = 0; t < ThreadsUsed; t++) {
-				if(ThreadedDepthBuffer[t][index] > DepthBuffer[index]) {
+				if(ThreadedDepthBuffer[t][index] < DepthBuffer[index] or DepthBuffer[index] == 0.0f) {
 					DepthBuffer[index] = ThreadedDepthBuffer[t][index];
 					pixels[index] = ThreadedPixels[t][index];
+					if (DepthBuffer[index] > DepthBufferMax) DepthBufferMax = DepthBuffer[index];
+					if (DepthBuffer[index] < DepthBufferMin) DepthBufferMin = DepthBuffer[index];
 				}
 			}
 		}

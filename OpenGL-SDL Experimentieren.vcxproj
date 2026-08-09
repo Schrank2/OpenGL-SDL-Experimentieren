@@ -160,12 +160,14 @@
     <ClCompile Include="..\..\..\..\..\GL\glad\src\glad.c" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="OpenGLRenderer.cpp" />
+    <ClCompile Include="RayCastRenderer.cpp" />
     <ClCompile Include="world.cpp" />
     <ClCompile Include="init.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SimpleRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ray.h" />
     <ClInclude Include="SimpleRenderer.h" />
     <ClInclude Include="defs.h" />
     <ClInclude Include="functions.h" />
