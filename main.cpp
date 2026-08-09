@@ -3,6 +3,7 @@
 #include "defs.h"
 #include "SimpleRenderer.h"
 #include "world.h"
+#include "ray.h"
 #include "input.h"
 #include "OpenGLRenderer.h"
 #include <iomanip> // for more precise floats in cout
@@ -17,8 +18,9 @@ Mouse mainMouse;
 int main(int argc, char* argv[])
 {
 	if (debug == true) { cout << "[DEBUG] function main() from main.cpp" << endl; }
-	simple.active = true;
+	simple.active = false;
 	open.active = false;
+	ray.active = true;
 
 	simple.ThreadAllocation = thread::hardware_concurrency() - 2;
 	simple.ThreadAllocation = simple.ThreadAllocation < 1 ? 1 : simple.ThreadAllocation;
@@ -32,6 +34,7 @@ int main(int argc, char* argv[])
 	int ScreenHeight = static_cast<int>(MonitorHeight * 0.75);
 	if(simple.active) simple.init(&ScreenWidth, &ScreenHeight);
 	if (open.active) open.init(&ScreenWidth, &ScreenHeight);
+	if (ray.active) ray.init(&ScreenWidth, &ScreenHeight, &ScreenPercentage, "RayCastingRenderer");
 	world.init(&ScreenWidth, &ScreenHeight);
 	bool running = true;
 

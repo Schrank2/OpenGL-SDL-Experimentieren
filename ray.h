@@ -10,8 +10,9 @@ using namespace std;
 
 class RAY {
 public:
-	void init(float* ScreenWidth, float* ScreenHeight, float* WindowSize, string WindowTitle);
+	void init(int* ScreenWidth, int* ScreenHeight, float* WindowSize, string WindowTitle);
 	void render();
+	bool active = true;
 private:
 	float WindowWidthF = 0.0f;
 	float WindowHeightF = 0.0f;

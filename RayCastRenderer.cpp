@@ -6,12 +6,11 @@
 #include <mutex>
 #include <string>
 
-void RAY::init(float* ScreenWidth, float* ScreenHeight, float* WindowSize, string WindowTitle) {
+void RAY::init(int* ScreenWidth, int* ScreenHeight, float* WindowSize, string WindowTitle) {
 	// Store WindowSize
-	WindowWidthF = *ScreenWidth * *WindowSize;
-	WindowHeightF = *ScreenHeight * *WindowSize;
+	WindowWidthF = static_cast<float>(*ScreenWidth) * *WindowSize;
+	WindowHeightF = static_cast<float>(*ScreenHeight) * *WindowSize;
 	// Create WindowTitle
-	string WindowTitle;
 	flags = SDL_WINDOW_ALWAYS_ON_TOP;
 	WindowTitle = WindowTitle + " " + to_string(WindowWidthF) + "x" + to_string(WindowHeightF);
 	const char* WindowTitleChar = WindowTitle.c_str();
