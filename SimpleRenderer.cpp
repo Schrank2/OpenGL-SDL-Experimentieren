@@ -148,11 +148,11 @@ void SimpleRenderer::TextRender() {
 	}
 }
 
-void SimpleRenderer::TriangleRenderThread(int thread, vector<Triangle> TriangleQueue) {
+void SimpleRenderer::TriangleRenderThread(int thread, vector<Triangle> ThreadedTriangleQueue) {
 	vector<Uint32> ThreadPixels(simple.ScreenHeight * simple.ScreenWidth, 0);
 	vector<float> ThreadDepthBuffer(simple.ScreenHeight * simple.ScreenWidth, 0);
-	for (int j = 0; j < TriangleQueue.size(); j++) {
-		simple.DrawTriangle(&TriangleQueue[j].p1.position, &TriangleQueue[j].p2.position, &TriangleQueue[j].p3.position, &TriangleQueue[j].color, &ThreadPixels, &ThreadDepthBuffer);
+	for (int j = 0; j < ThreadedTriangleQueue.size(); j++) {
+		simple.DrawTriangle(&ThreadedTriangleQueue[j].p1.position, &ThreadedTriangleQueue[j].p2.position, &ThreadedTriangleQueue[j].p3.position, &ThreadedTriangleQueue[j].color, &ThreadPixels, &ThreadDepthBuffer);
 	}
 	ThreadedPixels[thread] = ThreadPixels;
 	ThreadedDepthBuffer[thread] = ThreadDepthBuffer;
@@ -163,6 +163,7 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	
 	// Draw all triangles from world
 	int ThreadsUsed = TriangleQueue->size() < ThreadAllocation ? TriangleQueue->size() : ThreadAllocation;
+	cout << "ThreadsUsed: " << ThreadsUsed << endl;
 	int TrianglesPerThread = TriangleQueue->size() / ThreadAllocation;
 	int start = 0;
 	int end = 0;
@@ -187,6 +188,19 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 		t.join();
 	}
 	threads.clear();
+
+	for(int i = 0; i < ScreenWidth; i++) {
+		for(int j = 0; j < ScreenHeight; j++) {
+			int index = j * ScreenWidth + i;
+			for(int t = 0; t < ThreadsUsed; t++) {
+				if(ThreadedDepthBuffer[t][index] > DepthBuffer[index]) {
+					DepthBuffer[index] = ThreadedDepthBuffer[t][index];
+					pixels[index] = ThreadedPixels[t][index];
+				}
+			}
+		}
+	}	
+
 	ThreadedPixels.clear();
 	ThreadedDepthBuffer.clear();
 }
@@ -416,7 +430,7 @@ void SimpleRenderer::DrawLine(Pos* A3D, Pos* B3D, RGBA_int* c) {
 
 void SimpleRenderer::DrawPixel(float* x, float* y, RGBA_int* c, vector<Uint32>* ThreadPixels) {
 	if (*y * ScreenWidth + *x < ScreenWidth * ScreenHeight) {
-		pixels[static_cast<int>(*y * ScreenWidth + *x)] = ((*c).r << 24U) | ((*c).g << 16U) | ((*c).b << 8U) | (*c).a;
+		(*ThreadPixels)[static_cast<int>(*y * ScreenWidth + *x)] = ((*c).r << 24U) | ((*c).g << 16U) | ((*c).b << 8U) | (*c).a;
 	}
 }
 
@@ -432,10 +446,10 @@ bool SimpleRenderer::DepthBufferPoint(ScreenPos A, vector<float>* ThreadDepthBuf
 	int x = static_cast<int>(A.x);
 	int y = static_cast<int>(A.y);
 	if (x < 0 or y < 0 or x >= ScreenWidth or y >= ScreenHeight) return false; // Check if Point is on screen
-	if (DepthBuffer[y * ScreenWidth + x] == NULL or DepthBuffer[y * ScreenWidth + x] > A.z) {
+	if ((*ThreadDepthBuffer)[y * ScreenWidth + x] == NULL or (*ThreadDepthBuffer)[y * ScreenWidth + x] > A.z) {
 		if (A.z > DepthBufferMax or DepthBufferMax == NULL) DepthBufferMax = A.z;
 		if (A.z < DepthBufferMin or DepthBufferMin == NULL) DepthBufferMin = A.z;
-		DepthBuffer[y * ScreenWidth + x] = A.z;
+		(*ThreadDepthBuffer)[y * ScreenWidth + x] = A.z;
 		return true;
 	}
 	return false;
