@@ -26,7 +26,7 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	world.ScreenHeight = *ScreenHeight;
 	world.ScreenWidthF = static_cast<float>(world.ScreenWidth);
 	world.ScreenHeightF = static_cast<float>(world.ScreenHeight);
-	int worldSize = 5;
+	int worldSize = 3;
 	Voxels.resize(worldSize, vector<Uint32>(worldSize*worldSize, 0));
 	for (int x = 0; x < worldSize; x++) {
 		for(int y = 0; y < worldSize; y++) {
