@@ -7,6 +7,7 @@ using namespace std;
 #include <SDL3_ttf/SDL_ttf.h>
 #include <string>
 #include <vector>
+#include <thread>
 #include "defs.h"
 
 // declare R1 so rastSdlRender.cpp can use it
@@ -54,12 +55,17 @@ public:
 	bool CheckScreenPos(ScreenPos A);
 	bool CheckScreenPos(float A[3]);
 	vector<Uint32> pixels;
+	vector<vector<Uint32>> ThreadedPixels;
+	vector<vector<float>> ThreadedDepthBuffer;
 	void DrawPixel(float* x, float* y, RGBA_int* c);
 	float ScreenWidth;
 	float ScreenHeight;
 	int ScreenWidthF;
 	int ScreenHeightF;
 	bool active = true;
+	int ThreadAllocation = 1;
+	vector<thread> threads;
+	bool TriangleRenderThread(int thread, vector<Triangle>* TriangleQueue, int start, int stop);
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;

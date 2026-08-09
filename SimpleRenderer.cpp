@@ -3,6 +3,7 @@
 #include "defs.h"
 #include "SimpleRenderer.h"
 #include <vector>
+#include <thread>
 #include <iomanip> // basically settings for cout
 #include <algorithm> // for clamp()
 
@@ -75,6 +76,12 @@ void SimpleRenderer::init(int* ScreenWidth, int* ScreenHeight) {
 	simple.DepthBuffer.resize(simple.ScreenHeight * simple.ScreenWidth, 0);
 	simple.TextEngine = Create_TextEngine(simple.renderer);
 	simple.Get_TTF_Fonts();
+	int i = 0;
+	for (; i < simple.ThreadAllocation; i++) {
+		simple.threads.push_back(thread());
+		simple.ThreadedPixels.push_back(vector<Uint32>(simple.ScreenHeight * simple.ScreenWidth, 0));
+		simple.ThreadedDepthBuffer.push_back(vector<float>(simple.ScreenHeight * simple.ScreenWidth, 0));
+	}
 }
 
 void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue) {
@@ -151,9 +158,15 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	//	simple.DrawPoint(&(*PointQueue)[i]);
 	//}
 	// Draw all triangles from world
-	for (int j = 0; j < static_cast<int>(TriangleQueue->size()); j++) {
-		simple.DrawTriangle(&(*TriangleQueue)[j].p1.position, &(*TriangleQueue)[j].p2.position, &(*TriangleQueue)[j].p3.position, &(*TriangleQueue)[j].color);
+	int TrianglesPerThread = TriangleQueue->size() / ThreadAllocation;
+	int start = 0;
+	int end = 0;
+	for (int i = 0; i < (ThreadAllocation - 1) ; i++) {
+		start = i * TrianglesPerThread;
+		TriangleRenderThread(i, TriangleQueue, i * TrianglesPerThread, (i+1) * TrianglesPerThread);
 	}
+	start = (ThreadAllocation - 1) * TrianglesPerThread;
+	TriangleRenderThread((ThreadAllocation - 1), TriangleQueue, start, TriangleQueue->size());
 }
 
 void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
@@ -264,6 +277,12 @@ bool SimpleRenderer::CheckScreenPos(float A[3]) {
 		return false;
 	}
 	return true;
+}
+
+bool SimpleRenderer::TriangleRenderThread(int thread, vector<Triangle>* TriangleQueue, int start, int stop) {
+	for (int j = start; j < stop; j++) {
+		simple.DrawTriangle(&(*TriangleQueue)[j].p1.position, &(*TriangleQueue)[j].p2.position, &(*TriangleQueue)[j].p3.position, &(*TriangleQueue)[j].color);
+	}
 }
 
 void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color) {

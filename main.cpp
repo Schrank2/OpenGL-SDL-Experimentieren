@@ -19,6 +19,10 @@ int main(int argc, char* argv[])
 	if (debug == true) { cout << "[DEBUG] function main() from main.cpp" << endl; }
 	simple.active = true;
 	open.active = false;
+
+	simple.ThreadAllocation = _Thrd_hardware_concurrency() - 2;
+	simple.ThreadAllocation = simple.ThreadAllocation < 1 ? 1 : simple.ThreadAllocation;
+
 	float ScreenPercentage = 0.75;
 	int MonitorWidth = 0;
 	int MonitorHeight = 0;
