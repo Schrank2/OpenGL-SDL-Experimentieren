@@ -18,9 +18,9 @@ Mouse mainMouse;
 int main(int argc, char* argv[])
 {
 	if (debug == true) { cout << "[DEBUG] function main() from main.cpp" << endl; }
-	simple.active = false;
+	simple.active = true;
 	open.active = false;
-	ray.active = true;
+	ray.active = false;
 
 	simple.ThreadAllocation = thread::hardware_concurrency() - 2;
 	simple.ThreadAllocation = simple.ThreadAllocation < 1 ? 1 : simple.ThreadAllocation;

@@ -28,12 +28,14 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	world.ScreenHeightF = static_cast<float>(world.ScreenHeight);
 	int worldSize = 3;
 	Voxels.resize(worldSize, vector<Uint32>(worldSize*worldSize, 0));
-	for (int x = 0; x < worldSize; x++) {
-		for(int y = 0; y < worldSize; y++) {
-			for(int z = 0; z < worldSize; z++) {
-				if (z % 2 == 0) Voxels[x][y * worldSize + z] = (255 << 24U) | (128 << 16U) | (255 << 8U) | 255;
-				else
-				Voxels[x][y*worldSize + z] = 0;
+	if (false) {
+		for (int x = 0; x < worldSize; x++) {
+			for (int y = 0; y < worldSize; y++) {
+				for (int z = 0; z < worldSize; z++) {
+					if (z % 2 == 0) Voxels[x][y * worldSize + z] = (255 << 24U) | (128 << 16U) | (255 << 8U) | 255;
+					else
+						Voxels[x][y * worldSize + z] = 0;
+				}
 			}
 		}
 	}
