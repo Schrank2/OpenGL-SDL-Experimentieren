@@ -166,7 +166,7 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	int TrianglesPerThread = TriangleQueue->size() / ThreadsUsed;
 	int start = 0;
 	int end = 0;
-	cout << ThreadsUsed << endl;
+	cout << "Threads used: " << ThreadsUsed << endl;
 	vector<Triangle> ThreadTriangles;
 	for (int i = 0; i < ThreadsUsed; i++) {
 		ThreadedPixels.push_back(vector<Uint32>(ScreenHeight * ScreenWidth, 0));
@@ -218,7 +218,7 @@ void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
 	Pos Temp3D = Pos(A.x, A.y - r, A.z);
 	ScreenPos Temp = Projection(&Temp3D);
 	float R = As.y - Temp.y;
-	cout << R << endl;
+	cout << "Sphere Radius Screen Space: " << R << endl;
 	// where the sphere is lit most brightly (temporary, will later be replaced)
 	ScreenPos Light = ScreenPos(As.x - (R/2), As.y - (R/2), As.z, true);
 
