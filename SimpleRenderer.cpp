@@ -164,45 +164,33 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	
 	// Draw all triangles from world
 	int ThreadsUsed = TriangleQueue->size() < ThreadAllocation ? TriangleQueue->size() : ThreadAllocation;
+	//ThreadsUsed = 1;
 	int TrianglesPerThread = TriangleQueue->size() / ThreadsUsed;
 	int start = 0;
 	int end = 0;
 	if (debug) cout << "Threads used: " << ThreadsUsed << endl;
-	vector<Triangle> ThreadTriangles;
 	PolyGonsRenderedTotal = 0;
 	PolyGonsRenderedPerThread.clear();
+	TriangleDrawingTime = SDL_GetTicks();
 	for (int i = 0; i < ThreadsUsed; i++) {
-		ThreadedPixels.push_back(vector<Uint32>(ScreenHeight * ScreenWidth, 0));
-		ThreadedDepthBuffer.push_back(vector<float>(ScreenHeight * ScreenWidth, 0));
-		PolyGonsRenderedPerThread.push_back(0);
-
-		start = i * TrianglesPerThread;
-		end = (i + 1) * TrianglesPerThread;
-		// special case for the last thread to take any remaining triangles
-		end = end > TriangleQueue->size() ? TriangleQueue->size() : end;
-		start = start > end ? end : start;
-	
-		ThreadTriangles.clear();
-		for (int j = start; j < end; j++) {
-			ThreadTriangles.push_back((*TriangleQueue)[j]);
-		}
-		threads.emplace_back(&SimpleRenderer::TriangleRenderThread, this, i, ThreadTriangles);
+		TriangleRenderThreadInitialisation(i, TrianglesPerThread, TriangleQueue);
 	}
-
+	
 	for(thread& t: threads) {
 		t.join();
 	}
 	threads.clear();
+	TriangleDrawingTime = SDL_GetTicks() - TriangleDrawingTime;
 
 	for (int i = 0; i < ThreadsUsed; i++) {
 		PolyGonsRenderedTotal += PolyGonsRenderedPerThread[i];
 	}
-
+	DepthBufferMergingTime = SDL_GetTicks();
 	for(int i = 0; i < ScreenWidth; i++) {
 		for(int j = 0; j < ScreenHeight; j++) {
 			int index = j * ScreenWidth + i;
 			for(int t = 0; t < ThreadsUsed; t++) {
-				if(ThreadedDepthBuffer[t][index] < DepthBuffer[index] or DepthBuffer[index] == 0.0f) {
+				if(ThreadedDepthBuffer[t][index] > DepthBuffer[index] or DepthBuffer[index] == 0.0f) {
 					DepthBuffer[index] = ThreadedDepthBuffer[t][index];
 					pixels[index] = ThreadedPixels[t][index];
 					if (DepthBuffer[index] > DepthBufferMax) DepthBufferMax = DepthBuffer[index];
@@ -211,9 +199,28 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 			}
 		}
 	}	
-
+	DepthBufferMergingTime = SDL_GetTicks() - DepthBufferMergingTime;
 	ThreadedPixels.clear();
 	ThreadedDepthBuffer.clear();
+}
+
+void SimpleRenderer::TriangleRenderThreadInitialisation(int thread, int TrianglesPerThread, vector<Triangle>* TriangleQueue) {
+	vector<Triangle> ThreadTriangles;
+	ThreadedPixels.push_back(vector<Uint32>(ScreenHeight * ScreenWidth, 0));
+	ThreadedDepthBuffer.push_back(vector<float>(ScreenHeight * ScreenWidth, 0));
+	PolyGonsRenderedPerThread.push_back(0);
+	
+	int start = thread * TrianglesPerThread;
+	int end = (thread + 1) * TrianglesPerThread;
+	// special case for the last thread to take any remaining triangles
+	end = end > TriangleQueue->size() ? TriangleQueue->size() : end;
+	start = start > end ? end : start;
+
+	ThreadTriangles.clear();
+	for (int j = start; j < end; j++) {
+		ThreadTriangles.push_back((*TriangleQueue)[j]);
+	}
+	threads.emplace_back(&SimpleRenderer::TriangleRenderThread, this, thread, ThreadTriangles);
 }
 
 void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {

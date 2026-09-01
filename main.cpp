@@ -111,6 +111,9 @@ int main(int argc, char* argv[])
 				Report.push_back("Sin(Yaw): " + format("{:.2f}", sin(simple.CameraYaw*(3.14/180.0f))));
 				Report.push_back("Cos(Yaw): " + format("{:.2f}", cos(simple.CameraYaw * (3.14 / 180.0f))));
 				Report.push_back("Triangles Rendered: " + to_string(simple.PolyGonsRenderedTotal));
+				Report.push_back("TriangleDrawingTime: " + to_string(simple.TriangleDrawingTime));
+				Report.push_back("ThreadMergingTime: " + to_string(simple.ThreadMergingTime));
+				Report.push_back("DepthBufferMergingTime: " + to_string(simple.DepthBufferMergingTime));
 			}
 		}
 	}

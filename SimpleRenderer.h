@@ -66,6 +66,10 @@ public:
 	void TriangleRenderThread(int thread, vector<Triangle> TriangleQueue);
 	int PolyGonsRenderedTotal = 0;
 	vector<int> PolyGonsRenderedPerThread;
+	int TriangleDrawingTime = 0;
+	int ThreadMergingTime = 0;
+	int DepthBufferMergingTime = 0;
+	void TriangleRenderThreadInitialisation(int thread, int TrianglesPerThread, vector<Triangle>* TriangleQueue);
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;
