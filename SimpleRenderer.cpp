@@ -167,8 +167,9 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	int TrianglesPerThread = TriangleQueue->size() / ThreadsUsed;
 	int start = 0;
 	int end = 0;
-	cout << "Threads used: " << ThreadsUsed << endl;
+	if (debug) cout << "Threads used: " << ThreadsUsed << endl;
 	vector<Triangle> ThreadTriangles;
+	PolyGonsRenderedTotal = 0;
 	PolyGonsRenderedPerThread.clear();
 	for (int i = 0; i < ThreadsUsed; i++) {
 		ThreadedPixels.push_back(vector<Uint32>(ScreenHeight * ScreenWidth, 0));
