@@ -153,6 +153,7 @@ void SimpleRenderer::TriangleRenderThread(int thread, vector<Triangle> ThreadedT
 	vector<float> ThreadDepthBuffer(simple.ScreenHeight * simple.ScreenWidth, 0.0f);
 	for (int j = 0; j < ThreadedTriangleQueue.size(); j++) {
 		simple.DrawTriangle(&ThreadedTriangleQueue[j].p1.position, &ThreadedTriangleQueue[j].p2.position, &ThreadedTriangleQueue[j].p3.position, &ThreadedTriangleQueue[j].color, &ThreadPixels, &ThreadDepthBuffer);
+		PolyGonsRenderedPerThread[thread]++;
 	}
 	ThreadedPixels[thread] = std::move(ThreadPixels);
 	ThreadedDepthBuffer[thread] = std::move(ThreadDepthBuffer);
@@ -168,9 +169,11 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	int end = 0;
 	cout << "Threads used: " << ThreadsUsed << endl;
 	vector<Triangle> ThreadTriangles;
+	PolyGonsRenderedPerThread.clear();
 	for (int i = 0; i < ThreadsUsed; i++) {
 		ThreadedPixels.push_back(vector<Uint32>(ScreenHeight * ScreenWidth, 0));
 		ThreadedDepthBuffer.push_back(vector<float>(ScreenHeight * ScreenWidth, 0));
+		PolyGonsRenderedPerThread.push_back(0);
 
 		start = i * TrianglesPerThread;
 		end = (i + 1) * TrianglesPerThread;
@@ -189,6 +192,10 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 		t.join();
 	}
 	threads.clear();
+
+	for (int i = 0; i < ThreadsUsed; i++) {
+		PolyGonsRenderedTotal += PolyGonsRenderedPerThread[i];
+	}
 
 	for(int i = 0; i < ScreenWidth; i++) {
 		for(int j = 0; j < ScreenHeight; j++) {

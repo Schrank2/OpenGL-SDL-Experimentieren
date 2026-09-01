@@ -110,6 +110,7 @@ int main(int argc, char* argv[])
 				Report.push_back("Rendering Performance: " + format("{:.1f}", FPS) + "fps | " + format("{:.1f}", Frametime) + "ms");
 				Report.push_back("Sin(Yaw): " + format("{:.2f}", sin(simple.CameraYaw*(3.14/180.0f))));
 				Report.push_back("Cos(Yaw): " + format("{:.2f}", cos(simple.CameraYaw * (3.14 / 180.0f))));
+				Report.push_back("Triangles Rendered: " + to_string(simple.PolyGonsRenderedTotal));
 			}
 		}
 	}
