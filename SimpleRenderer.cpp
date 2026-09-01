@@ -199,9 +199,9 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 			}
 		}
 	}	
-	DepthBufferMergingTime = SDL_GetTicks() - DepthBufferMergingTime;
 	ThreadedPixels.clear();
 	ThreadedDepthBuffer.clear();
+	DepthBufferMergingTime = SDL_GetTicks() - DepthBufferMergingTime;
 }
 
 void SimpleRenderer::TriangleRenderThreadInitialisation(int thread, int TrianglesPerThread, vector<Triangle>* TriangleQueue) {
