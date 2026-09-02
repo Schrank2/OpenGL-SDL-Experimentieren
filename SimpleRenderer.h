@@ -35,7 +35,7 @@ public:
 	void GetVector(float Vector[3], float A[3], float B[3]); 
 	void DrawLine(Pos* A3D, Pos* B3D, RGBA_int* c);
 	void DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer);
-	void DrawScanLine(float* y, float* leftx, float* leftz, float* rightx, float* rightz, RGBA_int* Color, float* DiffZ, float* shadeIntensity, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer);
+	void DrawScanLine(float* y, float* leftx, float* leftz, float* rightx, float* rightz, RGBA_int* Color, float* minZ, float* maxZ, float* shadeIntensity, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer);
 	float DistBetweenPoints(Pos a, Pos b);
 	float RenderScale;
 	float ScreenDist(ScreenPos A, ScreenPos B);

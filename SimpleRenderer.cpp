@@ -110,9 +110,9 @@ void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQ
 		float ColorModifier = 0.0f;
 		float Depth = 0.0f;
 		float DepthBufferRange = DepthBufferMax - DepthBufferMin;
-		for (i = 0; i < ScreenWidth; i++) {
-			for (j=0; j< ScreenHeight; j++) {
-				index = static_cast<int>(j * ScreenWidthF + i);
+		for (i = 0; i < ScreenWidthF; i++) {
+			for (j=0; j< ScreenHeightF; j++) {
+				index = static_cast<int>(j * ScreenWidth + i);
 				Depth = DepthBuffer[index];
 				if (Depth < FarPlane) {
 					ColorModifier = (Depth - DepthBufferMin) / DepthBufferRange;
@@ -173,7 +173,7 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	
 	// Draw all triangles from world
 	int ThreadsUsed = TriangleQueue->size() < ThreadAllocation ? TriangleQueue->size() : ThreadAllocation;
-	ThreadsUsed = 1;
+	//ThreadsUsed = 1;
 	int TrianglesPerThread = TriangleQueue->size() / ThreadsUsed;
 	int start = 0;
 	int end = 0;
@@ -350,8 +350,6 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color,
 	// SHADING PREREQUISITES
 	float maxZ = max(A.z, max(B.z, C.z));
 	float minZ = min(A.z, min(B.z, C.z));
-	float diffZ = maxZ-minZ;
-	diffZ = diffZ <= 0.0f ? 0.000001f : diffZ;
 	float shadeIntensity = 0.4f;
 	RGBA_int LocalColor = *Color;
 
@@ -396,14 +394,15 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color,
 		lx = lx > 0.0f ? lx : 0.0f; // Clipping if minX < 0
 		if (lx <= 0.0f) lx = 0.0f;
 		if (y > 0 and y < ScreenHeight) {
-			DrawScanLine(&y, &lx, &lz, &rx, &rz, Color, &diffZ, &shadeIntensity, ThreadPixels, ThreadDepthBuffer);
+			DrawScanLine(&y, &lx, &lz, &rx, &rz, Color, &minZ, &maxZ, &shadeIntensity, ThreadPixels, ThreadDepthBuffer);
 		}
 	}
 }
 
-void SimpleRenderer::DrawScanLine(float* y, float* leftx, float* leftz, float* rightx, float* rightz, RGBA_int* Color, float* DiffZ, float* shadeIntensity, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer) {
+void SimpleRenderer::DrawScanLine(float* y, float* leftx, float* leftz, float* rightx, float* rightz, RGBA_int* Color, float* minZ, float* maxZ, float* shadeIntensity, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer) {
 	float yf = floor(*y);
 	int x;
+	float DiffZ = *maxZ - *minZ;
 	float z,r, shade;
 	ScreenPos P = ScreenPos(0.0f, yf, 0.0f, true);
 	RGBA_int LocalColor = *Color;
@@ -415,7 +414,7 @@ void SimpleRenderer::DrawScanLine(float* y, float* leftx, float* leftz, float* r
 			r = (x - *leftx) / span;
 			P.z = *leftz + r * (*rightz-*leftz);
 			if (DepthBufferPoint(P, ThreadDepthBuffer)) {
-				shade = (P.z - *leftz) / *DiffZ;
+				shade = (P.z - *leftz) / DiffZ;
 				LocalColor = ModifyColor(1.0f - shade, *shadeIntensity, *Color);
 				LocalColor.a = 255;
 				DrawPixel(&P.x, &P.y, &LocalColor, ThreadPixels);
