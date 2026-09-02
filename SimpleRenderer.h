@@ -48,7 +48,6 @@ public:
 	int RenderEndTime = 0;
 	int RenderTime = 0;
 	bool CheckScreenPos(ScreenPos A);
-	bool CheckScreenPos(float A[3]);
 	vector<Uint32> pixels;
 	vector<vector<Uint32>> ThreadedPixels;
 	vector<vector<float>> ThreadedDepthBuffer;

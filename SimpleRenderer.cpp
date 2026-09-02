@@ -302,13 +302,7 @@ ScreenPos SimpleRenderer::Projection(Pos* A3D) {
 }
 
 bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
-	if (A.x < 0.0f or A.x > ScreenWidthF or A.y < 0.0f or A.y > ScreenHeightF) {
-		return false;
-	}
-	return true;
-}
-bool SimpleRenderer::CheckScreenPos(float A[3]) {
-	if (A[0] < 0.0f or A[0] > ScreenWidthF or A[1] < 0.0f or A[1] > ScreenHeightF) {
+	if (static_cast<int>(A.x) < 0 or static_cast<int>(A.x) > ScreenWidth or static_cast<int>(A.y) < 0 or static_cast<int>(A.y) > ScreenHeight) {
 		return false;
 	}
 	return true;
