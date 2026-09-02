@@ -28,7 +28,6 @@ public:
 	void GetScreenData(int* ScreenWidth, int* ScreenHeight);
 	void draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue);
 	void DrawSphere(Pos A, float r, RGBA_int c);
-	ScreenPos Projection(float A[3]);
 	ScreenPos Projection(Pos* A3D);
 	bool DepthBufferPoint(ScreenPos A, vector<float>* ThreadDepthBuffer);
 	void DrawPoint(Point* point);
