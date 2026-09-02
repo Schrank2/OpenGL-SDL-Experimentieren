@@ -146,8 +146,8 @@ void SimpleRenderer::TextRender() {
 }
 
 void SimpleRenderer::TriangleRenderThread(int thread, vector<Triangle> ThreadedTriangleQueue) {
-	vector<Uint32> ThreadPixels(simple.ScreenHeight * simple.ScreenWidth, 0);
-	vector<float> ThreadDepthBuffer(simple.ScreenHeight * simple.ScreenWidth, 0.0f);
+	vector<Uint32> ThreadPixels = EmptyScreen;
+	vector<float> ThreadDepthBuffer = EmptyDepthBuffer;
 	for (int j = 0; j < ThreadedTriangleQueue.size(); j++) {
 		simple.DrawTriangle(&ThreadedTriangleQueue[j].p1.position, &ThreadedTriangleQueue[j].p2.position, &ThreadedTriangleQueue[j].p3.position, &ThreadedTriangleQueue[j].color, &ThreadPixels, &ThreadDepthBuffer);
 		PolyGonsRenderedPerThread[thread]++;
@@ -161,7 +161,7 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	
 	// Draw all triangles from world
 	int ThreadsUsed = TriangleQueue->size() < ThreadAllocation ? TriangleQueue->size() : ThreadAllocation;
-	//ThreadsUsed = 1;
+	ThreadsUsed = 1;
 	int TrianglesPerThread = TriangleQueue->size() / ThreadsUsed;
 	int start = 0;
 	int end = 0;
