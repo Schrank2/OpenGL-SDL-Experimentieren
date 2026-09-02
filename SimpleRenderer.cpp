@@ -105,10 +105,10 @@ void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQ
 		float i, j;
 		RGBA_int c = RGBA_int(0, 0, 0, 255);
 		float a;
-		float DepthBufferRange = FarPlane - NearPlane;
+		float DepthBufferRange = DepthBufferMax - DepthBufferMin;
 		for (i = 0; i < ScreenWidth; i++) {
 			for (j=0; j< ScreenHeight; j++) {
-				a = (DepthBuffer[j * ScreenWidth + i] - NearPlane) / (DepthBufferRange);
+				a = (DepthBuffer[j * ScreenWidth + i] - DepthBufferMin) / (DepthBufferRange);
 				//cout << fixed << setprecision(3) << a << " " << DepthBuffer[i][j] << endl;
 				//cout << fixed << setprecision(2) << a << endl;
 				a = a / DepthBufferRange;
@@ -198,6 +198,7 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 						DepthBuffer[index] = CurrentValue;
 						pixels[index] = ThreadedPixels[t][index];
 						if (DepthBufferMin > CurrentValue) DepthBufferMin = CurrentValue;
+						if (DepthBufferMax < CurrentValue) DepthBufferMax = CurrentValue;
 					}
 			}
 		}

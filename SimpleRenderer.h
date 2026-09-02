@@ -71,6 +71,7 @@ public:
 	vector<Uint32> EmptyScreen;
 	vector<float> EmptyDepthBuffer;
 	float DepthBufferMin = 0.0f;
+	float DepthBufferMax = 0.0f;
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;
