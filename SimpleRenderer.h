@@ -22,8 +22,6 @@ public:
 	PhysicsObject Camera = PhysicsObject(Pos(-2.0f, 1.0f, -2.0f), Pos(0.0f, 0.0f, 0.0f), 1.0f);
 	float CameraPitch = 0.0f;
 	float CameraYaw = 0.0f;
-	float DepthBufferMax = NULL;
-	float DepthBufferMin = NULL;
 	SDL_Renderer* Create_Renderer(SDL_Window* window);
 	SDL_Window* Create_Window(string title);
 	TTF_TextEngine* Create_TextEngine(SDL_Renderer* renderer);

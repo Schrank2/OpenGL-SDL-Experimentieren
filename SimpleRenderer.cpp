@@ -94,8 +94,6 @@ void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQ
 	SDL_RenderClear(simple.renderer);
 	fill(pixels.begin(), pixels.end(), 0);
 	fill(DepthBuffer.begin(), DepthBuffer.end(), 0);
-	DepthBufferMax = 0.0f;
-	DepthBufferMin = 1000000.0f;
 	simple.draw(LineQueue, TriangleQueue, PointQueue);
 	// Draw the Depth Buffer
 	if (mainInput[7].active == true) {
@@ -105,7 +103,7 @@ void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQ
 		float i, j;
 		RGBA_int c = RGBA_int(0, 0, 0, 255);
 		float a;
-		float DepthBufferRange = DepthBufferMax - DepthBufferMin;
+		float DepthBufferRange = FarPlane - NearPlane;
 		for (i = 0; i < ScreenWidth; i++) {
 			for (j=0; j< ScreenHeight; j++) {
 				a = (DepthBuffer[j * ScreenWidth + i] - NearPlane) / (DepthBufferRange);
@@ -118,8 +116,8 @@ void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQ
 			}
 		}
 		if (debug == true) {
-			cout << "DepthBufferMax: " << DepthBufferMax << endl;
-			cout << "DepthBufferMin: " << DepthBufferMin << endl;
+			cout << "DepthBufferMax: " << FarPlane << endl;
+			cout << "DepthBufferMin: " << NearPlane << endl;
 		}
 	}
 	SDL_UpdateTexture(simple.canvas, 0, pixels.data(), ScreenWidth * sizeof(Uint32));
@@ -183,15 +181,14 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 		PolyGonsRenderedTotal += PolyGonsRenderedPerThread[i];
 	}
 	DepthBufferMergingTime = SDL_GetTicks();
+	int index = 1;
 	for(int i = 0; i < ScreenWidth; i++) {
 		for(int j = 0; j < ScreenHeight; j++) {
-			int index = j * ScreenWidth + i;
+			index = j * ScreenWidth + i;
 			for(int t = 0; t < ThreadsUsed; t++) {
 				if(ThreadedDepthBuffer[t][index] > DepthBuffer[index] or DepthBuffer[index] < NearPlane or DepthBuffer[index] > FarPlane) {
 					DepthBuffer[index] = ThreadedDepthBuffer[t][index];
 					pixels[index] = ThreadedPixels[t][index];
-					if (DepthBuffer[index] > DepthBufferMax) DepthBufferMax = DepthBuffer[index];
-					if (DepthBuffer[index] < DepthBufferMin) DepthBufferMin = DepthBuffer[index];
 				}
 			}
 		}
@@ -459,7 +456,7 @@ void SimpleRenderer::GetVector(float Vector[3], float Start[3], float End[3]) {
 
 
 bool SimpleRenderer::DepthBufferPoint(ScreenPos A, vector<float>* ThreadDepthBuffer) {
-	if (!A.valid) return false;
+	if (!A.valid or A.z > FarPlane or A.z < NearPlane) return false;
 	int x = static_cast<int>(A.x);
 	int y = static_cast<int>(A.y);
 	int index = y * ScreenWidth + x;
