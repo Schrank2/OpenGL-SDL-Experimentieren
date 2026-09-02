@@ -378,7 +378,7 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color,
 		if (y >= B.y) { g = BC; g0 = B; g1 = C; } // switch line g to BC
 		// get x and z for line f = AC
 		if (y - f0.y != 0) {
-			r =  (y - f0.y) / (f1.y - f0.y);
+			r =  (y - f0.y) / (f.y);
 			lx = f0.x + r * f.x;
 			lz = f0.z + r * f.z;
 		}
