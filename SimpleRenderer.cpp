@@ -408,7 +408,6 @@ void SimpleRenderer::DrawScanLine(float* y, float* leftx, float* leftz, float* r
 	if (!CheckScreenPos(P)) return;
 	P = { *rightx, *y, *rightz, true };
 	if (!CheckScreenPos(P)) return;
-
 	for (x = *leftx; x < *rightx; x++) {
 			P.x = x;
 			P.y = *y;
