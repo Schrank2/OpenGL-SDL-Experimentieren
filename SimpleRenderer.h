@@ -70,6 +70,8 @@ public:
 	int ThreadMergingTime = 0;
 	int DepthBufferMergingTime = 0;
 	void TriangleRenderThreadInitialisation(int thread, int TrianglesPerThread, vector<Triangle>* TriangleQueue);
+	float NearPlane = 0.1f;
+	float FarPlane = 50.0f;
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;

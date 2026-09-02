@@ -105,16 +105,13 @@ void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQ
 		float i, j;
 		RGBA_int c = RGBA_int(0, 0, 0, 255);
 		float a;
+		float DepthBufferRange = DepthBufferMax - DepthBufferMin;
 		for (i = 0; i < ScreenWidth; i++) {
 			for (j=0; j< ScreenHeight; j++) {
-				if (DepthBufferMax == NULL) DepthBufferMax = 0.0f;
-				if (DepthBufferMin == NULL) DepthBufferMin = 1000.0f;
-				a = (DepthBuffer[j * ScreenWidth + i] - DepthBufferMin) / (DepthBufferMax - DepthBufferMin);
+				a = (DepthBuffer[j * ScreenWidth + i] - NearPlane) / (DepthBufferRange);
 				//cout << fixed << setprecision(3) << a << " " << DepthBuffer[i][j] << endl;
-				if (a < 0.0f) { a = 1.0f; }
-				if (a > 1.0f) { a = 0.0f; }
 				//cout << fixed << setprecision(2) << a << endl;
-				a = 1.0f - a;
+				a = a / DepthBufferRange;
 				SDL_SetRenderDrawColorFloat(simple.renderer, a, a, a, 1.0f);
 				c = RGBA_int(255 * a, 255 * a, 255 * a, 255);
 				DrawPixel(&i, &j, &c, &pixels);
@@ -190,7 +187,7 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 		for(int j = 0; j < ScreenHeight; j++) {
 			int index = j * ScreenWidth + i;
 			for(int t = 0; t < ThreadsUsed; t++) {
-				if(ThreadedDepthBuffer[t][index] > DepthBuffer[index] or DepthBuffer[index] == 0.0f) {
+				if(ThreadedDepthBuffer[t][index] > DepthBuffer[index] or DepthBuffer[index] < NearPlane or DepthBuffer[index] > FarPlane) {
 					DepthBuffer[index] = ThreadedDepthBuffer[t][index];
 					pixels[index] = ThreadedPixels[t][index];
 					if (DepthBuffer[index] > DepthBufferMax) DepthBufferMax = DepthBuffer[index];
@@ -297,7 +294,7 @@ ScreenPos SimpleRenderer::Projection(float A[3]) {
 	float x2 = cos(Yaw) * x1 - sin(Yaw) * z1;
 	float z2 = cos(Yaw) * z1 + sin(Yaw) * x1;
 	float y2 = y1;
-	if (z2 <= 0.1) return ScreenPos(0,0,0,false);
+	if (z2 < NearPlane or z2 > FarPlane) return ScreenPos(0,0,0,false);
 	y2 *= -1;
 	float screenx = (x2 / z2) * simple.RenderScale + ScreenWidthF / 2.0f;
 	float screeny = (y2 / z2) * simple.RenderScale + ScreenHeightF / 2.0f;
@@ -313,7 +310,7 @@ ScreenPos SimpleRenderer::Projection(Pos* A3D) {
 	float x2 = cos(Yaw) * x1 - sin(Yaw) * z1;
 	float z2 = cos(Yaw) * z1 + sin(Yaw) * x1;
 	float y2 = y1;
-	if (z2 <= 0.1) return ScreenPos(0, 0, 0, false);
+	if (z2 <= NearPlane) return ScreenPos(0, 0, 0, false);
 	y2 *= -1;
 	float screenx = (x2 / z2) * simple.RenderScale + ScreenWidthF / 2.0f;
 	float screeny = (y2 / z2) * simple.RenderScale + ScreenHeightF / 2.0f;
