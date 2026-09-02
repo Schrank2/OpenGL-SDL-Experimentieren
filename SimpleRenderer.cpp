@@ -400,17 +400,17 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color,
 
 void SimpleRenderer::DrawScanLine(float* y, float* leftx, float* leftz, float* rightx, float* rightz, RGBA_int* Color, float* DiffZ, float* shadeIntensity, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer) {
 	float yf = floor(*y);
-	float x;
+	int x;
 	float z,r, shade;
 	RGBA_int LocalColor = *Color;
 	float span = *rightx - *leftx;
-	if (span < 1) return;
+	if (span < 1.0f) return;
 	ScreenPos P = { *leftx, yf, *leftz, true };
 	if (!CheckScreenPos(P)) return;
 	P = { *rightx, yf, *rightz, true };
 	if (!CheckScreenPos(P)) return;
 	for (x = *leftx; x < *rightx; x++) {
-			P.x = x;
+			P.x = static_cast<float>(x);
 			P.y = yf;
 			r = (x - *leftx) / span;
 			P.z = *leftz + r * (*rightz-*leftz);
