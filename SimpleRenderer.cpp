@@ -114,7 +114,7 @@ void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQ
 			for (j=0; j< ScreenHeight; j++) {
 				index = static_cast<int>(j * ScreenWidthF + i);
 				Depth = DepthBuffer[index];
-				if (Depth != FarPlane) {
+				if (Depth <= FarPlane) {
 					ColorModifier = (Depth - DepthBufferMin) / (DepthBufferRange);
 					//cout << fixed << setprecision(3) << a << " " << DepthBuffer[i][j] << endl;
 					//cout << fixed << setprecision(2) << a << endl;
@@ -406,8 +406,10 @@ void SimpleRenderer::DrawScanLine(int* y, int* leftx, float* leftz, int* rightx,
 	int span = static_cast<int>(*rightx - *leftx);
 	if (span < 1) return;
 	ScreenPos P = { static_cast<float>(*leftx), static_cast<float>(*y), static_cast<float>(*leftz), true };
+	CheckScreenPos(P);
 	if (!P.valid) return;
 	P = { static_cast<float>(*rightx), static_cast<float>(*y), static_cast<float>(*rightz), true };
+	CheckScreenPos(P);
 	if (!P.valid) return;
 
 	for (x = *leftx; x < *rightx; x++) {
