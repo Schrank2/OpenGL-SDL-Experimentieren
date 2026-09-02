@@ -406,17 +406,15 @@ void SimpleRenderer::DrawScanLine(int* y, int* leftx, float* leftz, int* rightx,
 	int span = static_cast<int>(*rightx - *leftx);
 	if (span < 1) return;
 	ScreenPos P = { static_cast<float>(*leftx), static_cast<float>(*y), static_cast<float>(*leftz), true };
-	CheckScreenPos(P);
-	if (!P.valid) return;
+	if (!CheckScreenPos(P)) return;
 	P = { static_cast<float>(*rightx), static_cast<float>(*y), static_cast<float>(*rightz), true };
-	CheckScreenPos(P);
-	if (!P.valid) return;
+	if (!CheckScreenPos(P)) return;
 
 	for (x = *leftx; x < *rightx; x++) {
 			P.x = x;
 			P.y = *y;
-			r = static_cast<float>(x - *leftx) / static_cast<float>(*rightx - *leftx);
-			P.z = *leftz + r * (*rightz - *leftz);
+			r = static_cast<float>(x - *leftx) / static_cast<float>(span);
+			P.z = *leftz + r * (*rightz-*leftz);
 			if (DepthBufferPoint(P, ThreadDepthBuffer)) {
 				shade = fabs(P.z - *leftz) / *DiffZ;
 				LocalColor = ModifyColor(1.0f - shade, *shadeIntensity, *Color);
@@ -465,8 +463,7 @@ void SimpleRenderer::GetVector(float Vector[3], float Start[3], float End[3]) {
 
 
 bool SimpleRenderer::DepthBufferPoint(ScreenPos A, vector<float>* ThreadDepthBuffer) {
-	CheckScreenPos(A);
-	if (!A.valid or A.z > FarPlane or A.z < NearPlane) return false;
+	if (!CheckScreenPos(A) or !A.valid or A.z > FarPlane or A.z < NearPlane) return false;
 	int x = static_cast<int>(A.x);
 	int y = static_cast<int>(A.y);
 	int index = y * ScreenWidth + x;
