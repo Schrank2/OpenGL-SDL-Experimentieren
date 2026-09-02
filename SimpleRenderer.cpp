@@ -77,6 +77,8 @@ void SimpleRenderer::init(int* ScreenWidth, int* ScreenHeight) {
 	simple.DepthBuffer.resize(simple.ScreenHeight * simple.ScreenWidth, 0);
 	simple.TextEngine = Create_TextEngine(simple.renderer);
 	simple.Get_TTF_Fonts();
+	simple.EmptyScreen = vector<Uint32>(simple.ScreenHeight * simple.ScreenWidth, 0);
+	simple.EmptyDepthBuffer = vector<float>(simple.ScreenHeight * simple.ScreenWidth, 0);
 	int i = 0;
 	for (; i < simple.ThreadAllocation; i++) {
 		//simple.threads.push_back(thread());
@@ -92,8 +94,8 @@ void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQ
 	SDL_RenderClear(simple.renderer);
 	SDL_SetRenderTarget(simple.renderer, simple.canvas);
 	SDL_RenderClear(simple.renderer);
-	fill(pixels.begin(), pixels.end(), 0);
-	fill(DepthBuffer.begin(), DepthBuffer.end(), 0);
+	pixels = simple.EmptyScreen;
+	DepthBuffer = simple.EmptyDepthBuffer;
 	simple.draw(LineQueue, TriangleQueue, PointQueue);
 	// Draw the Depth Buffer
 	if (mainInput[7].active == true) {
@@ -200,8 +202,8 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 
 void SimpleRenderer::TriangleRenderThreadInitialisation(int thread, int TrianglesPerThread, vector<Triangle>* TriangleQueue) {
 	vector<Triangle> ThreadTriangles;
-	ThreadedPixels.push_back(vector<Uint32>(ScreenHeight * ScreenWidth, 0));
-	ThreadedDepthBuffer.push_back(vector<float>(ScreenHeight * ScreenWidth, 0));
+	ThreadedPixels.push_back(EmptyScreen);
+	ThreadedDepthBuffer.push_back(EmptyDepthBuffer);
 	PolyGonsRenderedPerThread.push_back(0);
 	
 	int start = thread * TrianglesPerThread;

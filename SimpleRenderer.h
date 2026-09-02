@@ -69,6 +69,8 @@ public:
 	void TriangleRenderThreadInitialisation(int thread, int TrianglesPerThread, vector<Triangle>* TriangleQueue);
 	float NearPlane = 0.1f;
 	float FarPlane = 50.0f;
+	vector<Uint32> EmptyScreen;
+	vector<float> EmptyDepthBuffer;
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;
