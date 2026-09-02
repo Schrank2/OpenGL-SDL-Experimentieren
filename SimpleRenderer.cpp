@@ -74,11 +74,11 @@ void SimpleRenderer::init(int* ScreenWidth, int* ScreenHeight) {
 	simple.renderer = Create_Renderer(simple.window);
 	simple.canvas = SDL_CreateTexture(simple.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, simple.ScreenWidth, simple.ScreenHeight);
 	simple.pixels.resize(simple.ScreenHeight * simple.ScreenWidth, 0);
-	simple.DepthBuffer.resize(simple.ScreenHeight * simple.ScreenWidth, 0);
+	simple.DepthBuffer.resize(simple.ScreenHeight * simple.ScreenWidth, FarPlane);
 	simple.TextEngine = Create_TextEngine(simple.renderer);
 	simple.Get_TTF_Fonts();
-	simple.EmptyScreen = vector<Uint32>(simple.ScreenHeight * simple.ScreenWidth, 0);
-	simple.EmptyDepthBuffer = vector<float>(simple.ScreenHeight * simple.ScreenWidth, 0);
+	simple.EmptyScreen = simple.pixels;
+	simple.EmptyDepthBuffer = simple.DepthBuffer;
 	int i = 0;
 	for (; i < simple.ThreadAllocation; i++) {
 		//simple.threads.push_back(thread());
@@ -188,10 +188,11 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 		for(int j = 0; j < ScreenHeight; j++) {
 			index = j * ScreenWidth + i;
 			for(int t = 0; t < ThreadsUsed; t++) {
-				if(ThreadedDepthBuffer[t][index] > DepthBuffer[index] or DepthBuffer[index] < NearPlane or DepthBuffer[index] > FarPlane) {
-					DepthBuffer[index] = ThreadedDepthBuffer[t][index];
-					pixels[index] = ThreadedPixels[t][index];
-				}
+				if(ThreadedDepthBuffer[t][index] > NearPlane and ThreadedDepthBuffer[t][index] < FarPlane) 
+					if (ThreadedDepthBuffer[t][index] < DepthBuffer[index]) {
+						DepthBuffer[index] = ThreadedDepthBuffer[t][index];
+						pixels[index] = ThreadedPixels[t][index];
+					}
 			}
 		}
 	}	
@@ -446,8 +447,7 @@ bool SimpleRenderer::DepthBufferPoint(ScreenPos A, vector<float>* ThreadDepthBuf
 	int x = static_cast<int>(A.x);
 	int y = static_cast<int>(A.y);
 	int index = y * ScreenWidth + x;
-	if (x < 0 or y < 0 or x >= ScreenWidth or y >= ScreenHeight) return false; // Check if Point is on screen
-	if ((*ThreadDepthBuffer)[index] == NULL or (*ThreadDepthBuffer)[index] > A.z) {
+	if (A.z < (*ThreadDepthBuffer)[index]) {
 		(*ThreadDepthBuffer)[index] = A.z;
 		return true;
 	}
