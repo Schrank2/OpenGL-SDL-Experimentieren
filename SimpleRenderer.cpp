@@ -376,7 +376,7 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color,
 		if (y >= B.y) { g = BC; g0 = B; g1 = C; } // switch line g to BC
 		// get x and z for line f = AC
 		if (y - f0.y != 0) {
-			r =  static_cast<float>(y - f0.y) / static_cast<float>(f1.y - f0.y);
+			r =  (y - f0.y) / (f1.y - f0.y);
 			lx = f0.x + r * f.x;
 			lz = f0.z + r * f.z;
 		}
@@ -399,18 +399,19 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color,
 }
 
 void SimpleRenderer::DrawScanLine(float* y, float* leftx, float* leftz, float* rightx, float* rightz, RGBA_int* Color, float* DiffZ, float* shadeIntensity, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer) {
+	float yf = floor(*y);
 	float x;
 	float z,r, shade;
 	RGBA_int LocalColor = *Color;
 	float span = *rightx - *leftx;
 	if (span < 1) return;
-	ScreenPos P = { *leftx, *y, *leftz, true };
+	ScreenPos P = { *leftx, yf, *leftz, true };
 	if (!CheckScreenPos(P)) return;
-	P = { *rightx, *y, *rightz, true };
+	P = { *rightx, yf, *rightz, true };
 	if (!CheckScreenPos(P)) return;
 	for (x = *leftx; x < *rightx; x++) {
 			P.x = x;
-			P.y = *y;
+			P.y = yf;
 			r = (x - *leftx) / span;
 			P.z = *leftz + r * (*rightz-*leftz);
 			if (DepthBufferPoint(P, ThreadDepthBuffer)) {
