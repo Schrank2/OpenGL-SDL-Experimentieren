@@ -316,7 +316,7 @@ ScreenPos SimpleRenderer::Projection(Pos* A3D) {
 	float z2 = CosYaw * z1 + SinYaw * x1;
 	float y2 = y1;
 	if (z2 <= NearPlane) return ScreenPos(0, 0, 0, false);
-	y2 *= -1;
+	y2 *= -1.0f;
 	float screenx = (x2 / z2) * simple.RenderScale + ScreenWidthF / 2.0f;
 	float screeny = (y2 / z2) * simple.RenderScale + ScreenHeightF / 2.0f;
 	return ScreenPos(screenx, screeny, z2, true);
