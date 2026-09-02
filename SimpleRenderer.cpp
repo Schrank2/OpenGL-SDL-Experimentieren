@@ -22,7 +22,7 @@ void SimpleRenderer::GetScreenData(int* ScreenWidth, int* ScreenHeight) {
 SDL_Window* SimpleRenderer::Create_Window(string title) {
 	if (debug == true) { cout << "[DEBUG] function simple.Create_Window() from SimpleRenderer.cpp" << endl; }
 	string WindowTitle;
-	flags = SDL_WINDOW_ALWAYS_ON_TOP;
+	flags = NULL; // SDL_WINDOW_ALWAYS_ON_TOP;
 	WindowTitle = title + " " + to_string(ScreenWidth) + "x" + to_string(ScreenHeight);
 	const char* WindowTitleChar = WindowTitle.c_str();
 	SDL_Window* window = SDL_CreateWindow(WindowTitleChar, ScreenWidth, ScreenHeight, static_cast<Uint32>(flags));
@@ -302,7 +302,7 @@ ScreenPos SimpleRenderer::Projection(Pos* A3D) {
 }
 
 bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
-	if (static_cast<int>(A.x) < 0 or static_cast<int>(A.x) >= ScreenWidth or static_cast<int>(A.y) < 0 or static_cast<int>(A.y) >= ScreenHeight) {
+	if (A.x < 0.0f or A.x >= ScreenWidthF or A.y < 0.0f or A.y >= ScreenHeightF) {
 		return false;
 	}
 	return true;
@@ -331,7 +331,6 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color,
 	float minZ = min(A.z, min(B.z, C.z));
 	float diffZ = maxZ-minZ;
 	diffZ = diffZ <= 0.0f ? 0.000001f : diffZ;
-	float shade;
 	float shadeIntensity = 0.4f;
 	RGBA_int LocalColor = *Color;
 
@@ -383,8 +382,8 @@ void SimpleRenderer::DrawScanLine(int* y, int* leftx, float* leftz, int* rightx,
 	int x;
 	float z,r, shade;
 	RGBA_int LocalColor = *Color;
-	float span = *rightx - *leftx;
-	if (span < 1.0f) return;
+	int span = static_cast<int>(*rightx - *leftx);
+	if (span < 1) return;
 	ScreenPos P = { static_cast<float>(*leftx), static_cast<float>(*y), static_cast<float>(*leftz), true };
 	if (!P.valid) return;
 	P = { static_cast<float>(*rightx), static_cast<float>(*y), static_cast<float>(*rightz), true };
@@ -396,7 +395,7 @@ void SimpleRenderer::DrawScanLine(int* y, int* leftx, float* leftz, int* rightx,
 			r = static_cast<float>(x - *leftx) / static_cast<float>(*rightx - *leftx);
 			P.z = *leftz + r * (*rightz - *leftz);
 			if (DepthBufferPoint(P, ThreadDepthBuffer)) {
-				shade = abs(P.z - *leftz) / *DiffZ;
+				shade = fabs(P.z - *leftz) / *DiffZ;
 				LocalColor = ModifyColor(1.0f - shade, *shadeIntensity, *Color);
 				LocalColor.a = 255;
 				DrawPixel(&P.x, &P.y, &LocalColor, ThreadPixels);
@@ -443,6 +442,7 @@ void SimpleRenderer::GetVector(float Vector[3], float Start[3], float End[3]) {
 
 
 bool SimpleRenderer::DepthBufferPoint(ScreenPos A, vector<float>* ThreadDepthBuffer) {
+	CheckScreenPos(A);
 	if (!A.valid or A.z > FarPlane or A.z < NearPlane) return false;
 	int x = static_cast<int>(A.x);
 	int y = static_cast<int>(A.y);
