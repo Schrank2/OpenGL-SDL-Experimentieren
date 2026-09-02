@@ -416,7 +416,7 @@ void SimpleRenderer::DrawScanLine(int* y, int* leftx, float* leftz, int* rightx,
 			P.x = x;
 			P.y = *y;
 			r = static_cast<float>(x - *leftx) / static_cast<float>(*rightx - *leftx);
-			P.z = *leftz + r * fabs(*rightz - *leftz);
+			P.z = *leftz + r * (*rightz - *leftz);
 			if (DepthBufferPoint(P, ThreadDepthBuffer)) {
 				shade = fabs(P.z - *leftz) / *DiffZ;
 				LocalColor = ModifyColor(1.0f - shade, *shadeIntensity, *Color);
