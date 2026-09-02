@@ -304,14 +304,16 @@ float SimpleRenderer::ScreenDist(ScreenPos A, ScreenPos B) {
 }
 
 ScreenPos SimpleRenderer::Projection(Pos* A3D) {
-	float pi = 3.14f;
+	float pi = 3.14159265358979323846f;
 	float x1 = A3D->x - simple.Camera.pos.x;
 	float y1 = A3D->y - simple.Camera.pos.y;
 	float z1 = A3D->z - simple.Camera.pos.z;
 	float Yaw = CameraYaw * (pi / 180.0f);
 	float Pitch = CameraPitch * (pi / 180.0f);
-	float x2 = cos(Yaw) * x1 - sin(Yaw) * z1;
-	float z2 = cos(Yaw) * z1 + sin(Yaw) * x1;
+	float CosYaw = cos(Yaw);
+	float SinYaw = sin(Yaw);
+	float x2 = CosYaw * x1 - SinYaw * z1;
+	float z2 = CosYaw * z1 + SinYaw * x1;
 	float y2 = y1;
 	if (z2 <= NearPlane) return ScreenPos(0, 0, 0, false);
 	y2 *= -1;
