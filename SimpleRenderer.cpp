@@ -114,17 +114,16 @@ void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQ
 			for (j=0; j< ScreenHeight; j++) {
 				index = static_cast<int>(j * ScreenWidthF + i);
 				Depth = DepthBuffer[index];
-				if (Depth <= FarPlane) {
-					ColorModifier = (Depth - DepthBufferMin) / (DepthBufferRange);
+				if (Depth < FarPlane) {
+					ColorModifier = (Depth - DepthBufferMin) / DepthBufferRange;
 					//cout << fixed << setprecision(3) << a << " " << DepthBuffer[i][j] << endl;
 					//cout << fixed << setprecision(2) << a << endl;
-					ColorModifier = ColorModifier / DepthBufferRange;
 					CachedColor = pixels[index];
 					r = (CachedColor >> 0) & 0xFF;
 					g = (CachedColor >> 8) & 0xFF;
 					b = (CachedColor >> 16) & 0xFF;
 					//a = (CachedColor >> 24) & 0xFF;
-					Color = RGBA_int(r * ColorModifier, g * ColorModifier, b * ColorModifier, 255);
+					Color = RGBA_int(255 * ColorModifier, 255 * ColorModifier, 255 * ColorModifier, 255);
 					DrawPixel(&i, &j, &Color, &pixels);
 				}
 			}
