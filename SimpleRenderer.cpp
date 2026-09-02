@@ -392,8 +392,9 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color,
 		}
 		else { rx = g0.x; rz = g0.z; }
 		if (lx > rx) { dx = lx; lx = rx; rx = dx; dz = lz; lz = rz; rz = dz; }
-		rx = rx < ScreenWidthF ? rx : ScreenWidthF; // Clipping if maxX > ScreenWidth
+		if (rx >= ScreenWidthF) rx = ScreenWidthF - 1.0f;
 		lx = lx > 0.0f ? lx : 0.0f; // Clipping if minX < 0
+		if (lx <= 0.0f) lx = 0.0f;
 		if (y > 0 and y < ScreenHeight) {
 			DrawScanLine(&y, &lx, &lz, &rx, &rz, Color, &diffZ, &shadeIntensity, ThreadPixels, ThreadDepthBuffer);
 		}
@@ -404,13 +405,10 @@ void SimpleRenderer::DrawScanLine(float* y, float* leftx, float* leftz, float* r
 	float yf = floor(*y);
 	int x;
 	float z,r, shade;
+	ScreenPos P = ScreenPos(0.0f, yf, 0.0f, true);
 	RGBA_int LocalColor = *Color;
 	float span = *rightx - *leftx;
 	if (span < 1.0f) return;
-	ScreenPos P = { *leftx, yf, *leftz, true };
-	if (!CheckScreenPos(P)) return;
-	P = { *rightx, yf, *rightz, true };
-	if (!CheckScreenPos(P)) return;
 	for (x = *leftx; x < *rightx; x++) {
 			P.x = static_cast<float>(x);
 			P.y = yf;
