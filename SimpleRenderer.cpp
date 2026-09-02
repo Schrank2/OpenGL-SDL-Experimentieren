@@ -374,7 +374,9 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color,
 		if (lx > rx) { dx = lx; lx = rx; rx = dx; dz = lz; lz = rz; rz = dz; }
 		rx = rx < ScreenWidth ? rx : ScreenWidth; // Clipping if maxX > ScreenWidth
 		lx = lx > 0 ? lx : 0; // Clipping if minX < 0
-		DrawScanLine(&y, &lx, &lz, &rx, &rz, Color, &diffZ, &shadeIntensity, ThreadPixels, ThreadDepthBuffer);
+		if (y > 0 and y < ScreenHeight) {
+			DrawScanLine(&y, &lx, &lz, &rx, &rz, Color, &diffZ, &shadeIntensity, ThreadPixels, ThreadDepthBuffer);
+		}
 	}
 }
 
