@@ -102,20 +102,29 @@ void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQ
 		// Clear the Main Window
 		SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
 		SDL_RenderClear(simple.renderer);
-		float i, j;
+		float i, j = 0;
+		int index = 0;
+		int r, g, b, a = 0;
 		RGBA_int Color = RGBA_int(0, 0, 0, 255);
+		Uint32 CachedColor = 0;
 		float ColorModifier = 0.0f;
 		float Depth = 0.0f;
 		float DepthBufferRange = DepthBufferMax - DepthBufferMin;
 		for (i = 0; i < ScreenWidth; i++) {
 			for (j=0; j< ScreenHeight; j++) {
-				Depth = DepthBuffer[j * ScreenWidth + i];
+				index = static_cast<int>(j * ScreenWidthF + i);
+				Depth = DepthBuffer[index];
 				if (Depth != FarPlane) {
 					ColorModifier = (Depth - DepthBufferMin) / (DepthBufferRange);
 					//cout << fixed << setprecision(3) << a << " " << DepthBuffer[i][j] << endl;
 					//cout << fixed << setprecision(2) << a << endl;
 					ColorModifier = ColorModifier / DepthBufferRange;
-					Color = RGBA_int(255 * ColorModifier, 255 * ColorModifier, 255 * ColorModifier, 255);
+					CachedColor = pixels[index];
+					r = (CachedColor >> 0) & 0xFF;
+					g = (CachedColor >> 8) & 0xFF;
+					b = (CachedColor >> 16) & 0xFF;
+					//a = (CachedColor >> 24) & 0xFF;
+					Color = RGBA_int(r * ColorModifier, g * ColorModifier, b * ColorModifier, 255);
 					DrawPixel(&i, &j, &Color, &pixels);
 				}
 			}
@@ -405,7 +414,7 @@ void SimpleRenderer::DrawScanLine(int* y, int* leftx, float* leftz, int* rightx,
 			P.x = x;
 			P.y = *y;
 			r = static_cast<float>(x - *leftx) / static_cast<float>(*rightx - *leftx);
-			P.z = *leftz + r * (*rightz - *leftz);
+			P.z = *leftz + r * fabs(*rightz - *leftz);
 			if (DepthBufferPoint(P, ThreadDepthBuffer)) {
 				shade = fabs(P.z - *leftz) / *DiffZ;
 				LocalColor = ModifyColor(1.0f - shade, *shadeIntensity, *Color);
