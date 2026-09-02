@@ -367,12 +367,11 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color,
 
 	int a = 0;
 	// Drawing the Triangle
-	int x;
-	int y = A.y > 1 ? A.y + 1 : 1; // Clipping if minY < 0
-	int lx, rx, dx, dz;
+	float y = A.y > 1.0f ? A.y + 1.0f : 1.0f; // Clipping if minY < 0
+	float lx, rx, dx, dz;
 	float lz, rz;
 	ScreenPos P = A; // Current Position to Draw
-	int maxY = C.y < ScreenHeight ? C.y : ScreenHeight; // Clipping if maxY > ScreenHeight
+	int maxY = C.y < ScreenHeightF ? C.y : ScreenHeightF; // Clipping if maxY > ScreenHeight
 	for (; y <= maxY; y++) {
 		if (y >= B.y) { g = BC; g0 = B; g1 = C; } // switch line g to BC
 		// get x and z for line f = AC
@@ -385,38 +384,38 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color,
 
 		// get x and z for line g = AB, later BC
 		if (y - g0.y != 0) {
-			r = static_cast<float>(y - g0.y) / static_cast<float>(g1.y - g0.y);
+			r = (y - g0.y) / (g1.y - g0.y);
 			rx = g0.x + r * g.x;
 			rz = g0.z + r * g.z;
 		}
 		else { rx = g0.x; rz = g0.z; }
 		if (lx > rx) { dx = lx; lx = rx; rx = dx; dz = lz; lz = rz; rz = dz; }
-		rx = rx < ScreenWidth ? rx : ScreenWidth; // Clipping if maxX > ScreenWidth
-		lx = lx > 0 ? lx : 0; // Clipping if minX < 0
+		rx = rx < ScreenWidthF ? rx : ScreenWidthF; // Clipping if maxX > ScreenWidth
+		lx = lx > 0.0f ? lx : 0.0f; // Clipping if minX < 0
 		if (y > 0 and y < ScreenHeight) {
 			DrawScanLine(&y, &lx, &lz, &rx, &rz, Color, &diffZ, &shadeIntensity, ThreadPixels, ThreadDepthBuffer);
 		}
 	}
 }
 
-void SimpleRenderer::DrawScanLine(int* y, int* leftx, float* leftz, int* rightx, float* rightz, RGBA_int* Color, float* DiffZ, float* shadeIntensity, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer) {
-	int x;
+void SimpleRenderer::DrawScanLine(float* y, float* leftx, float* leftz, float* rightx, float* rightz, RGBA_int* Color, float* DiffZ, float* shadeIntensity, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer) {
+	float x;
 	float z,r, shade;
 	RGBA_int LocalColor = *Color;
-	int span = static_cast<int>(*rightx - *leftx);
+	float span = *rightx - *leftx;
 	if (span < 1) return;
-	ScreenPos P = { static_cast<float>(*leftx), static_cast<float>(*y), static_cast<float>(*leftz), true };
+	ScreenPos P = { *leftx, *y, *leftz, true };
 	if (!CheckScreenPos(P)) return;
-	P = { static_cast<float>(*rightx), static_cast<float>(*y), static_cast<float>(*rightz), true };
+	P = { *rightx, *y, *rightz, true };
 	if (!CheckScreenPos(P)) return;
 
 	for (x = *leftx; x < *rightx; x++) {
 			P.x = x;
 			P.y = *y;
-			r = static_cast<float>(x - *leftx) / static_cast<float>(span);
+			r = (x - *leftx) / span;
 			P.z = *leftz + r * (*rightz-*leftz);
 			if (DepthBufferPoint(P, ThreadDepthBuffer)) {
-				shade = fabs(P.z - *leftz) / *DiffZ;
+				shade = (P.z - *leftz) / *DiffZ;
 				LocalColor = ModifyColor(1.0f - shade, *shadeIntensity, *Color);
 				LocalColor.a = 255;
 				DrawPixel(&P.x, &P.y, &LocalColor, ThreadPixels);
