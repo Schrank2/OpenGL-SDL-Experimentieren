@@ -183,15 +183,21 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 		PolyGonsRenderedTotal += PolyGonsRenderedPerThread[i];
 	}
 	DepthBufferMergingTime = SDL_GetTicks();
+	DepthBufferMin = FarPlane;
 	int index = 1;
+	float CurrentValue = 0.0f;
+	float OldValue = 0.0f;
 	for(int i = 0; i < ScreenWidth; i++) {
 		for(int j = 0; j < ScreenHeight; j++) {
 			index = j * ScreenWidth + i;
 			for(int t = 0; t < ThreadsUsed; t++) {
-				if(ThreadedDepthBuffer[t][index] > NearPlane and ThreadedDepthBuffer[t][index] < FarPlane) 
-					if (ThreadedDepthBuffer[t][index] < DepthBuffer[index]) {
-						DepthBuffer[index] = ThreadedDepthBuffer[t][index];
+				CurrentValue = ThreadedDepthBuffer[t][index];
+				OldValue = DepthBuffer[index];
+				if(CurrentValue > NearPlane and CurrentValue < FarPlane) 
+					if (CurrentValue < OldValue) {
+						DepthBuffer[index] = CurrentValue;
 						pixels[index] = ThreadedPixels[t][index];
+						if (DepthBufferMin > CurrentValue) DepthBufferMin = CurrentValue;
 					}
 			}
 		}
