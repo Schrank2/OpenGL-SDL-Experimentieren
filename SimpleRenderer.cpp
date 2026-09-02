@@ -302,7 +302,7 @@ ScreenPos SimpleRenderer::Projection(Pos* A3D) {
 }
 
 bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
-	if (static_cast<int>(A.x) < 0 or static_cast<int>(A.x) > ScreenWidth or static_cast<int>(A.y) < 0 or static_cast<int>(A.y) > ScreenHeight) {
+	if (static_cast<int>(A.x) < 0 or static_cast<int>(A.x) >= ScreenWidth or static_cast<int>(A.y) < 0 or static_cast<int>(A.y) >= ScreenHeight) {
 		return false;
 	}
 	return true;
@@ -383,7 +383,13 @@ void SimpleRenderer::DrawScanLine(int* y, int* leftx, float* leftz, int* rightx,
 	int x;
 	float z,r, shade;
 	RGBA_int LocalColor = *Color;
-	ScreenPos P = { 0,0,0.0f, true };
+	float span = *rightx - *leftx;
+	if (span < 1.0f) return;
+	ScreenPos P = { static_cast<float>(*leftx), static_cast<float>(*y), static_cast<float>(*leftz), true };
+	if (!P.valid) return;
+	P = { static_cast<float>(*rightx), static_cast<float>(*y), static_cast<float>(*rightz), true };
+	if (!P.valid) return;
+
 	for (x = *leftx; x < *rightx; x++) {
 			P.x = x;
 			P.y = *y;

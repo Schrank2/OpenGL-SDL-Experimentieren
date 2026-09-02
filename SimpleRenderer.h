@@ -52,8 +52,8 @@ public:
 	vector<vector<Uint32>> ThreadedPixels;
 	vector<vector<float>> ThreadedDepthBuffer;
 	void DrawPixel(float* x, float* y, RGBA_int* c, vector<Uint32>* ThreadPixels);
-	float ScreenWidth;
-	float ScreenHeight;
+	int ScreenWidth;
+	int ScreenHeight;
 	int ScreenWidthF;
 	int ScreenHeightF;
 	bool active = true;
