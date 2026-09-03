@@ -171,7 +171,7 @@ void SimpleRenderer::TriangleRenderThread(int ThreadIndex, vector<Triangle>* Tri
 
 void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue) {
 	if (debug == true) { cout << "[DEBUG] function simple.draw() from SimpleRenderer.cpp" << endl; }
-	
+	TriangleThreadSetupTime = SDL_GetTicks();
 	// Draw all triangles from world
 	int ThreadsUsed = TriangleQueue->size() < ThreadAllocation ? TriangleQueue->size() : ThreadAllocation;
 	//ThreadsUsed = 1;
@@ -185,6 +185,7 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	for (int i = 0; i < ThreadsUsed; i++) {
 		TriangleRenderThreadInitialisation(i, TrianglesPerThread, TriangleQueue);
 	}
+	TriangleThreadSetupTime = SDL_GetTicks() - TriangleThreadSetupTime;
 	
 	int j = 0;
 	for (; j < ThreadsUsed; j++) {
