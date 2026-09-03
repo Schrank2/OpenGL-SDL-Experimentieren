@@ -204,8 +204,8 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 
 void SimpleRenderer::DepthBufferThread(int offset, int range, vector<Uint32>* pixels, vector<float>* DepthBuffer, int ThreadIndex, int ThreadsUsed) {
 	int index;
-	int CurrentValue = 0;
-	int OldValue = 0;
+	float CurrentValue = 0;
+	float OldValue = 0;
 	for (int i = 0; i < ScreenWidth; i++) {
 		for (int j = 0; j < ScreenHeight; j++) {
 			index = j * ScreenWidth + i;
