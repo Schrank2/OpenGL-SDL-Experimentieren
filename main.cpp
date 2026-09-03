@@ -22,8 +22,8 @@ int main(int argc, char* argv[])
 	open.active = false;
 	ray.active = false;
 
-	simple.ThreadAllocation = thread::hardware_concurrency() - 2;
-	simple.ThreadAllocation = simple.ThreadAllocation < 1 ? 1 : simple.ThreadAllocation;
+	int SimpleRendererThreadAllocation = thread::hardware_concurrency() - 2;
+	SimpleRendererThreadAllocation = simple.ThreadAllocation < 1 ? 1 : simple.ThreadAllocation;
 
 	float ScreenPercentage = 0.75;
 	int MonitorWidth = 0;
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 	simple.GetScreenData(&MonitorWidth, &MonitorHeight);
 	int ScreenWidth = static_cast<int>(MonitorWidth * 0.75);
 	int ScreenHeight = static_cast<int>(MonitorHeight * 0.75);
-	if(simple.active) simple.init(&ScreenWidth, &ScreenHeight);
+	if(simple.active) simple.init(&ScreenWidth, &ScreenHeight, &SimpleRendererThreadAllocation);
 	if (open.active) open.init(&ScreenWidth, &ScreenHeight);
 	if (ray.active) ray.init(&ScreenWidth, &ScreenHeight, &ScreenPercentage, "RayCastingRenderer");
 	world.init(&ScreenWidth, &ScreenHeight);

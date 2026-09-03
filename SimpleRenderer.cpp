@@ -65,11 +65,12 @@ void SimpleRenderer::Get_TTF_Fonts() {
 	}
 }
 
-void SimpleRenderer::init(int* ScreenWidth, int* ScreenHeight) {
+void SimpleRenderer::init(int* ScreenWidth, int* ScreenHeight, int* ThreadAllocation) {
 	simple.ScreenWidth = *ScreenWidth;
 	simple.ScreenHeight = *ScreenHeight;
 	simple.ScreenWidthF = static_cast<float>(simple.ScreenWidth);
 	simple.ScreenHeightF = static_cast<float>(simple.ScreenHeight);
+	simple.ThreadAllocation = *ThreadAllocation;
 	simple.window = Create_Window("Simple Render Main");
 	simple.renderer = Create_Renderer(simple.window);
 	simple.canvas = SDL_CreateTexture(simple.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, simple.ScreenWidth, simple.ScreenHeight);

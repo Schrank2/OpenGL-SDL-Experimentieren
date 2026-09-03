@@ -13,7 +13,7 @@ using namespace std;
 // declare R1 so rastSdlRender.cpp can use it
 class SimpleRenderer {
 public:
-	void init(int* ScreenWidth, int* ScreenHeight);
+	void init(int* ScreenWidth, int* ScreenHeight, int* ThreadAllocation);
 	bool DepthBufferShown = false;
 	void render(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue);
 	void Get_TTF_Fonts();
