@@ -192,7 +192,7 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	}
 	DepthBufferMergingTime = SDL_GetTicks();
 	DepthBufferMin = FarPlane;
-	int index = 1;
+	int index = 0;
 	float CurrentValue = 0.0f;
 	float OldValue = 0.0f;
 	for(int i = 0; i < ScreenWidth; i++) {
