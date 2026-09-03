@@ -72,6 +72,7 @@ public:
 	vector<float> EmptyDepthBuffer;
 	float DepthBufferMin = 0.0f;
 	float DepthBufferMax = 0.0f;
+	void DepthBufferThread(int offset, int range, vector<Uint32>* pixels, vector<float>* DepthBuffer, int ThreadIndex);
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;
