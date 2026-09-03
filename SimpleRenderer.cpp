@@ -406,13 +406,17 @@ void SimpleRenderer::DrawScanLine(float* y, float* leftx, float* leftz, float* r
 	float z,progress;
 	ScreenPos P = ScreenPos(0.0f, yf, 0.0f, true);
 	RGBA_int LocalColor = *Color;
-	float span = *rightx - *leftx;
-	if (span < 1.0f) return;
+	float spanX = *rightx - *leftx;
+	float spanZ = *rightz - *leftz;
+	if (spanX < 1.0f) return;
+	float stepZ = spanZ / spanX;
+	P.x = *leftx;
+	P.y = yf;
+	P.z = *leftz;
 	for (x = *leftx; x < *rightx; x++) {
-			P.x = static_cast<float>(x);
-			P.y = yf;
-			progress = (x - *leftx) / span;
-			P.z = *leftz + progress * (*rightz-*leftz);
+			P.x = floor(x);
+			progress = (x - *leftx) / spanX;
+			P.z += stepZ;
 			if (DepthBufferPoint(P, ThreadDepthBuffer)) {
 				LocalColor = ModifyColor(1.0f - progress, *shadeIntensity, *Color);
 				LocalColor.a = 255;
