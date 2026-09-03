@@ -246,10 +246,6 @@ void SimpleRenderer::TriangleRenderThreadInitialisation(int ThreadIndex, int Tri
 	end = end > TriangleQueue->size() ? TriangleQueue->size() : end;
 	start = start > end ? end : start;
 
-	ThreadTriangles.clear();
-	for (int j = start; j < end; j++) {
-		ThreadTriangles.push_back((*TriangleQueue)[j]);
-	}
 	threads[ThreadIndex] = thread( & SimpleRenderer::TriangleRenderThread, this, ThreadIndex, TriangleQueue, start, end);
 	//threads.emplace_back(&SimpleRenderer::TriangleRenderThread, this, thread, ThreadTriangles);
 }
