@@ -194,32 +194,34 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	}
 	DepthBufferMergingTime = SDL_GetTicks();
 	DepthBufferMin = FarPlane;
-	int index = 0;
-	float CurrentValue = 0.0f;
-	float OldValue = 0.0f;
-	for(int i = 0; i < ScreenWidth; i++) {
-		for(int j = 0; j < ScreenHeight; j++) {
-			index = j * ScreenWidth + i;
-			for(int t = 0; t < ThreadsUsed; t++) {
-				CurrentValue = ThreadedDepthBuffer[t][index];
-				OldValue = DepthBuffer[index];
-				if(CurrentValue > NearPlane and CurrentValue < FarPlane) 
-					if (CurrentValue < OldValue) {
-						DepthBuffer[index] = CurrentValue;
-						pixels[index] = ThreadedPixels[t][index];
-						if (DepthBufferMin > CurrentValue) DepthBufferMin = CurrentValue;
-						if (DepthBufferMax < CurrentValue) DepthBufferMax = CurrentValue;
-					}
-			}
-		}
-	}	
+	
+	DepthBufferThread(0, ScreenHeight, &pixels, &DepthBuffer, 0, ThreadsUsed);
+	
 	ThreadedPixels.clear();
 	ThreadedDepthBuffer.clear();
 	DepthBufferMergingTime = SDL_GetTicks() - DepthBufferMergingTime;
 }
 
-void SimpleRenderer::DepthBufferThread(int offset, int range, vector<Uint32>* pixels, vector<float>* DepthBuffer, int ThreadIndex) {
-
+void SimpleRenderer::DepthBufferThread(int offset, int range, vector<Uint32>* pixels, vector<float>* DepthBuffer, int ThreadIndex, int ThreadsUsed) {
+	int index;
+	int CurrentValue = 0;
+	int OldValue = 0;
+	for (int i = 0; i < ScreenWidth; i++) {
+		for (int j = 0; j < ScreenHeight; j++) {
+			index = j * ScreenWidth + i;
+			for (int t = 0; t < ThreadsUsed; t++) {
+				CurrentValue = ThreadedDepthBuffer[t][index];
+				OldValue = (*DepthBuffer)[index];
+				if (CurrentValue > NearPlane and CurrentValue < FarPlane)
+					if (CurrentValue < OldValue) {
+						(*DepthBuffer)[index] = CurrentValue;
+						(*pixels)[index] = ThreadedPixels[t][index];
+						if (DepthBufferMin > CurrentValue) DepthBufferMin = CurrentValue;
+						if (DepthBufferMax < CurrentValue) DepthBufferMax = CurrentValue;
+					}
+			}
+		}
+	}
 }
 
 void SimpleRenderer::TriangleRenderThreadInitialisation(int ThreadIndex, int TrianglesPerThread, vector<Triangle>* TriangleQueue) {
