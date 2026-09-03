@@ -59,7 +59,7 @@ public:
 	bool active = true;
 	int ThreadAllocation = 1;
 	vector<thread> threads;
-	void TriangleRenderThread(int ThreadIndex, vector<Triangle> TriangleQueue);
+	void TriangleRenderThread(int ThreadIndex, vector<Triangle>* TriangleQueue, int start, int end);
 	int PolyGonsRenderedTotal = 0;
 	vector<int> PolyGonsRenderedPerThread;
 	int TriangleDrawingTime = 0;

@@ -156,12 +156,12 @@ void SimpleRenderer::TextRender() {
 	}
 }
 
-void SimpleRenderer::TriangleRenderThread(int ThreadIndex, vector<Triangle> ThreadedTriangleQueue) {
+void SimpleRenderer::TriangleRenderThread(int ThreadIndex, vector<Triangle>* TriangleQueue, int start, int end) {
 	PerThreadTriangleTime[ThreadIndex] = SDL_GetTicks();
 	vector<Uint32> ThreadPixels = EmptyScreen;
 	vector<float> ThreadDepthBuffer = EmptyDepthBuffer;
-	for (int j = 0; j < ThreadedTriangleQueue.size(); j++) {
-		simple.DrawTriangle(&ThreadedTriangleQueue[j].p1.position, &ThreadedTriangleQueue[j].p2.position, &ThreadedTriangleQueue[j].p3.position, &ThreadedTriangleQueue[j].color, &ThreadPixels, &ThreadDepthBuffer);
+	for (int j = start; j < end; j++) {
+		simple.DrawTriangle(&(*TriangleQueue)[j].p1.position, &(*TriangleQueue)[j].p2.position, &(*TriangleQueue)[j].p3.position, &(*TriangleQueue)[j].color, &ThreadPixels, &ThreadDepthBuffer);
 		PolyGonsRenderedPerThread[ThreadIndex]++;
 	}
 	ThreadedPixels[ThreadIndex] = std::move(ThreadPixels);
@@ -249,7 +249,7 @@ void SimpleRenderer::TriangleRenderThreadInitialisation(int ThreadIndex, int Tri
 	for (int j = start; j < end; j++) {
 		ThreadTriangles.push_back((*TriangleQueue)[j]);
 	}
-	threads[ThreadIndex] = thread( & SimpleRenderer::TriangleRenderThread, this, ThreadIndex, ThreadTriangles);
+	threads[ThreadIndex] = thread( & SimpleRenderer::TriangleRenderThread, this, ThreadIndex, TriangleQueue, start, end);
 	//threads.emplace_back(&SimpleRenderer::TriangleRenderThread, this, thread, ThreadTriangles);
 }
 
