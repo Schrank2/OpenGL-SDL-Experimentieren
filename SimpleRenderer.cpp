@@ -195,7 +195,10 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	DepthBufferMergingTime = SDL_GetTicks();
 	DepthBufferMin = FarPlane;
 	
-	DepthBufferThread(0, ScreenHeight, &pixels, &DepthBuffer, 0, ThreadsUsed);
+	int PixelsPerThread = floor(ScreenHeightF / static_cast<float>(ThreadAllocation));
+	for(int i = 0; i < ThreadAllocation; i++) {
+		DepthBufferThread(i * PixelsPerThread, (i+1) * PixelsPerThread, &pixels, &DepthBuffer, i, ThreadsUsed);
+	}
 	
 	ThreadedPixels.clear();
 	ThreadedDepthBuffer.clear();
