@@ -197,7 +197,10 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	
 	int PixelsPerThread = floor(ScreenHeightF / static_cast<float>(ThreadAllocation));
 	for(int i = 0; i < ThreadAllocation; i++) {
-		DepthBufferThread(i * PixelsPerThread, (i+1) * PixelsPerThread, &pixels, &DepthBuffer, i, ThreadsUsed);
+		threads[i] = thread(&SimpleRenderer::DepthBufferThread, this, i * PixelsPerThread, (i + 1) * PixelsPerThread, &pixels, &DepthBuffer, i, ThreadsUsed);
+	}
+	for(int i = 0; i < ThreadAllocation; i++) {
+		threads[i].join();
 	}
 	
 	ThreadedPixels.clear();
