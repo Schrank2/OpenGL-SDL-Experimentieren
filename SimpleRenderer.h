@@ -59,13 +59,13 @@ public:
 	bool active = true;
 	int ThreadAllocation = 1;
 	vector<thread> threads;
-	void TriangleRenderThread(int thread, vector<Triangle> TriangleQueue);
+	void TriangleRenderThread(int ThreadIndex, vector<Triangle> TriangleQueue);
 	int PolyGonsRenderedTotal = 0;
 	vector<int> PolyGonsRenderedPerThread;
 	int TriangleDrawingTime = 0;
 	int ThreadMergingTime = 0;
 	int DepthBufferMergingTime = 0;
-	void TriangleRenderThreadInitialisation(int thread, int TrianglesPerThread, vector<Triangle>* TriangleQueue);
+	void TriangleRenderThreadInitialisation(int ThreadIndex, int TrianglesPerThread, vector<Triangle>* TriangleQueue);
 	float NearPlane = 0.1f;
 	float FarPlane = 50.0f;
 	vector<Uint32> EmptyScreen;

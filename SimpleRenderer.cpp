@@ -70,7 +70,6 @@ void SimpleRenderer::init(int* ScreenWidth, int* ScreenHeight, int* ThreadAlloca
 	simple.ScreenHeight = *ScreenHeight;
 	simple.ScreenWidthF = static_cast<float>(simple.ScreenWidth);
 	simple.ScreenHeightF = static_cast<float>(simple.ScreenHeight);
-	simple.ThreadAllocation = *ThreadAllocation;
 	simple.window = Create_Window("Simple Render Main");
 	simple.renderer = Create_Renderer(simple.window);
 	simple.canvas = SDL_CreateTexture(simple.renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, simple.ScreenWidth, simple.ScreenHeight);
@@ -80,12 +79,9 @@ void SimpleRenderer::init(int* ScreenWidth, int* ScreenHeight, int* ThreadAlloca
 	simple.Get_TTF_Fonts();
 	simple.EmptyScreen = simple.pixels;
 	simple.EmptyDepthBuffer = simple.DepthBuffer;
-	int i = 0;
-	for (; i < simple.ThreadAllocation; i++) {
-		//simple.threads.push_back(thread());
-		//simple.ThreadedPixels.push_back(vector<Uint32>(simple.ScreenHeight * simple.ScreenWidth, 0));
-		//simple.ThreadedDepthBuffer.push_back(vector<float>(simple.ScreenHeight * simple.ScreenWidth, 0));
-	}
+
+	simple.ThreadAllocation = *ThreadAllocation;
+	threads.resize(*ThreadAllocation);
 }
 
 void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue) {
@@ -158,15 +154,15 @@ void SimpleRenderer::TextRender() {
 	}
 }
 
-void SimpleRenderer::TriangleRenderThread(int thread, vector<Triangle> ThreadedTriangleQueue) {
+void SimpleRenderer::TriangleRenderThread(int ThreadIndex, vector<Triangle> ThreadedTriangleQueue) {
 	vector<Uint32> ThreadPixels = EmptyScreen;
 	vector<float> ThreadDepthBuffer = EmptyDepthBuffer;
 	for (int j = 0; j < ThreadedTriangleQueue.size(); j++) {
 		simple.DrawTriangle(&ThreadedTriangleQueue[j].p1.position, &ThreadedTriangleQueue[j].p2.position, &ThreadedTriangleQueue[j].p3.position, &ThreadedTriangleQueue[j].color, &ThreadPixels, &ThreadDepthBuffer);
-		PolyGonsRenderedPerThread[thread]++;
+		PolyGonsRenderedPerThread[ThreadIndex]++;
 	}
-	ThreadedPixels[thread] = std::move(ThreadPixels);
-	ThreadedDepthBuffer[thread] = std::move(ThreadDepthBuffer);
+	ThreadedPixels[ThreadIndex] = std::move(ThreadPixels);
+	ThreadedDepthBuffer[ThreadIndex] = std::move(ThreadDepthBuffer);
 }
 
 void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue) {
@@ -189,7 +185,6 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	for(thread& t: threads) {
 		t.join();
 	}
-	threads.clear();
 	TriangleDrawingTime = SDL_GetTicks() - TriangleDrawingTime;
 
 	for (int i = 0; i < ThreadsUsed; i++) {
@@ -221,14 +216,14 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	DepthBufferMergingTime = SDL_GetTicks() - DepthBufferMergingTime;
 }
 
-void SimpleRenderer::TriangleRenderThreadInitialisation(int thread, int TrianglesPerThread, vector<Triangle>* TriangleQueue) {
+void SimpleRenderer::TriangleRenderThreadInitialisation(int ThreadIndex, int TrianglesPerThread, vector<Triangle>* TriangleQueue) {
 	vector<Triangle> ThreadTriangles;
 	ThreadedPixels.push_back(EmptyScreen);
 	ThreadedDepthBuffer.push_back(EmptyDepthBuffer);
 	PolyGonsRenderedPerThread.push_back(0);
 	
-	int start = thread * TrianglesPerThread;
-	int end = (thread + 1) * TrianglesPerThread;
+	int start = ThreadIndex * TrianglesPerThread;
+	int end = (ThreadIndex + 1) * TrianglesPerThread;
 	// special case for the last thread to take any remaining triangles
 	end = end > TriangleQueue->size() ? TriangleQueue->size() : end;
 	start = start > end ? end : start;
@@ -237,7 +232,8 @@ void SimpleRenderer::TriangleRenderThreadInitialisation(int thread, int Triangle
 	for (int j = start; j < end; j++) {
 		ThreadTriangles.push_back((*TriangleQueue)[j]);
 	}
-	threads.emplace_back(&SimpleRenderer::TriangleRenderThread, this, thread, ThreadTriangles);
+	threads[ThreadIndex] = thread( & SimpleRenderer::TriangleRenderThread, this, ThreadIndex, ThreadTriangles);
+	//threads.emplace_back(&SimpleRenderer::TriangleRenderThread, this, thread, ThreadTriangles);
 }
 
 void SimpleRenderer::DrawSphere(Pos A, float r, RGBA_int c) {
