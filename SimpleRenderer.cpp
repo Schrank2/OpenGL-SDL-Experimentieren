@@ -65,7 +65,7 @@ void SimpleRenderer::Get_TTF_Fonts() {
 	}
 }
 
-void SimpleRenderer::init(int* ScreenWidth, int* ScreenHeight, int* ThreadAllocation) {
+void SimpleRenderer::init(int* ScreenWidth, int* ScreenHeight, int* ThreadsAllocated) {
 	simple.ScreenWidth = *ScreenWidth;
 	simple.ScreenHeight = *ScreenHeight;
 	simple.ScreenWidthF = static_cast<float>(simple.ScreenWidth);
@@ -80,8 +80,8 @@ void SimpleRenderer::init(int* ScreenWidth, int* ScreenHeight, int* ThreadAlloca
 	simple.EmptyScreen = simple.pixels;
 	simple.EmptyDepthBuffer = simple.DepthBuffer;
 
-	simple.ThreadAllocation = *ThreadAllocation;
-	threads.resize(*ThreadAllocation);
+	ThreadAllocation = *ThreadsAllocated;
+	threads.resize(*ThreadsAllocated);
 }
 
 void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue) {

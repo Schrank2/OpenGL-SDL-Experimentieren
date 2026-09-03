@@ -23,8 +23,7 @@ int main(int argc, char* argv[])
 	ray.active = false;
 
 	int SimpleRendererThreadAllocation = thread::hardware_concurrency() - 2;
-	SimpleRendererThreadAllocation = simple.ThreadAllocation < 1 ? 1 : simple.ThreadAllocation;
-
+	SimpleRendererThreadAllocation = SimpleRendererThreadAllocation < 1 ? 1 : SimpleRendererThreadAllocation;
 	float ScreenPercentage = 0.75;
 	int MonitorWidth = 0;
 	int MonitorHeight = 0;
