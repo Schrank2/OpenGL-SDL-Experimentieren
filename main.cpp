@@ -114,6 +114,11 @@ int main(int argc, char* argv[])
 				Report.push_back("ThreadMergingTime: " + to_string(simple.ThreadMergingTime));
 				Report.push_back("DepthBufferMergingTime: " + to_string(simple.DepthBufferMergingTime));
 				Report.push_back("Threads Allocated: " + to_string(simple.ThreadAllocation));
+				if (true) {
+					for(int i = 0; i < simple.PerThreadTriangleTime.size(); i++) {
+						Report.push_back("Thread " + to_string(i) + " Triangle Time: " + to_string(simple.PerThreadTriangleTime[i]));
+					}
+				}
 			}
 		}
 	}

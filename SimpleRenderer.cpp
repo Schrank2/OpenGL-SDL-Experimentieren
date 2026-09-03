@@ -83,6 +83,7 @@ void SimpleRenderer::init(int* ScreenWidth, int* ScreenHeight, int* ThreadsAlloc
 	ThreadAllocation = *ThreadsAllocated;
 	cout << "Threads Allocated: " << ThreadAllocation << endl;
 	threads.resize(*ThreadsAllocated);
+	PerThreadTriangleTime.resize(*ThreadsAllocated, 0);
 }
 
 void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue) {
@@ -156,6 +157,7 @@ void SimpleRenderer::TextRender() {
 }
 
 void SimpleRenderer::TriangleRenderThread(int ThreadIndex, vector<Triangle> ThreadedTriangleQueue) {
+	PerThreadTriangleTime[ThreadIndex] = SDL_GetTicks();
 	vector<Uint32> ThreadPixels = EmptyScreen;
 	vector<float> ThreadDepthBuffer = EmptyDepthBuffer;
 	for (int j = 0; j < ThreadedTriangleQueue.size(); j++) {
@@ -164,6 +166,7 @@ void SimpleRenderer::TriangleRenderThread(int ThreadIndex, vector<Triangle> Thre
 	}
 	ThreadedPixels[ThreadIndex] = std::move(ThreadPixels);
 	ThreadedDepthBuffer[ThreadIndex] = std::move(ThreadDepthBuffer);
+	PerThreadTriangleTime[ThreadIndex] = SDL_GetTicks() - PerThreadTriangleTime[ThreadIndex];
 }
 
 void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue) {

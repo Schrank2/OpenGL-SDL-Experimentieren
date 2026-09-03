@@ -64,6 +64,7 @@ public:
 	vector<int> PolyGonsRenderedPerThread;
 	int TriangleDrawingTime = 0;
 	int ThreadMergingTime = 0;
+	vector<int> PerThreadTriangleTime;
 	int DepthBufferMergingTime = 0;
 	void TriangleRenderThreadInitialisation(int ThreadIndex, int TrianglesPerThread, vector<Triangle>* TriangleQueue);
 	float NearPlane = 0.1f;
