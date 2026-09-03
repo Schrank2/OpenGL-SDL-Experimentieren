@@ -202,12 +202,12 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	DepthBufferMergingTime = SDL_GetTicks() - DepthBufferMergingTime;
 }
 
-void SimpleRenderer::DepthBufferThread(int offset, int range, vector<Uint32>* pixels, vector<float>* DepthBuffer, int ThreadIndex, int ThreadsUsed) {
+void SimpleRenderer::DepthBufferThread(int offset, int end, vector<Uint32>* pixels, vector<float>* DepthBuffer, int ThreadIndex, int ThreadsUsed) {
 	int index;
 	float CurrentValue = 0;
 	float OldValue = 0;
 	for (int i = 0; i < ScreenWidth; i++) {
-		for (int j = 0; j < ScreenHeight; j++) {
+		for (int j = offset; j < end; j++) {
 			index = j * ScreenWidth + i;
 			for (int t = 0; t < ThreadsUsed; t++) {
 				CurrentValue = ThreadedDepthBuffer[t][index];
