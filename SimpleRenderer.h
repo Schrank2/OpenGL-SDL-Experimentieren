@@ -9,6 +9,7 @@ using namespace std;
 #include <vector>
 #include <thread>
 #include "defs.h"
+#include <mutex>
 
 // declare R1 so rastSdlRender.cpp can use it
 class SimpleRenderer {
@@ -39,6 +40,7 @@ public:
 	bool IsOnScreenSnippet(ScreenPos* A, int MinX, int MaxX, int MinY, int MaxY);
 	float DistBetweenPoints(Pos a, Pos b);
 	float RenderScale;
+	mutex Mutex;
 	float ScreenDist(ScreenPos A, ScreenPos B);
 	RGBA_int ModifyColor(float modifier, float strength, RGBA_int c);
 	SDL_Window* window;

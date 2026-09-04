@@ -169,8 +169,12 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	TriangleThreadSetupTime = SDL_GetTicks();
 
 	// Draw all triangles from world
-	vector<ScreenTriangle> ProjectedTriangleQueue;
 	int TriangleQueueSize = TriangleQueue->size();
+	vector<ScreenTriangle> ProjectedTriangleQueue;
+	ScreenPos temp = ScreenPos(0.0f, 0.0f, 0.0f, true);
+	ScreenTriangle TempTriangle = ScreenTriangle(temp, temp, temp, RGBA_int(0, 0, 0, 0));
+	ProjectedTriangleQueue.resize(TriangleQueueSize, TempTriangle);
+	
 	int start = 0;
 	int end = 0;
 	int ThreadsUsed = ThreadAllocation < TriangleQueueSize ? ThreadAllocation : TriangleQueueSize;
@@ -216,7 +220,9 @@ void SimpleRenderer::ProjectTriangleCoords(int start, int stop, int CurrentThrea
 		ScreenPos A = Projection(&(*TriangleQueue)[i].p1.position);
 		ScreenPos B = Projection(&(*TriangleQueue)[i].p2.position);
 		ScreenPos C = Projection(&(*TriangleQueue)[i].p3.position);
-		(*ProjectedTriangleQueue).push_back(ScreenTriangle(A, B, C, (*TriangleQueue)[i].color));
+		Mutex.lock();
+		(*ProjectedTriangleQueue)[i] = ScreenTriangle(A, B, C, (*TriangleQueue)[i].color);
+		Mutex.unlock();
 	}
 }
 
