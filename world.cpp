@@ -27,6 +27,28 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	world.ScreenWidthF = static_cast<float>(world.ScreenWidth);
 	world.ScreenHeightF = static_cast<float>(world.ScreenHeight);
 	vector<SpaceTriangle> VoxelModel;
+	Pos A = Pos(0.0f, 0.0f, 0.0f);
+	Pos B = Pos(1.0f, 0.0f, 0.0f);
+	Pos C = Pos(1.0f, 1.0f, 0.0f);
+	Pos D = Pos(0.0f, 1.0f, 0.0f);
+	Pos E = Pos(0.0f, 0.0f, 1.0f);
+	Pos F = Pos(1.0f, 0.0f, 1.0f);
+	Pos G = Pos(1.0f, 1.0f, 1.0f);
+	Pos H = Pos(0.0f, 1.0f, 1.0f); 
+	Pos Center = Pos(0.5f, 0.5f, 0.5f);
+	RGBA_int VoxelColor = RGBA_int(255, 0, 0, 255);
+	VoxelModel.push_back(SpaceTriangle(A, B, C, VoxelColor));
+	VoxelModel.push_back(SpaceTriangle(A, C, D, VoxelColor));
+	VoxelModel.push_back(SpaceTriangle(E, F, G, VoxelColor));
+	VoxelModel.push_back(SpaceTriangle(E, G, H, VoxelColor));
+	VoxelModel.push_back(SpaceTriangle(A, B, F, VoxelColor));
+	VoxelModel.push_back(SpaceTriangle(A, F, E, VoxelColor));
+	VoxelModel.push_back(SpaceTriangle(B, C, G, VoxelColor));
+	VoxelModel.push_back(SpaceTriangle(B, G, F, VoxelColor));
+	VoxelModel.push_back(SpaceTriangle(C, D, H, VoxelColor));
+	VoxelModel.push_back(SpaceTriangle(C, H, G, VoxelColor));
+	VoxelModel.push_back(SpaceTriangle(D, A, E, VoxelColor));
+	VoxelModel.push_back(SpaceTriangle(D, E, H, VoxelColor));
 
 
 	int worldSize = 3;
