@@ -356,11 +356,12 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color,
 
 	int a = 0;
 	// Drawing the Triangle
-	float y = A.y > 1.0f ? A.y + 1.0f : 1.0f; // Clipping if minY < 0
+	float y = A.y;
+	y = y > CanvasSnippetStart ? y : static_cast<float>(CanvasSnippetStart); // Clipping if minY < CanvasSnippetStart
 	float lx, rx, dx, dz;
 	float lz, rz;
 	ScreenPos P = A; // Current Position to Draw
-	int maxY = C.y < ScreenHeightF ? C.y : ScreenHeightF; // Clipping if maxY > ScreenHeight
+	int maxY = C.y < CanvasSnippetEnd ? C.y : CanvasSnippetEnd; // Clipping if maxY > ScreenHeight
 	for (; y <= maxY; y++) {
 		if (y >= B.y) { g = BC; g0 = B; g1 = C; } // switch line g to BC
 		// get x and z for line f = AC
