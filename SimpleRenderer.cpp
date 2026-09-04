@@ -156,10 +156,10 @@ void SimpleRenderer::TextRender() {
 	}
 }
 
-void SimpleRenderer::TriangleRenderThread(int ThreadIndex, vector<Triangle>* TriangleQueue, int CanvasSnippetStart, int CanvasSnippetEnd) {
+void SimpleRenderer::TriangleRenderThread(int ThreadIndex, vector<ScreenTriangle>* ProjectedTriangleQueue, int CanvasSnippetStart, int CanvasSnippetEnd) {
 	PerThreadTriangleTime[ThreadIndex] = SDL_GetTicks();
-	for (int j = 0; j < TriangleQueue->size(); j++) {
-		simple.DrawTriangle(&(*TriangleQueue)[j].p1.position, &(*TriangleQueue)[j].p2.position, &(*TriangleQueue)[j].p3.position, &(*TriangleQueue)[j].color, &pixels, &DepthBuffer, CanvasSnippetStart, CanvasSnippetEnd);
+	for (int j = 0; j < ProjectedTriangleQueue->size(); j++) {
+		DrawTriangle(&(*ProjectedTriangleQueue)[j].p1, &(*TriangleQueue)[j].p2, &(*TriangleQueue)[j].p3, &(*TriangleQueue)[j].color, &pixels, &DepthBuffer, CanvasSnippetStart, CanvasSnippetEnd);
 	}
 	PerThreadTriangleTime[ThreadIndex] = SDL_GetTicks() - PerThreadTriangleTime[ThreadIndex];
 }
@@ -171,15 +171,25 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	// Draw all triangles from world
 	vector<ScreenTriangle> ProjectedTriangleQueue;
 	ProjectTriangleCoords(0, TriangleQueue->size() - 1, 0, TriangleQueue, &ProjectedTriangleQueue);
-
 	int start = 0;
 	int end = 0;
+	int TrianglesPerThread = floor(ProjectedTriangleQueue.size() / static_cast<float>(ThreadAllocation));
+	for (int i = 0; i < ThreadAllocation; i++) {
+		start = i * TrianglesPerThread;
+		end = (i + 1) * TrianglesPerThread;
+		ProjectTriangleCoords(start, end, i, TriangleQueue, &ProjectedTriangleQueue);
+		threads[i] = thread(&SimpleRenderer::ProjectTriangleCoords, this, start,end,i,TriangleQueue,&ProjectedTriangleQueue);
+	}
+	for (int j = 0; j < ThreadAllocation; j++) {
+		threads[j].join();
+	}
+
 	PolyGonsRenderedTotal = 0;
 	PolyGonsRenderedPerThread.clear();
 	TriangleDrawingTime = SDL_GetTicks();
 	int PixelsPerThread = floor(ScreenHeightF / static_cast<float>(ThreadAllocation));
 	for (int i = 0; i < ThreadAllocation; i++) {
-		TriangleRenderThreadInitialisation(i, PixelsPerThread, TriangleQueue);
+		TriangleRenderThreadInitialisation(i, PixelsPerThread, &ProjectedTriangleQueue);
 	}
 	TriangleThreadSetupTime = SDL_GetTicks() - TriangleThreadSetupTime;
 	
@@ -231,11 +241,11 @@ void SimpleRenderer::DepthBufferThread(int offset, int end, vector<Uint32>* pixe
 	}
 }
 
-void SimpleRenderer::TriangleRenderThreadInitialisation(int ThreadIndex, int PixelsPerThread, vector<Triangle>* TriangleQueue) {
+void SimpleRenderer::TriangleRenderThreadInitialisation(int ThreadIndex, int PixelsPerThread, vector<ScreenTriangle>* ProjectedTriangleQueue) {
 	int CanvasSnippetStart = ThreadIndex * PixelsPerThread;
 	int CanvasSnippetEnd = (ThreadIndex + 1) * PixelsPerThread;
 	PolyGonsRenderedPerThread.push_back(0);
-	threads[ThreadIndex] = thread( & SimpleRenderer::TriangleRenderThread, this, ThreadIndex, TriangleQueue, CanvasSnippetStart, CanvasSnippetEnd);
+	threads[ThreadIndex] = thread( &SimpleRenderer::TriangleRenderThread, this, ThreadIndex, ProjectedTriangleQueue, CanvasSnippetStart, CanvasSnippetEnd);
 	//threads.emplace_back(&SimpleRenderer::TriangleRenderThread, this, thread, ThreadTriangles);
 }
 
@@ -329,7 +339,7 @@ bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
 	return true;
 }
 
-void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color, vector<Uint32>* Canvas, vector<float>* DepthBuffer, int CanvasSnippetStart, int CanvasSnippetEnd) {
+void SimpleRenderer::DrawTriangle(ScreenPos* A, ScreenPos* B, ScreenPos* C, RGBA_int* Color, vector<Uint32>* Canvas, vector<float>* DepthBuffer, int CanvasSnippetStart, int CanvasSnippetEnd) {
 	ScreenPos A = Projection(A3D);
 	ScreenPos B = Projection(B3D);
 	ScreenPos C = Projection(C3D);
