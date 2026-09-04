@@ -321,9 +321,11 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color,
 	ScreenPos B = Projection(B3D);
 	ScreenPos C = Projection(C3D);
 	// Culling if fully behind camera
-	if (!IsOnScreenSnippet(&A, 0, ScreenWidth, 0, ScreenHeight)) return;
-	if (!IsOnScreenSnippet(&B, 0, ScreenWidth, 0, ScreenHeight)) return;
-	if (!IsOnScreenSnippet(&C, 0, ScreenWidth, 0, ScreenHeight)) return;
+	bool AOnSnippet = IsOnScreenSnippet(&A, 0, ScreenWidth, 0, ScreenHeight);
+	bool BOnSnippet = IsOnScreenSnippet(&B, 0, ScreenWidth, 0, ScreenHeight);
+	bool COnSnippet = IsOnScreenSnippet(&C, 0, ScreenWidth, 0, ScreenHeight);
+	if (!AOnSnippet and !BOnSnippet and !COnSnippet) return;
+	
 	// Sort by smallest y
 	ScreenPos temp = A;
 	if (B.y < A.y) { temp = B; B = A; A = temp; }
