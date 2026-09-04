@@ -159,7 +159,7 @@ void SimpleRenderer::TextRender() {
 void SimpleRenderer::TriangleRenderThread(int ThreadIndex, vector<ScreenTriangle>* ProjectedTriangleQueue, int CanvasSnippetStart, int CanvasSnippetEnd) {
 	PerThreadTriangleTime[ThreadIndex] = SDL_GetTicks();
 	for (int j = 0; j < ProjectedTriangleQueue->size(); j++) {
-		DrawTriangle(&(*ProjectedTriangleQueue)[j].p1, &(*TriangleQueue)[j].p2, &(*TriangleQueue)[j].p3, &(*TriangleQueue)[j].color, &pixels, &DepthBuffer, CanvasSnippetStart, CanvasSnippetEnd);
+		DrawTriangle(&(*ProjectedTriangleQueue)[j].p1, &(*ProjectedTriangleQueue)[j].p2, &(*ProjectedTriangleQueue)[j].p3, &(*ProjectedTriangleQueue)[j].color, &pixels, &DepthBuffer, CanvasSnippetStart, CanvasSnippetEnd);
 	}
 	PerThreadTriangleTime[ThreadIndex] = SDL_GetTicks() - PerThreadTriangleTime[ThreadIndex];
 }
@@ -170,14 +170,13 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 
 	// Draw all triangles from world
 	vector<ScreenTriangle> ProjectedTriangleQueue;
-	ProjectTriangleCoords(0, TriangleQueue->size() - 1, 0, TriangleQueue, &ProjectedTriangleQueue);
 	int start = 0;
 	int end = 0;
 	int TrianglesPerThread = floor(ProjectedTriangleQueue.size() / static_cast<float>(ThreadAllocation));
+	if (TrianglesPerThread < 1) TrianglesPerThread = 1;
 	for (int i = 0; i < ThreadAllocation; i++) {
 		start = i * TrianglesPerThread;
 		end = (i + 1) * TrianglesPerThread;
-		ProjectTriangleCoords(start, end, i, TriangleQueue, &ProjectedTriangleQueue);
 		threads[i] = thread(&SimpleRenderer::ProjectTriangleCoords, this, start,end,i,TriangleQueue,&ProjectedTriangleQueue);
 	}
 	for (int j = 0; j < ThreadAllocation; j++) {
@@ -211,6 +210,9 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 }
 
 void SimpleRenderer::ProjectTriangleCoords(int start, int stop, int CurrentThread, vector<Triangle>* TriangleQueue, vector<ScreenTriangle>* ProjectedTriangleQueue) {
+	if (CurrentThread >= ThreadAllocation) {
+		stop = TriangleQueue->size();
+	}
 	for(int i = start; i < stop; i++) {
 		ScreenPos A = Projection(&(*TriangleQueue)[i].p1.position);
 		ScreenPos B = Projection(&(*TriangleQueue)[i].p2.position);
@@ -340,55 +342,52 @@ bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
 }
 
 void SimpleRenderer::DrawTriangle(ScreenPos* A, ScreenPos* B, ScreenPos* C, RGBA_int* Color, vector<Uint32>* Canvas, vector<float>* DepthBuffer, int CanvasSnippetStart, int CanvasSnippetEnd) {
-	ScreenPos A = Projection(A3D);
-	ScreenPos B = Projection(B3D);
-	ScreenPos C = Projection(C3D);
 	// Culling if fully behind camera
-	bool AOnSnippet = IsOnScreenSnippet(&A, 0, ScreenWidth, 0, ScreenHeight);
-	bool BOnSnippet = IsOnScreenSnippet(&B, 0, ScreenWidth, 0, ScreenHeight);
-	bool COnSnippet = IsOnScreenSnippet(&C, 0, ScreenWidth, 0, ScreenHeight);
+	bool AOnSnippet = IsOnScreenSnippet(A, 0, ScreenWidth, 0, ScreenHeight);
+	bool BOnSnippet = IsOnScreenSnippet(B, 0, ScreenWidth, 0, ScreenHeight);
+	bool COnSnippet = IsOnScreenSnippet(C, 0, ScreenWidth, 0, ScreenHeight);
 	if (!AOnSnippet and !BOnSnippet and !COnSnippet) return;
 	
 	// Sort by smallest y
-	ScreenPos temp = A;
-	if (B.y < A.y) { temp = B; B = A; A = temp; }
-	if (C.y < A.y) { temp = C; C = A; A = temp; }
-	if (C.y < B.y) { temp = C; C = B; B = temp; }
-	if (debug == true) cout << "sort result: " << A.y << " " << B.y << " " << C.y << endl;
+	ScreenPos temp = *A;
+	if (B->y < A->y) { temp = *B; *B = *A; *A = temp; }
+	if (C->y < A->y) { temp = *C; *C = *A; *A = temp; }
+	if (C->y < B->y) { temp = *C; *C = *B; *B = temp; }
+	if (debug == true) cout << "sort result: " << A->y << " " << B->y << " " << C->y << endl;
 
 	// Drawing the WireFrame
 	// Get Direction Vectors for AB,BC and AC
-	ScreenPos DV_AB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z, true);
-	ScreenPos DV_BC = ScreenPos(C.x - B.x, C.y - B.y, C.z - B.z, true);
-	ScreenPos DV_AC = ScreenPos(C.x - A.x, C.y - A.y, C.z - A.z, true);
+	ScreenPos DV_AB = ScreenPos(B->x - A->x, B->y - A->y, B->z - A->z, true);
+	ScreenPos DV_BC = ScreenPos(C->x - B->x, C->y - B->y, C->z - B->z, true);
+	ScreenPos DV_AC = ScreenPos(C->x - A->x, C->y - A->y, C->z - A->z, true);
 	// SHADING PREREQUISITES
-	float maxZ = max(A.z, max(B.z, C.z));
-	float minZ = min(A.z, min(B.z, C.z));
+	float maxZ = max(A->z, max(B->z, C->z));
+	float minZ = min(A->z, min(B->z, C->z));
 	float shadeIntensity = 0.4f;
 	RGBA_int LocalColor = *Color;
 
 	// Vectors
-	ScreenPos AB = ScreenPos(B.x - A.x, B.y - A.y, B.z - A.z, true);
-	ScreenPos AC = ScreenPos(C.x - A.x, C.y - A.y, C.z - A.z, true);
-	ScreenPos BC = ScreenPos(C.x - B.x, C.y - B.y, C.z - B.z, true);
+	ScreenPos AB = ScreenPos(B->x - A->x, B->y - A->y, B->z - A->z, true);
+	ScreenPos AC = ScreenPos(C->x - A->x, C->y - A->y, C->z - A->z, true);
+	ScreenPos BC = ScreenPos(C->x - B->x, C->y - B->y, C->z - B->z, true);
 	ScreenPos f = AC;
-	ScreenPos f0 = A;
-	ScreenPos f1 = C;
+	ScreenPos f0 = *A;
+	ScreenPos f1 = *C;
 	ScreenPos g = AB;
-	ScreenPos g0 = A;
-	ScreenPos g1 = B;
+	ScreenPos g0 = *A;
+	ScreenPos g1 = *B;
 	float r; // parameter
 
 	int a = 0;
 	// Drawing the Triangle
-	float y = A.y;
+	float y = A->y;
 	y = y > CanvasSnippetStart ? y : static_cast<float>(CanvasSnippetStart); // Clipping if minY < CanvasSnippetStart
 	float lx, rx, dx, dz;
 	float lz, rz;
-	ScreenPos P = A; // Current Position to Draw
-	int maxY = C.y < CanvasSnippetEnd ? C.y : CanvasSnippetEnd; // Clipping if maxY > ScreenHeight
+	ScreenPos P = *A; // Current Position to Draw
+	int maxY = C->y < CanvasSnippetEnd ? C->y : CanvasSnippetEnd; // Clipping if maxY > ScreenHeight
 	for (; y <= maxY; y++) {
-		if (y >= B.y) { g = BC; g0 = B; g1 = C; } // switch line g to BC
+		if (y >= B->y) { g = BC; g0 = *B; g1 = *C; } // switch line g to BC
 		// get x and z for line f = AC
 		if (y - f0.y != 0) {
 			r =  (y - f0.y) / (f.y);
