@@ -170,21 +170,24 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 
 	// Draw all triangles from world
 	vector<ScreenTriangle> ProjectedTriangleQueue;
+	int TriangleQueueSize = TriangleQueue->size();
 	int start = 0;
 	int end = 0;
-	int TrianglesPerThread = floor(ProjectedTriangleQueue.size() / static_cast<float>(ThreadAllocation));
+	int ThreadsUsed = ThreadAllocation < TriangleQueueSize ? ThreadAllocation : TriangleQueueSize;
+	int TrianglesPerThread = floor(ProjectedTriangleQueue.size() / static_cast<float>(ThreadsUsed));
 	if (TrianglesPerThread < 1) TrianglesPerThread = 1;
-	for (int i = 0; i < ThreadAllocation; i++) {
+	for (int i = 0; i < ThreadsUsed; i++) {
 		start = i * TrianglesPerThread;
 		end = (i + 1) * TrianglesPerThread;
 		threads[i] = thread(&SimpleRenderer::ProjectTriangleCoords, this, start,end,i,TriangleQueue,&ProjectedTriangleQueue);
 	}
-	for (int j = 0; j < ThreadAllocation; j++) {
+	for (int j = 0; j < ThreadsUsed; j++) {
 		threads[j].join();
 	}
 
-	PolyGonsRenderedTotal = 0;
-	PolyGonsRenderedPerThread.clear();
+	//cout << "TriangleQueue Size: " << (*TriangleQueue).size() << endl;
+	//cout << "ProjectedTriangleQueue Size: " << ProjectedTriangleQueue.size() << endl;
+
 	TriangleDrawingTime = SDL_GetTicks();
 	int PixelsPerThread = floor(ScreenHeightF / static_cast<float>(ThreadAllocation));
 	for (int i = 0; i < ThreadAllocation; i++) {
@@ -197,10 +200,6 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 		threads[j].join();
 	}
 	TriangleDrawingTime = SDL_GetTicks() - TriangleDrawingTime;
-
-	for (int i = 0; i < ThreadAllocation; i++) {
-		PolyGonsRenderedTotal += PolyGonsRenderedPerThread[i];
-	}
 	DepthBufferMergingTime = SDL_GetTicks();
 	DepthBufferMin = FarPlane;
 	
@@ -221,32 +220,9 @@ void SimpleRenderer::ProjectTriangleCoords(int start, int stop, int CurrentThrea
 	}
 }
 
-void SimpleRenderer::DepthBufferThread(int offset, int end, vector<Uint32>* pixels, vector<float>* DepthBuffer, int ThreadIndex, int ThreadsUsed) {
-	int index;
-	float CurrentValue = 0;
-	float OldValue = 0;
-	for (int i = 0; i < ScreenWidth; i++) {
-		for (int j = offset; j < end; j++) {
-			index = j * ScreenWidth + i;
-			for (int t = 0; t < ThreadsUsed; t++) {
-				CurrentValue = ThreadedDepthBuffer[t][index];
-				OldValue = (*DepthBuffer)[index];
-				if (CurrentValue > NearPlane and CurrentValue < FarPlane)
-					if (CurrentValue < OldValue) {
-						(*DepthBuffer)[index] = CurrentValue;
-						(*pixels)[index] = ThreadedPixels[t][index];
-						if (DepthBufferMin > CurrentValue) DepthBufferMin = CurrentValue;
-						if (DepthBufferMax < CurrentValue) DepthBufferMax = CurrentValue;
-					}
-			}
-		}
-	}
-}
-
 void SimpleRenderer::TriangleRenderThreadInitialisation(int ThreadIndex, int PixelsPerThread, vector<ScreenTriangle>* ProjectedTriangleQueue) {
 	int CanvasSnippetStart = ThreadIndex * PixelsPerThread;
 	int CanvasSnippetEnd = (ThreadIndex + 1) * PixelsPerThread;
-	PolyGonsRenderedPerThread.push_back(0);
 	threads[ThreadIndex] = thread( &SimpleRenderer::TriangleRenderThread, this, ThreadIndex, ProjectedTriangleQueue, CanvasSnippetStart, CanvasSnippetEnd);
 	//threads.emplace_back(&SimpleRenderer::TriangleRenderThread, this, thread, ThreadTriangles);
 }
@@ -422,17 +398,13 @@ bool SimpleRenderer::IsOnScreenSnippet(ScreenPos* A, int MinX, int MaxX, int Min
 void SimpleRenderer::DrawScanLine(float* y, float* leftx, float* leftz, float* rightx, float* rightz, RGBA_int* Color, float* minZ, float* maxZ, float* shadeIntensity, vector<Uint32>* Canvas, vector<float>* DepthBuffer) {
 	float yf = floor(*y);
 	int x;
-	float DiffZ = *maxZ - *minZ;
-	float z,progress;
-	ScreenPos P = ScreenPos(0.0f, yf, 0.0f, true);
+	float progress;
 	RGBA_int LocalColor = *Color;
 	float spanX = *rightx - *leftx;
 	float spanZ = *rightz - *leftz;
 	if (spanX < 1.0f) return;
 	float stepZ = spanZ / spanX;
-	P.x = *leftx;
-	P.y = yf;
-	P.z = *leftz;
+	ScreenPos P = ScreenPos(*leftx, yf, *leftz, true);
 	for (x = *leftx; x < *rightx; x++) {
 			P.x = floor(x);
 			progress = (x - *leftx) / spanX;

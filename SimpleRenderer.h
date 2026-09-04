@@ -62,7 +62,6 @@ public:
 	vector<thread> threads;
 	void TriangleRenderThread(int ThreadIndex, vector<ScreenTriangle>* ProjectedTriangleQueue, int CanvasSnippetStart, int CanvasSnippetEnd);
 	int PolyGonsRenderedTotal = 0;
-	vector<int> PolyGonsRenderedPerThread;
 	int TriangleDrawingTime = 0;
 	int ThreadMergingTime = 0;
 	int TriangleThreadSetupTime = 0;
@@ -76,7 +75,6 @@ public:
 	vector<float> EmptyDepthBuffer;
 	float DepthBufferMin = 0.0f;
 	float DepthBufferMax = 0.0f;
-	void DepthBufferThread(int offset, int end, vector<Uint32>* pixels, vector<float>* DepthBuffer, int ThreadIndex, int ThreadsUsed);
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern SimpleRenderer simple;
