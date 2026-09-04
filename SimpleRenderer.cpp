@@ -156,13 +156,12 @@ void SimpleRenderer::TextRender() {
 	}
 }
 
-void SimpleRenderer::TriangleRenderThread(int ThreadIndex, vector<Triangle>* TriangleQueue, int start, int end) {
+void SimpleRenderer::TriangleRenderThread(int ThreadIndex, vector<Triangle>* TriangleQueue, int CanvasSnippetStart, int CanvasSnippetEnd) {
 	PerThreadTriangleTime[ThreadIndex] = SDL_GetTicks();
 	vector<Uint32> ThreadPixels = EmptyScreen;
 	vector<float> ThreadDepthBuffer = EmptyDepthBuffer;
-	for (int j = start; j < end; j++) {
-		simple.DrawTriangle(&(*TriangleQueue)[j].p1.position, &(*TriangleQueue)[j].p2.position, &(*TriangleQueue)[j].p3.position, &(*TriangleQueue)[j].color, &ThreadPixels, &ThreadDepthBuffer);
-		PolyGonsRenderedPerThread[ThreadIndex]++;
+	for (int j = 0; j < TriangleQueue->size(); j++) {
+		simple.DrawTriangle(&(*TriangleQueue)[j].p1.position, &(*TriangleQueue)[j].p2.position, &(*TriangleQueue)[j].p3.position, &(*TriangleQueue)[j].color, &ThreadPixels, &ThreadDepthBuffer, CanvasSnippetStart, CanvasSnippetEnd);
 	}
 	ThreadedPixels[ThreadIndex] = std::move(ThreadPixels);
 	ThreadedDepthBuffer[ThreadIndex] = std::move(ThreadDepthBuffer);
@@ -182,8 +181,9 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	PolyGonsRenderedTotal = 0;
 	PolyGonsRenderedPerThread.clear();
 	TriangleDrawingTime = SDL_GetTicks();
+	int PixelsPerThread = floor(ScreenHeightF / static_cast<float>(ThreadAllocation));
 	for (int i = 0; i < ThreadsUsed; i++) {
-		TriangleRenderThreadInitialisation(i, TrianglesPerThread, TriangleQueue);
+		TriangleRenderThreadInitialisation(i, PixelsPerThread, TriangleQueue);
 	}
 	TriangleThreadSetupTime = SDL_GetTicks() - TriangleThreadSetupTime;
 	
@@ -199,13 +199,13 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	DepthBufferMergingTime = SDL_GetTicks();
 	DepthBufferMin = FarPlane;
 	
-	int PixelsPerThread = floor(ScreenHeightF / static_cast<float>(ThreadAllocation));
-	for(int i = 0; i < ThreadAllocation; i++) {
-		threads[i] = thread(&SimpleRenderer::DepthBufferThread, this, i * PixelsPerThread, (i + 1) * PixelsPerThread, &pixels, &DepthBuffer, i, ThreadsUsed);
-	}
-	for(int i = 0; i < ThreadAllocation; i++) {
-		threads[i].join();
-	}
+	//int PixelsPerThread = floor(ScreenHeightF / static_cast<float>(ThreadAllocation));
+	//for(int i = 0; i < ThreadAllocation; i++) {
+	//	threads[i] = thread(&SimpleRenderer::DepthBufferThread, this, i * PixelsPerThread, (i + 1) * PixelsPerThread, &pixels, &DepthBuffer, i, ThreadsUsed);
+	//}
+	//for(int i = 0; i < ThreadAllocation; i++) {
+	//	threads[i].join();
+	//}
 	
 	ThreadedPixels.clear();
 	ThreadedDepthBuffer.clear();
@@ -234,19 +234,16 @@ void SimpleRenderer::DepthBufferThread(int offset, int end, vector<Uint32>* pixe
 	}
 }
 
-void SimpleRenderer::TriangleRenderThreadInitialisation(int ThreadIndex, int TrianglesPerThread, vector<Triangle>* TriangleQueue) {
+void SimpleRenderer::TriangleRenderThreadInitialisation(int ThreadIndex, int PixelsPerThread, vector<Triangle>* TriangleQueue) {
 	vector<Triangle> ThreadTriangles;
 	ThreadedPixels.push_back(EmptyScreen);
 	ThreadedDepthBuffer.push_back(EmptyDepthBuffer);
 	PolyGonsRenderedPerThread.push_back(0);
 	
-	int start = ThreadIndex * TrianglesPerThread;
-	int end = (ThreadIndex + 1) * TrianglesPerThread;
-	// special case for the last thread to take any remaining triangles
-	end = end > TriangleQueue->size() ? TriangleQueue->size() : end;
-	start = start > end ? end : start;
+	int CanvasSnippetStart = ThreadIndex * PixelsPerThread;
+	int CanvasSnippetEnd = (ThreadIndex + 1) * PixelsPerThread;
 
-	threads[ThreadIndex] = thread( & SimpleRenderer::TriangleRenderThread, this, ThreadIndex, TriangleQueue, start, end);
+	threads[ThreadIndex] = thread( & SimpleRenderer::TriangleRenderThread, this, ThreadIndex, TriangleQueue, CanvasSnippetStart, CanvasSnippetEnd);
 	//threads.emplace_back(&SimpleRenderer::TriangleRenderThread, this, thread, ThreadTriangles);
 }
 
@@ -340,12 +337,14 @@ bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
 	return true;
 }
 
-void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer) {
+void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer, int CanvasSnippetStart, int CanvasSnippetEnd) {
 	ScreenPos A = Projection(A3D);
 	ScreenPos B = Projection(B3D);
 	ScreenPos C = Projection(C3D);
 	// Culling if fully behind camera
-	if (!A.valid and !B.valid and !C.valid) return;
+	if (!IsOnScreenSnippet(&A, 0, ScreenWidth, 0, ScreenHeight)) return;
+	if (!IsOnScreenSnippet(&B, 0, ScreenWidth, 0, ScreenHeight)) return;
+	if (!IsOnScreenSnippet(&C, 0, ScreenWidth, 0, ScreenHeight)) return;
 	// Sort by smallest y
 	ScreenPos temp = A;
 	if (B.y < A.y) { temp = B; B = A; A = temp; }
@@ -405,9 +404,17 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color,
 		lx = lx > 0.0f ? lx : 0.0f; // Clipping if minX < 0
 		if (lx <= 0.0f) lx = 0.0f;
 		if (y > 0 and y < ScreenHeight) {
-			DrawScanLine(&y, &lx, &lz, &rx, &rz, Color, &minZ, &maxZ, &shadeIntensity, ThreadPixels, ThreadDepthBuffer);
+			DrawScanLine(&y, &lx, &lz, &rx, &rz, Color, &minZ, &maxZ, &shadeIntensity, ThreadPixels, &DepthBuffer);
 		}
 	}
+}
+
+bool SimpleRenderer::IsOnScreenSnippet(ScreenPos* A, int MinX, int MaxX, int MinY, int MaxY) {
+	if (A->z < NearPlane or A->z > FarPlane) return false;
+	if (A->x < MinX or A->x >= MaxX or A->y < MinY or A->y >= MaxY) {
+		return false;
+	}
+	return true;
 }
 
 void SimpleRenderer::DrawScanLine(float* y, float* leftx, float* leftz, float* rightx, float* rightz, RGBA_int* Color, float* minZ, float* maxZ, float* shadeIntensity, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer) {

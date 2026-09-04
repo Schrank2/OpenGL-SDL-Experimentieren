@@ -34,8 +34,9 @@ public:
 	void TextRender();
 	void GetVector(float Vector[3], float A[3], float B[3]); 
 	void DrawLine(Pos* A3D, Pos* B3D, RGBA_int* c);
-	void DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer);
+	void DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer , int CanvasSnippetStart, int CanvasSnippedEnd);
 	void DrawScanLine(float* y, float* leftx, float* leftz, float* rightx, float* rightz, RGBA_int* Color, float* minZ, float* maxZ, float* shadeIntensity, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer);
+	bool IsOnScreenSnippet(ScreenPos* A, int MinX, int MaxX, int MinY, int MaxY);
 	float DistBetweenPoints(Pos a, Pos b);
 	float RenderScale;
 	float ScreenDist(ScreenPos A, ScreenPos B);
@@ -59,7 +60,7 @@ public:
 	bool active = true;
 	int ThreadAllocation = 1;
 	vector<thread> threads;
-	void TriangleRenderThread(int ThreadIndex, vector<Triangle>* TriangleQueue, int start, int end);
+	void TriangleRenderThread(int ThreadIndex, vector<Triangle>* TriangleQueue, int CanvasSnippetStart, int CanvasSnippetEnd);
 	int PolyGonsRenderedTotal = 0;
 	vector<int> PolyGonsRenderedPerThread;
 	int TriangleDrawingTime = 0;
@@ -67,7 +68,7 @@ public:
 	int TriangleThreadSetupTime = 0;
 	vector<int> PerThreadTriangleTime;
 	int DepthBufferMergingTime = 0;
-	void TriangleRenderThreadInitialisation(int ThreadIndex, int TrianglesPerThread, vector<Triangle>* TriangleQueue);
+	void TriangleRenderThreadInitialisation(int ThreadIndex, int PixelsPerThread, vector<Triangle>* TriangleQueue);
 	float NearPlane = 0.1f;
 	float FarPlane = 50.0f;
 	vector<Uint32> EmptyScreen;
