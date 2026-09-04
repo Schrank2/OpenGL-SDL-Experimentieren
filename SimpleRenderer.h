@@ -73,6 +73,7 @@ public:
 	void ProjectTriangleCoords(int start, int stop, int CurrentThread, vector<SpaceTriangle>* TriangleQueue, vector<ScreenTriangle>* ProjectedTriangleQueue);
 	Pos TranslatePosition(Pos* A, Pos* B);
 	SpaceTriangle TranslateTriangle(SpaceTriangle* A, Pos* B);
+	void TranslateModelObject(ModelObject* A, vector<SpaceTriangle>* ResultTriangleQueue);
 	float NearPlane = 0.1f;
 	float FarPlane = 50.0f;
 	vector<Uint32> EmptyScreen;

@@ -78,6 +78,7 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 			}
 		}
 	}
+	Triangles.insert(.end(), v2.begin(), v2.end());
 
 
 	// add Points to World

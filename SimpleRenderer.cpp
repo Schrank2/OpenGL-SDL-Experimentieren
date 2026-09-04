@@ -94,6 +94,12 @@ SpaceTriangle SimpleRenderer::TranslateTriangle(SpaceTriangle* A, Pos* B) {
 	SpaceTriangle C = SpaceTriangle(TranslatePosition(&A->A, B), TranslatePosition(&A->B, B), TranslatePosition(&A->C, B), A->color);
 	return C;
 }
+void SimpleRenderer::TranslateModelObject(ModelObject* A, vector<SpaceTriangle>* ResultTriangleQueue) {
+	vector<SpaceTriangle> TranslatedTriangles;
+	for(auto& Triangle : (*A->Model)) {
+		(*ResultTriangleQueue).push_back(TranslateTriangle(&Triangle, &(*A).Position));
+	}
+}
 
 void SimpleRenderer::render(vector<Line>* LineQueue, vector<SpaceTriangle>* TriangleQueue, vector<Point>* PointQueue) {
 	if (debug == true) { cout << "[DEBUG] function simple.render() from SimpleRenderer.cpp" << endl; }
