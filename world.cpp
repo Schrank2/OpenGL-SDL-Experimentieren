@@ -54,7 +54,7 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	int worldSize = 3;
 	int index = 0;
 	vector<vector<Voxel>> VoxelMap;
-	VoxelMap.resize(worldSize, vector<Voxel>(worldSize*worldSize));
+	VoxelMap.resize(worldSize, vector<Voxel>(worldSize*worldSize, Voxel(false,RGBA_int(0,0,0,0))));
 	RGBA_int RED = RGBA_int(255, 0, 0, 255);
 	if (false) {
 		for (int x = 0; x < worldSize; x++) {
@@ -73,7 +73,7 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 			for(int z = 0; z < worldSize; z++) {
 				Voxel* CurrentVoxel = &VoxelMap[x][y * worldSize + z];
 				if(CurrentVoxel->exists == true) {
-					ModelObjectQueue.push_back(ModelObject(&VoxelModel, Pos(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z), CurrentVoxel->color));
+					ModelObjectQueue.push_back(ModelObject(&VoxelModel, Pos(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)), CurrentVoxel->color));
 				}
 			}
 		}
