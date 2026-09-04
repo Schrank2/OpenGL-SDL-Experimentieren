@@ -74,6 +74,12 @@ struct Triangle {
 	}
 	Triangle(Point p1, Point p2, Point p3, RGBA_int color) : p1(p1), p2(p2), p3(p3), name(GetName()), color(color) {}
 };
+struct ScreenTriangle {
+	ScreenPos A = ScreenPos(0, 0, 0, false);
+	ScreenPos p1, p2, p3 = A;
+	RGBA_int color = RGBA_int(0, 0, 0, 0);
+	ScreenTriangle(ScreenPos p1, ScreenPos p2, ScreenPos p3, RGBA_int color) : p1(p1), p2(p2), p3(p3), color(color) {}
+};
 
 struct PhysicsObject {
 	Pos pos;

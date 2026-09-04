@@ -167,7 +167,11 @@ void SimpleRenderer::TriangleRenderThread(int ThreadIndex, vector<Triangle>* Tri
 void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue) {
 	if (debug == true) { cout << "[DEBUG] function simple.draw() from SimpleRenderer.cpp" << endl; }
 	TriangleThreadSetupTime = SDL_GetTicks();
+
 	// Draw all triangles from world
+	vector<ScreenTriangle> ProjectedTriangleQueue;
+	ProjectTriangleCoords(0, TriangleQueue->size() - 1, 0, TriangleQueue, &ProjectedTriangleQueue);
+
 	int start = 0;
 	int end = 0;
 	PolyGonsRenderedTotal = 0;
@@ -196,11 +200,12 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	DepthBufferMergingTime = SDL_GetTicks() - DepthBufferMergingTime;
 }
 
-void SimpleRenderer::ProjectTriangleCoords(int start, int stop, int CurrentThread, vector<Triangle>* TriangleQueue, vector<Triangle>* ProjectedTriangleQueue) {
+void SimpleRenderer::ProjectTriangleCoords(int start, int stop, int CurrentThread, vector<Triangle>* TriangleQueue, vector<ScreenTriangle>* ProjectedTriangleQueue) {
 	for(int i = start; i < stop; i++) {
-		(*ProjectedTriangleQueue)[i].p1.position = Projection(&(*TriangleQueue)[i].p1.position);
-		ProjectedTriangleQueue->back().p2.position = Projection(&(*TriangleQueue)[i].p2.position);
-		ProjectedTriangleQueue->back().p3.position = Projection(&(*TriangleQueue)[i].p3.position);
+		ScreenPos A = Projection(&(*TriangleQueue)[i].p1.position);
+		ScreenPos B = Projection(&(*TriangleQueue)[i].p2.position);
+		ScreenPos C = Projection(&(*TriangleQueue)[i].p3.position);
+		(*ProjectedTriangleQueue).push_back(ScreenTriangle(A, B, C, (*TriangleQueue)[i].color));
 	}
 }
 
