@@ -51,17 +51,21 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	VoxelModel.push_back(SpaceTriangle(D, E, H, VoxelColor));
 
 
-	int worldSize = 3;
+	int worldSize = 10;
 	int index = 0;
 	vector<vector<Voxel>> VoxelMap;
 	VoxelMap.resize(worldSize, vector<Voxel>(worldSize*worldSize, Voxel(false,RGBA_int(0,0,0,0))));
 	RGBA_int RED = RGBA_int(255, 0, 0, 255);
-	if (false) {
+	if (true) {
 		for (int x = 0; x < worldSize; x++) {
 			for (int y = 0; y < worldSize; y++) {
 				for (int z = 0; z < worldSize; z++) {
 					index = y * worldSize + z;
-					if (z % 2 == 0) VoxelMap[x][index] = Voxel(true, RED);
+					if (z % 2 == 0)
+					{
+						VoxelMap[x][index] = Voxel(true, RED);
+						cout << "C" << endl;
+					};
 				}
 			}
 		}
@@ -72,7 +76,8 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 		for(int y = 0; y < worldSize; y++) {
 			for(int z = 0; z < worldSize; z++) {
 				Voxel* CurrentVoxel = &VoxelMap[x][y * worldSize + z];
-				if(CurrentVoxel->exists == true) {
+				if(CurrentVoxel->exists) {
+					cout << "world.cpp around line 76" << endl;
 					ModelObjectQueue.push_back(ModelObject(&VoxelModel, Pos(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)), CurrentVoxel->color));
 				}
 			}

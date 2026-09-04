@@ -115,6 +115,7 @@ int main(int argc, char* argv[])
 				Report.push_back("DepthBufferMergingTime: " + to_string(simple.DepthBufferMergingTime));
 				Report.push_back("Threads Allocated: " + to_string(simple.ThreadAllocation));
 				Report.push_back("TriangleThreadSetupTime: " + to_string(simple.TriangleThreadSetupTime));
+				Report.push_back("TriangleQueue Size: " + to_string(world.Triangles.size()));
 				if (true) {
 					for(int i = 0; i < simple.PerThreadTriangleTime.size(); i++) {
 						Report.push_back("Thread " + to_string(i) + " Triangle Time: " + to_string(simple.PerThreadTriangleTime[i]));
@@ -125,18 +126,3 @@ int main(int argc, char* argv[])
 	}
 }
 
-static vector<float> convert(vector<SpaceTriangle>* &Triangles) {
-	vector<float> Output;
-	for (int i = 0; i < (*Triangles).size(); i++) {
-		Output.push_back((*Triangles)[i].A.x);
-		Output.push_back((*Triangles)[i].A.y);
-		Output.push_back((*Triangles)[i].A.z);
-		Output.push_back((*Triangles)[i].B.x);
-		Output.push_back((*Triangles)[i].B.y);
-		Output.push_back((*Triangles)[i].B.z);
-		Output.push_back((*Triangles)[i].C.x);
-		Output.push_back((*Triangles)[i].C.y);
-		Output.push_back((*Triangles)[i].C.z);
-	}
-	return Output;
-}

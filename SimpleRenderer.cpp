@@ -96,7 +96,8 @@ SpaceTriangle SimpleRenderer::TranslateTriangle(SpaceTriangle* A, Pos* B) {
 }
 void SimpleRenderer::TranslateModelObject(ModelObject* A, vector<SpaceTriangle>* ResultTriangleQueue) {
 	vector<SpaceTriangle> TranslatedTriangles;
-	for(auto& Triangle : (*A->Model)) {
+	if (!A or !A->Model) return;
+	for(auto& Triangle : *(A->Model)) {
 		(*ResultTriangleQueue).push_back(TranslateTriangle(&Triangle, &(*A).Position));
 	}
 }
