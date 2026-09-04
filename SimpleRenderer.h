@@ -71,6 +71,7 @@ public:
 	int DepthBufferMergingTime = 0;
 	void TriangleRenderThreadInitialisation(int ThreadIndex, int PixelsPerThread, vector<ScreenTriangle>* ProjectedTriangleQueue);
 	void ProjectTriangleCoords(int start, int stop, int CurrentThread, vector<SpaceTriangle>* TriangleQueue, vector<ScreenTriangle>* ProjectedTriangleQueue);
+	Pos TranslatePosition(Pos* A, Pos* B);
 	float NearPlane = 0.1f;
 	float FarPlane = 50.0f;
 	vector<Uint32> EmptyScreen;

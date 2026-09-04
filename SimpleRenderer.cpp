@@ -86,6 +86,11 @@ void SimpleRenderer::init(int* ScreenWidth, int* ScreenHeight, int* ThreadsAlloc
 	PerThreadTriangleTime.resize(*ThreadsAllocated, 0);
 }
 
+Pos SimpleRenderer::TranslatePosition(Pos* A, Pos* B) {
+	Pos C = Pos(A->x + B->x, A->y + B->y, A->z + B->z);
+	return C;
+}
+
 void SimpleRenderer::render(vector<Line>* LineQueue, vector<SpaceTriangle>* TriangleQueue, vector<Point>* PointQueue) {
 	if (debug == true) { cout << "[DEBUG] function simple.render() from SimpleRenderer.cpp" << endl; }
 	RenderStartTime = SDL_GetTicks();
