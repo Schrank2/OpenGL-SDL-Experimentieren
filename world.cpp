@@ -78,7 +78,9 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 			}
 		}
 	}
-	Triangles.insert(.end(), v2.begin(), v2.end());
+	for(int i = 0; i < ModelObjectQueue.size(); i++) {
+		simple.TranslateModelObject(&ModelObjectQueue[i], &Triangles);
+	}
 
 
 	// add Points to World
