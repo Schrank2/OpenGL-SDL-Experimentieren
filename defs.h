@@ -76,7 +76,7 @@ struct ModelObject {
 	vector<SpaceTriangle>* Model;
 	Pos Position;
 	RGBA_int color;
-	ModelObject(vector<SpaceTriangle>* ModelObject, Pos Position, RGBA_int color) : Model(Model), Position(Position) , color(color) {}
+	ModelObject(vector<SpaceTriangle>* Model, Pos Position, RGBA_int color) : Model(Model), Position(Position) , color(color) {}
 };
 
 struct PhysicsObject {

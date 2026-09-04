@@ -64,7 +64,6 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 					if (z % 2 == 0)
 					{
 						VoxelMap[x][index] = Voxel(true, RED);
-						cout << "C" << endl;
 					};
 				}
 			}
@@ -84,7 +83,9 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 		}
 	}
 	for(int i = 0; i < ModelObjectQueue.size(); i++) {
-		simple.TranslateModelObject(&ModelObjectQueue[i], &Triangles);
+		cout << "a" << endl;
+		cout << ModelObjectQueue[i].Model->size() << endl;
+		simple.TranslateModelObject(&(ModelObjectQueue[i]), &Triangles);
 	}
 
 
