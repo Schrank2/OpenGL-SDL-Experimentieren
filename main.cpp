@@ -125,18 +125,18 @@ int main(int argc, char* argv[])
 	}
 }
 
-static vector<float> convert(vector<Triangle>* &Triangles) {
+static vector<float> convert(vector<SpaceTriangle>* &Triangles) {
 	vector<float> Output;
 	for (int i = 0; i < (*Triangles).size(); i++) {
-		Output.push_back((*Triangles)[i].p1.position.x);
-		Output.push_back((*Triangles)[i].p1.position.y);
-		Output.push_back((*Triangles)[i].p1.position.z);
-		Output.push_back((*Triangles)[i].p2.position.x);
-		Output.push_back((*Triangles)[i].p2.position.y);
-		Output.push_back((*Triangles)[i].p2.position.z);
-		Output.push_back((*Triangles)[i].p3.position.x);
-		Output.push_back((*Triangles)[i].p3.position.y);
-		Output.push_back((*Triangles)[i].p3.position.z);
+		Output.push_back((*Triangles)[i].A.x);
+		Output.push_back((*Triangles)[i].A.y);
+		Output.push_back((*Triangles)[i].A.z);
+		Output.push_back((*Triangles)[i].B.x);
+		Output.push_back((*Triangles)[i].B.y);
+		Output.push_back((*Triangles)[i].B.z);
+		Output.push_back((*Triangles)[i].C.x);
+		Output.push_back((*Triangles)[i].C.y);
+		Output.push_back((*Triangles)[i].C.z);
 	}
 	return Output;
 }

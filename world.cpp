@@ -8,7 +8,7 @@
 
 vector<Point> Points;
 vector<Line> Lines;
-vector<Triangle> Triangles;
+vector<SpaceTriangle> Triangles;
 // bright RGB colors
 RGBA_int bright_red(255, 0, 0, 255);
 RGBA_int bright_blue(100, 100, 200, 255);
@@ -26,7 +26,7 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	world.ScreenHeight = *ScreenHeight;
 	world.ScreenWidthF = static_cast<float>(world.ScreenWidth);
 	world.ScreenHeightF = static_cast<float>(world.ScreenHeight);
-	vector<Triangle> VoxelModel;
+	vector<SpaceTriangle> VoxelModel;
 
 
 	int worldSize = 3;
@@ -61,15 +61,6 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 			}
 		}
 	}
-	for (int i = 0; i < VoxelTriangles.size(); i++) {
-		vector<Pos> Voxel = VoxelTriangles[i];
-		Triangles.push_back(Triangle(Point('A', Voxel[0], bright_red), Point('B', Voxel[1], bright_red), Point('C', Voxel[2], bright_red), bright_red));
-		Triangles.push_back(Triangle(Point('A', Voxel[0], bright_red), Point('C', Voxel[2], bright_red), Point('D', Voxel[3], bright_red), bright_red));
-		Triangles.push_back(Triangle(Point('E', Voxel[4], bright_blue), Point('F', Voxel[5], bright_blue), Point('G', Voxel[6], bright_blue), bright_blue));
-		Triangles.push_back(Triangle(Point('E', Voxel[4], bright_blue), Point('G', Voxel[6], bright_blue), Point('H', Voxel[7], bright_blue), bright_blue));
-		Triangles.push_back(Triangle(Point('A', Voxel[0], bright_green), Point('B', Voxel[1], bright_green), Point('F', Voxel[5], bright_green), bright_green));
-		Triangles.push_back(Triangle(Point('A', Voxel[0], bright_green), Point('F', Voxel[5], bright_green), Point('E', Voxel[4], bright_green), bright_green));
-	}
 
 
 	// add Points to World
@@ -84,10 +75,10 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	Points.push_back(Point('Z', Pos(0.0f, 0.0f, 1.0f ), dark_green));
 
 	// add Triangles to World
-	Triangles.push_back(Triangle(Points[1], Points[2], Points[3], bright_red));
-	Triangles.push_back(Triangle(Points[0], Points[2], Points[3], bright_blue));
-	Triangles.push_back(Triangle(Points[0], Points[1], Points[3], bright_green));
-	Triangles.push_back(Triangle(Points[0], Points[1], Points[2], bright_orange));
+	Triangles.push_back(SpaceTriangle(Points[1].position, Points[2].position, Points[3].position, bright_red));
+	Triangles.push_back(SpaceTriangle(Points[0].position, Points[2].position, Points[3].position, bright_blue));
+	Triangles.push_back(SpaceTriangle(Points[0].position, Points[1].position, Points[3].position, bright_green));
+	Triangles.push_back(SpaceTriangle(Points[0].position, Points[1].position, Points[2].position, bright_orange));
 
 	// add Lines to World
 	//Lines.push_back(Line(Points[0], Points[6], 'x', dark_blue));

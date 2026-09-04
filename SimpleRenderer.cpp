@@ -86,7 +86,7 @@ void SimpleRenderer::init(int* ScreenWidth, int* ScreenHeight, int* ThreadsAlloc
 	PerThreadTriangleTime.resize(*ThreadsAllocated, 0);
 }
 
-void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue) {
+void SimpleRenderer::render(vector<Line>* LineQueue, vector<SpaceTriangle>* TriangleQueue, vector<Point>* PointQueue) {
 	if (debug == true) { cout << "[DEBUG] function simple.render() from SimpleRenderer.cpp" << endl; }
 	RenderStartTime = SDL_GetTicks();
 	SDL_SetRenderDrawColor(simple.renderer, 255, 255, 255, 255);
@@ -164,7 +164,7 @@ void SimpleRenderer::TriangleRenderThread(int ThreadIndex, vector<ScreenTriangle
 	PerThreadTriangleTime[ThreadIndex] = SDL_GetTicks() - PerThreadTriangleTime[ThreadIndex];
 }
 
-void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQueue, vector<Point>* PointQueue) {
+void SimpleRenderer::draw(vector<Line>* LineQueue, vector<SpaceTriangle>* TriangleQueue, vector<Point>* PointQueue) {
 	if (debug == true) { cout << "[DEBUG] function simple.draw() from SimpleRenderer.cpp" << endl; }
 	TriangleThreadSetupTime = SDL_GetTicks();
 
@@ -212,14 +212,14 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	DepthBufferMergingTime = SDL_GetTicks() - DepthBufferMergingTime;
 }
 
-void SimpleRenderer::ProjectTriangleCoords(int start, int stop, int CurrentThread, vector<Triangle>* TriangleQueue, vector<ScreenTriangle>* ProjectedTriangleQueue) {
+void SimpleRenderer::ProjectTriangleCoords(int start, int stop, int CurrentThread, vector<SpaceTriangle>* TriangleQueue, vector<ScreenTriangle>* ProjectedTriangleQueue) {
 	if (CurrentThread >= ThreadAllocation) {
 		stop = TriangleQueue->size();
 	}
 	for(int i = start; i < stop; i++) {
-		ScreenPos A = Projection(&(*TriangleQueue)[i].p1.position);
-		ScreenPos B = Projection(&(*TriangleQueue)[i].p2.position);
-		ScreenPos C = Projection(&(*TriangleQueue)[i].p3.position);
+		ScreenPos A = Projection(&(*TriangleQueue)[i].A);
+		ScreenPos B = Projection(&(*TriangleQueue)[i].B);
+		ScreenPos C = Projection(&(*TriangleQueue)[i].C);
 		Mutex.lock();
 		(*ProjectedTriangleQueue)[i] = ScreenTriangle(A, B, C, (*TriangleQueue)[i].color);
 		Mutex.unlock();

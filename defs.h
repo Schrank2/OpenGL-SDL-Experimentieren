@@ -61,18 +61,10 @@ struct Line {
 	Line(Point p1, Point p2, char letter, RGBA_int color) : p1(p1), p2(p2), letter(letter), color(color) {}
 };
 
-struct Triangle {
-	Point p1, p2, p3;
-	string name;
+struct SpaceTriangle {
+	Pos A, B, C;
 	RGBA_int color;
-	const string GetName() {
-		string name = "Triangle ";
-		name += p1.letter;
-		name += p2.letter;
-		name += p3.letter;
-		return name;
-	}
-	Triangle(Point p1, Point p2, Point p3, RGBA_int color) : p1(p1), p2(p2), p3(p3), name(GetName()), color(color) {}
+	SpaceTriangle(Pos A, Pos B, Pos C, RGBA_int color) : A(A), B(B), C(C), color(color) {}
 };
 struct ScreenTriangle {
 	ScreenPos A = ScreenPos(0, 0, 0, false);
