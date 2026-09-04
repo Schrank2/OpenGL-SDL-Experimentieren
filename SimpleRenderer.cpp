@@ -90,6 +90,10 @@ Pos SimpleRenderer::TranslatePosition(Pos* A, Pos* B) {
 	Pos C = Pos(A->x + B->x, A->y + B->y, A->z + B->z);
 	return C;
 }
+SpaceTriangle SimpleRenderer::TranslateTriangle(SpaceTriangle* A, Pos* B) {
+	SpaceTriangle C = SpaceTriangle(TranslatePosition(&A->A, B), TranslatePosition(&A->B, B), TranslatePosition(&A->C, B), A->color);
+	return C;
+}
 
 void SimpleRenderer::render(vector<Line>* LineQueue, vector<SpaceTriangle>* TriangleQueue, vector<Point>* PointQueue) {
 	if (debug == true) { cout << "[DEBUG] function simple.render() from SimpleRenderer.cpp" << endl; }

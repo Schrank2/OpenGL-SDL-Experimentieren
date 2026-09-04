@@ -52,14 +52,16 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 
 
 	int worldSize = 3;
-	Voxels.resize(worldSize, vector<Uint32>(worldSize*worldSize, 0));
+	int index = 0;
+	vector<vector<Voxel>> VoxelMap;
+	VoxelMap.resize(worldSize, vector<Voxel>(worldSize*worldSize));
+	RGBA_int RED = RGBA_int(255, 0, 0, 255);
 	if (false) {
 		for (int x = 0; x < worldSize; x++) {
 			for (int y = 0; y < worldSize; y++) {
 				for (int z = 0; z < worldSize; z++) {
-					if (z % 2 == 0) Voxels[x][y * worldSize + z] = (255 << 24U) | (128 << 16U) | (255 << 8U) | 255;
-					else
-						Voxels[x][y * worldSize + z] = 0;
+					index = y * worldSize + z;
+					if (z % 2 == 0) VoxelMap[x][index] = Voxel(true, RED);
 				}
 			}
 		}
@@ -69,16 +71,9 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	for(int x = 0; x < worldSize; x++) {
 		for(int y = 0; y < worldSize; y++) {
 			for(int z = 0; z < worldSize; z++) {
-				if(Voxels[x][y*worldSize + z] != 0) {
-					Pos A = Pos(x, y, z);
-					Pos B = Pos(x+1, y, z);
-					Pos C = Pos(x+1, y+1, z);
-					Pos D = Pos(x, y+1, z);
-					Pos E = Pos(x, y, z+1);
-					Pos F = Pos(x+1, y, z+1);
-					Pos G = Pos(x+1, y+1, z+1);
-					Pos H = Pos(x, y+1, z+1);
-					VoxelTriangles.push_back({A,B,C,D,E,F,G,H});
+				Voxel* CurrentVoxel = &VoxelMap[x][y * worldSize + z];
+				if(CurrentVoxel->exists == true) {
+					ModelObjectQueue.push_back(ModelObject(&VoxelModel, Pos(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z), CurrentVoxel->color));
 				}
 			}
 		}

@@ -23,9 +23,16 @@ public:
 	int ScreenHeight;
 	float ScreenWidthF;
 	float ScreenHeightF;
-	vector<vector<Uint32>> Voxels;
+	vector<vector<Voxel>> VoxelMap;
+	vector<ModelObject> ModelObjectQueue;
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern WORLD world;
+
+struct Voxel {
+	bool exists = false;
+	RGBA_int color;
+	Voxel(bool exists, RGBA_int color) : exists(exists), color(color) {}
+};;
 
 #endif // WORLD_H

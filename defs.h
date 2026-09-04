@@ -72,6 +72,12 @@ struct ScreenTriangle {
 	RGBA_int color = RGBA_int(0, 0, 0, 0);
 	ScreenTriangle(ScreenPos p1, ScreenPos p2, ScreenPos p3, RGBA_int color) : p1(p1), p2(p2), p3(p3), color(color) {}
 };
+struct ModelObject {
+	vector<SpaceTriangle>* Model;
+	Pos Position;
+	RGBA_int color;
+	ModelObject(vector<SpaceTriangle>* ModelObject, Pos Position, RGBA_int color) : Model(Model), Position(Position) , color(color) {}
+};
 
 struct PhysicsObject {
 	Pos pos;
