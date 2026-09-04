@@ -168,40 +168,28 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	if (debug == true) { cout << "[DEBUG] function simple.draw() from SimpleRenderer.cpp" << endl; }
 	TriangleThreadSetupTime = SDL_GetTicks();
 	// Draw all triangles from world
-	int ThreadsUsed = TriangleQueue->size() < ThreadAllocation ? TriangleQueue->size() : ThreadAllocation;
-	//ThreadsUsed = 1;
-	int TrianglesPerThread = TriangleQueue->size() / ThreadsUsed;
 	int start = 0;
 	int end = 0;
-	if (debug) cout << "Threads used: " << ThreadsUsed << endl;
 	PolyGonsRenderedTotal = 0;
 	PolyGonsRenderedPerThread.clear();
 	TriangleDrawingTime = SDL_GetTicks();
 	int PixelsPerThread = floor(ScreenHeightF / static_cast<float>(ThreadAllocation));
-	for (int i = 0; i < ThreadsUsed; i++) {
+	for (int i = 0; i < ThreadAllocation; i++) {
 		TriangleRenderThreadInitialisation(i, PixelsPerThread, TriangleQueue);
 	}
 	TriangleThreadSetupTime = SDL_GetTicks() - TriangleThreadSetupTime;
 	
 	int j = 0;
-	for (; j < ThreadsUsed; j++) {
+	for (; j < ThreadAllocation; j++) {
 		threads[j].join();
 	}
 	TriangleDrawingTime = SDL_GetTicks() - TriangleDrawingTime;
 
-	for (int i = 0; i < ThreadsUsed; i++) {
+	for (int i = 0; i < ThreadAllocation; i++) {
 		PolyGonsRenderedTotal += PolyGonsRenderedPerThread[i];
 	}
 	DepthBufferMergingTime = SDL_GetTicks();
 	DepthBufferMin = FarPlane;
-	
-	//int PixelsPerThread = floor(ScreenHeightF / static_cast<float>(ThreadAllocation));
-	//for(int i = 0; i < ThreadAllocation; i++) {
-	//	threads[i] = thread(&SimpleRenderer::DepthBufferThread, this, i * PixelsPerThread, (i + 1) * PixelsPerThread, &pixels, &DepthBuffer, i, ThreadsUsed);
-	//}
-	//for(int i = 0; i < ThreadAllocation; i++) {
-	//	threads[i].join();
-	//}
 	
 	ThreadedPixels.clear();
 	ThreadedDepthBuffer.clear();
