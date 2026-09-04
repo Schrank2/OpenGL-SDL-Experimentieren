@@ -26,6 +26,9 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	world.ScreenHeight = *ScreenHeight;
 	world.ScreenWidthF = static_cast<float>(world.ScreenWidth);
 	world.ScreenHeightF = static_cast<float>(world.ScreenHeight);
+	vector<Triangle> VoxelModel;
+
+
 	int worldSize = 3;
 	Voxels.resize(worldSize, vector<Uint32>(worldSize*worldSize, 0));
 	if (false) {

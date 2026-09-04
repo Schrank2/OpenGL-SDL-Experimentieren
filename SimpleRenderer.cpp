@@ -134,9 +134,9 @@ void SimpleRenderer::render(vector<Line>* LineQueue, vector<Triangle>* TriangleQ
 		}
 	}
 	SDL_UpdateTexture(simple.canvas, 0, pixels.data(), ScreenWidth * sizeof(Uint32));
-	if (mainInput[8].active) simple.TextRender();
 	SDL_SetRenderTarget(simple.renderer, NULL);
 	SDL_RenderTexture(simple.renderer, simple.canvas, 0, 0);
+	if (mainInput[8].active) simple.TextRender();
 	SDL_RenderPresent(simple.renderer);
 	RenderEndTime = SDL_GetTicks();
 	RenderTime = RenderEndTime - RenderStartTime;
