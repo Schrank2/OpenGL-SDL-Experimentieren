@@ -158,13 +158,9 @@ void SimpleRenderer::TextRender() {
 
 void SimpleRenderer::TriangleRenderThread(int ThreadIndex, vector<Triangle>* TriangleQueue, int CanvasSnippetStart, int CanvasSnippetEnd) {
 	PerThreadTriangleTime[ThreadIndex] = SDL_GetTicks();
-	vector<Uint32> ThreadPixels = EmptyScreen;
-	vector<float> ThreadDepthBuffer = EmptyDepthBuffer;
 	for (int j = 0; j < TriangleQueue->size(); j++) {
-		simple.DrawTriangle(&(*TriangleQueue)[j].p1.position, &(*TriangleQueue)[j].p2.position, &(*TriangleQueue)[j].p3.position, &(*TriangleQueue)[j].color, &ThreadPixels, &ThreadDepthBuffer, CanvasSnippetStart, CanvasSnippetEnd);
+		simple.DrawTriangle(&(*TriangleQueue)[j].p1.position, &(*TriangleQueue)[j].p2.position, &(*TriangleQueue)[j].p3.position, &(*TriangleQueue)[j].color, &pixels, &DepthBuffer, CanvasSnippetStart, CanvasSnippetEnd);
 	}
-	ThreadedPixels[ThreadIndex] = std::move(ThreadPixels);
-	ThreadedDepthBuffer[ThreadIndex] = std::move(ThreadDepthBuffer);
 	PerThreadTriangleTime[ThreadIndex] = SDL_GetTicks() - PerThreadTriangleTime[ThreadIndex];
 }
 
@@ -235,14 +231,9 @@ void SimpleRenderer::DepthBufferThread(int offset, int end, vector<Uint32>* pixe
 }
 
 void SimpleRenderer::TriangleRenderThreadInitialisation(int ThreadIndex, int PixelsPerThread, vector<Triangle>* TriangleQueue) {
-	vector<Triangle> ThreadTriangles;
-	ThreadedPixels.push_back(EmptyScreen);
-	ThreadedDepthBuffer.push_back(EmptyDepthBuffer);
-	PolyGonsRenderedPerThread.push_back(0);
-	
 	int CanvasSnippetStart = ThreadIndex * PixelsPerThread;
 	int CanvasSnippetEnd = (ThreadIndex + 1) * PixelsPerThread;
-
+	PolyGonsRenderedPerThread.push_back(0);
 	threads[ThreadIndex] = thread( & SimpleRenderer::TriangleRenderThread, this, ThreadIndex, TriangleQueue, CanvasSnippetStart, CanvasSnippetEnd);
 	//threads.emplace_back(&SimpleRenderer::TriangleRenderThread, this, thread, ThreadTriangles);
 }
@@ -337,7 +328,7 @@ bool SimpleRenderer::CheckScreenPos(ScreenPos A) {
 	return true;
 }
 
-void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer, int CanvasSnippetStart, int CanvasSnippetEnd) {
+void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color, vector<Uint32>* Canvas, vector<float>* DepthBuffer, int CanvasSnippetStart, int CanvasSnippetEnd) {
 	ScreenPos A = Projection(A3D);
 	ScreenPos B = Projection(B3D);
 	ScreenPos C = Projection(C3D);
@@ -404,7 +395,7 @@ void SimpleRenderer::DrawTriangle(Pos* A3D, Pos* B3D, Pos* C3D, RGBA_int* Color,
 		lx = lx > 0.0f ? lx : 0.0f; // Clipping if minX < 0
 		if (lx <= 0.0f) lx = 0.0f;
 		if (y > 0 and y < ScreenHeight) {
-			DrawScanLine(&y, &lx, &lz, &rx, &rz, Color, &minZ, &maxZ, &shadeIntensity, ThreadPixels, &DepthBuffer);
+			DrawScanLine(&y, &lx, &lz, &rx, &rz, Color, &minZ, &maxZ, &shadeIntensity, Canvas, DepthBuffer);
 		}
 	}
 }
@@ -417,7 +408,7 @@ bool SimpleRenderer::IsOnScreenSnippet(ScreenPos* A, int MinX, int MaxX, int Min
 	return true;
 }
 
-void SimpleRenderer::DrawScanLine(float* y, float* leftx, float* leftz, float* rightx, float* rightz, RGBA_int* Color, float* minZ, float* maxZ, float* shadeIntensity, vector<Uint32>* ThreadPixels, vector<float>* ThreadDepthBuffer) {
+void SimpleRenderer::DrawScanLine(float* y, float* leftx, float* leftz, float* rightx, float* rightz, RGBA_int* Color, float* minZ, float* maxZ, float* shadeIntensity, vector<Uint32>* Canvas, vector<float>* DepthBuffer) {
 	float yf = floor(*y);
 	int x;
 	float DiffZ = *maxZ - *minZ;
@@ -435,10 +426,10 @@ void SimpleRenderer::DrawScanLine(float* y, float* leftx, float* leftz, float* r
 			P.x = floor(x);
 			progress = (x - *leftx) / spanX;
 			P.z += stepZ;
-			if (DepthBufferPoint(P, ThreadDepthBuffer)) {
+			if (DepthBufferPoint(P, DepthBuffer)) {
 				LocalColor = ModifyColor(1.0f - progress, *shadeIntensity, *Color);
 				LocalColor.a = 255;
-				DrawPixel(&P.x, &P.y, &LocalColor, ThreadPixels);
+				DrawPixel(&P.x, &P.y, &LocalColor, Canvas);
 			}
 		}
 }
