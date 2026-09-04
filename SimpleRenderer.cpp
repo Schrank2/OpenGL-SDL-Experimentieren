@@ -196,6 +196,14 @@ void SimpleRenderer::draw(vector<Line>* LineQueue, vector<Triangle>* TriangleQue
 	DepthBufferMergingTime = SDL_GetTicks() - DepthBufferMergingTime;
 }
 
+void SimpleRenderer::ProjectTriangleCoords(int start, int stop, int CurrentThread, vector<Triangle>* TriangleQueue, vector<Triangle>* ProjectedTriangleQueue) {
+	for(int i = start; i < stop; i++) {
+		(*ProjectedTriangleQueue)[i].p1.position = Projection(&(*TriangleQueue)[i].p1.position);
+		ProjectedTriangleQueue->back().p2.position = Projection(&(*TriangleQueue)[i].p2.position);
+		ProjectedTriangleQueue->back().p3.position = Projection(&(*TriangleQueue)[i].p3.position);
+	}
+}
+
 void SimpleRenderer::DepthBufferThread(int offset, int end, vector<Uint32>* pixels, vector<float>* DepthBuffer, int ThreadIndex, int ThreadsUsed) {
 	int index;
 	float CurrentValue = 0;
