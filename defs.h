@@ -65,14 +65,14 @@ struct Triangle {
 	Point p1, p2, p3;
 	string name;
 	RGBA_int color;
-	const string triangle_getname() {
+	const string GetName() {
 		string name = "Triangle ";
 		name += p1.letter;
 		name += p2.letter;
 		name += p3.letter;
 		return name;
 	}
-	Triangle(Point p1, Point p2, Point p3, RGBA_int color) : p1(p1), p2(p2), p3(p3), name(triangle_getname()), color(color) {}
+	Triangle(Point p1, Point p2, Point p3, RGBA_int color) : p1(p1), p2(p2), p3(p3), name(GetName()), color(color) {}
 };
 
 struct PhysicsObject {
