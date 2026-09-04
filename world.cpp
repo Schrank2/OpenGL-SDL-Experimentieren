@@ -76,15 +76,12 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 			for(int z = 0; z < worldSize; z++) {
 				Voxel* CurrentVoxel = &VoxelMap[x][y * worldSize + z];
 				if(CurrentVoxel->exists) {
-					cout << "world.cpp around line 76" << endl;
 					ModelObjectQueue.push_back(ModelObject(&VoxelModel, Pos(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)), CurrentVoxel->color));
 				}
 			}
 		}
 	}
 	for(int i = 0; i < ModelObjectQueue.size(); i++) {
-		cout << "a" << endl;
-		cout << ModelObjectQueue[i].Model->size() << endl;
 		simple.TranslateModelObject(&(ModelObjectQueue[i]), &Triangles);
 	}
 
