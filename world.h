@@ -16,6 +16,16 @@ struct Voxel {
 	Voxel(bool exists, RGBA_int color) : exists(exists), color(color) {}
 };
 
+struct Chunk{
+	int x, y, z;
+	vector<vector<Voxel>> VoxelStorage;
+	vector<vector<Voxel>> CreateVoxelStorage() {
+		vector<vector<Voxel>> VoxelStorage(16, vector<Voxel>(256, Voxel(false, RGBA_int(0, 0, 0, 0))));
+				return VoxelStorage;
+	}
+	Chunk(int x, int y, int z) : x(x), y(y), z(z), VoxelStorage(CreateVoxelStorage())  {}
+};
+
 class WORLD {
 public:
 	vector<Point> Points;
