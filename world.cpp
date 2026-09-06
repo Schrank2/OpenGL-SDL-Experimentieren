@@ -9,6 +9,9 @@
 vector<Point> Points;
 vector<Line> Lines;
 vector<SpaceTriangle> Triangles;
+vector<vector<Voxel>> VoxelMap;
+vector<SpaceTriangle> VoxelModel;
+int worldSize = 10;
 // bright RGB colors
 RGBA_int bright_red(255, 0, 0, 255);
 RGBA_int bright_blue(100, 100, 200, 255);
@@ -26,7 +29,6 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	world.ScreenHeight = *ScreenHeight;
 	world.ScreenWidthF = static_cast<float>(world.ScreenWidth);
 	world.ScreenHeightF = static_cast<float>(world.ScreenHeight);
-	vector<SpaceTriangle> VoxelModel;
 	Pos A = Pos(0.0f, 0.0f, 0.0f);
 	Pos B = Pos(1.0f, 0.0f, 0.0f);
 	Pos C = Pos(1.0f, 1.0f, 0.0f);
@@ -50,10 +52,7 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	VoxelModel.push_back(SpaceTriangle(D, A, E, VoxelColor));
 	VoxelModel.push_back(SpaceTriangle(D, E, H, VoxelColor));
 
-
-	int worldSize = 10;
 	int index = 0;
-	vector<vector<Voxel>> VoxelMap;
 	VoxelMap.resize(worldSize, vector<Voxel>(worldSize*worldSize, Voxel(false,RGBA_int(0,0,0,0))));
 	RGBA_int RED = RGBA_int(255, 0, 0, 255);
 	if (true) {
@@ -71,46 +70,30 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	}
 
 	vector<vector<Pos>> VoxelTriangles;
-	for(int x = 0; x < worldSize; x++) {
-		for(int y = 0; y < worldSize; y++) {
-			for(int z = 0; z < worldSize; z++) {
+	for (int x = 0; x < worldSize; x++) {
+		for (int y = 0; y < worldSize; y++) {
+			for (int z = 0; z < worldSize; z++) {
 				Voxel* CurrentVoxel = &VoxelMap[x][y * worldSize + z];
-				if(CurrentVoxel->exists) {
+				if (CurrentVoxel->exists) {
 					ModelObjectQueue.push_back(ModelObject(&VoxelModel, Pos(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)), CurrentVoxel->color));
 				}
 			}
 		}
 	}
-	for(int i = 0; i < ModelObjectQueue.size(); i++) {
+	for (int i = 0; i < ModelObjectQueue.size(); i++) {
 		simple.TranslateModelObject(&(ModelObjectQueue[i]), &Triangles);
 	}
-
-
-	// add Points to World
-	Points.push_back(Point('O', Pos( 0.0f, 0.0f, 0.0f ), black));
-	Points.push_back(Point('A', Pos(2.0f, 2.0f, 2.0f ), bright_red));
-	Points.push_back(Point('B', Pos(2.0f, 0.0f, 0.0f ), bright_green));
-	Points.push_back(Point('C', Pos(0.0f, 0.0f, 2.0f ), bright_blue));
-	Points.push_back(Point('D', Pos(4.0f, 4.0f, -3.0f ), bright_red));
-	Points.push_back(Point('E', Pos(0.0f, 0.05f, 0.0f ), bright_green));
-	Points.push_back(Point('X', Pos(1.0f, 0.0f, 0.0f ), dark_blue));
-	Points.push_back(Point('Y', Pos(0.0f, 1.0f, 0.0f ), dark_red));
-	Points.push_back(Point('Z', Pos(0.0f, 0.0f, 1.0f ), dark_green));
-
-	// add Triangles to World
-	Triangles.push_back(SpaceTriangle(Points[1].position, Points[2].position, Points[3].position, bright_red));
-	Triangles.push_back(SpaceTriangle(Points[0].position, Points[2].position, Points[3].position, bright_blue));
-	Triangles.push_back(SpaceTriangle(Points[0].position, Points[1].position, Points[3].position, bright_green));
-	Triangles.push_back(SpaceTriangle(Points[0].position, Points[1].position, Points[2].position, bright_orange));
-
-	// add Lines to World
-	//Lines.push_back(Line(Points[0], Points[6], 'x', dark_blue));
-	//Lines.push_back(Line(Points[0], Points[7], 'y', dark_red));
-	//Lines.push_back(Line(Points[0], Points[8], 'z', dark_green));
 }
 
 void WORLD::tick() {
 	if (debug == true) { cout << "[DEBUG] function game.tick() from game.cpp" << endl; }
+	// Moving Triangles from World to Renderer
+
+
+
+
+
+
 	// Update Camera Rotation
 	simple.CameraYaw += 90.0f * (mainMouse.movex / world.ScreenWidthF) * mainMouse.sens;
 	simple.CameraPitch += 90.0f * (mainMouse.movey / world.ScreenHeightF) * mainMouse.sens;
