@@ -9,7 +9,6 @@
 vector<Point> Points;
 vector<Line> Lines;
 vector<SpaceTriangle> Triangles;
-vector<vector<Voxel>> VoxelMap;
 vector<SpaceTriangle> VoxelModel;
 int worldSize = 20;
 // bright RGB colors
@@ -51,42 +50,43 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	VoxelModel.push_back(SpaceTriangle(C, H, G, VoxelColor));
 	VoxelModel.push_back(SpaceTriangle(D, A, E, VoxelColor));
 	VoxelModel.push_back(SpaceTriangle(D, E, H, VoxelColor));
-
-	int index = 0;
-	VoxelMap.resize(worldSize, vector<Voxel>(worldSize*worldSize, Voxel(false,RGBA_int(0,0,0,0))));
-	RGBA_int RED = RGBA_int(255, 0, 0, 255);
-	if (true) {
-		for (int x = 0; x < worldSize; x++) {
-			for (int y = 0; y < worldSize; y++) {
-				for (int z = 0; z < worldSize; z++) {
-					index = y * worldSize + z;
-					if (z % 2 == 0)
-					{
-						VoxelMap[x][index] = Voxel(true, RED);
-					};
-				}
-			}
-		}
-	}
 }
 
 void WORLD::tick() {
 	if (debug == true) { cout << "[DEBUG] function game.tick() from game.cpp" << endl; }
-	// Moving Triangles from World to Renderer
+	simple.VoxelsToTrianglesTime = SDL_GetTicks();
 	Triangles.clear();
 	ModelObjectQueue.clear();
-	vector<vector<Pos>> VoxelTriangles;
-	simple.VoxelsToTrianglesTime = SDL_GetTicks();
-	for (int x = 0; x < worldSize; x++) {
-		for (int y = 0; y < worldSize; y++) {
-			for (int z = 0; z < worldSize; z++) {
-				Voxel* CurrentVoxel = &VoxelMap[x][y * worldSize + z];
-				if (CurrentVoxel->exists) {
-					ModelObjectQueue.push_back(ModelObject(&VoxelModel, Pos(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)), CurrentVoxel->color));
+	// generating nearby chunks
+	int GridCameraX = static_cast<int>(simple.Camera.pos.x);
+	int GridCameraY = static_cast<int>(simple.Camera.pos.y);
+	int GridCameraZ = static_cast<int>(simple.Camera.pos.z);
+	int GridCameraIndex = GridCameraX * 16 + GridCameraY * 16 + GridCameraZ * 16;
+	if(VoxelMap.size() == 0) VoxelMap.push_back(Chunk())
+
+	for (int i = 0; i < VoxelMap.size(); i++) {
+		Chunk* C = &(VoxelMap[GridCameraIndex]);
+		if (GridCameraX == C->x && GridCameraY == C->y && GridCameraZ == C->z) {
+			if (C->generated == false) {
+				(*C).generate();
+			}
+			for (int x = 0; x < 16; x++) {
+				for (int y = 0; y < 16; y++) {
+					for (int z = 0; z < 16; z++) {
+						Voxel* CurrentVoxel = &(C->VoxelStorage[x * 16 + y * 16 + z]);
+						if (CurrentVoxel->exists == true) {
+							ModelObjectQueue.push_back(ModelObject(&VoxelModel, Pos(x, y, z), CurrentVoxel->color));
+						}
+					}
 				}
 			}
 		}
 	}
+	for (int i = 0; i < VoxelMap.size(); i++) {
+		Chunk* CurrentChunk = &(VoxelMap[i]);
+		
+	}
+
 	for (int i = 0; i < ModelObjectQueue.size(); i++) {
 		simple.TranslateModelObject(&(ModelObjectQueue[i]), &Triangles);
 	}
