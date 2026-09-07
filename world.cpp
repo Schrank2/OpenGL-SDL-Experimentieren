@@ -11,7 +11,7 @@ vector<Line> Lines;
 vector<SpaceTriangle> Triangles;
 vector<vector<Voxel>> VoxelMap;
 vector<SpaceTriangle> VoxelModel;
-int worldSize = 10;
+int worldSize = 20;
 // bright RGB colors
 RGBA_int bright_red(255, 0, 0, 255);
 RGBA_int bright_blue(100, 100, 200, 255);
@@ -76,6 +76,7 @@ void WORLD::tick() {
 	Triangles.clear();
 	ModelObjectQueue.clear();
 	vector<vector<Pos>> VoxelTriangles;
+	simple.VoxelsToTrianglesTime = SDL_GetTicks();
 	for (int x = 0; x < worldSize; x++) {
 		for (int y = 0; y < worldSize; y++) {
 			for (int z = 0; z < worldSize; z++) {
@@ -89,6 +90,7 @@ void WORLD::tick() {
 	for (int i = 0; i < ModelObjectQueue.size(); i++) {
 		simple.TranslateModelObject(&(ModelObjectQueue[i]), &Triangles);
 	}
+	simple.VoxelsToTrianglesTime = SDL_GetTicks() - simple.VoxelsToTrianglesTime;
 	// Update Camera Rotation
 	simple.CameraYaw += 90.0f * (mainMouse.movex / world.ScreenWidthF) * mainMouse.sens;
 	simple.CameraPitch += 90.0f * (mainMouse.movey / world.ScreenHeightF) * mainMouse.sens;
