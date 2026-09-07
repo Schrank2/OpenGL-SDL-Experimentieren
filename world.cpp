@@ -68,7 +68,13 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 			}
 		}
 	}
+}
 
+void WORLD::tick() {
+	if (debug == true) { cout << "[DEBUG] function game.tick() from game.cpp" << endl; }
+	// Moving Triangles from World to Renderer
+	Triangles.clear();
+	ModelObjectQueue.clear();
 	vector<vector<Pos>> VoxelTriangles;
 	for (int x = 0; x < worldSize; x++) {
 		for (int y = 0; y < worldSize; y++) {
@@ -83,17 +89,6 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	for (int i = 0; i < ModelObjectQueue.size(); i++) {
 		simple.TranslateModelObject(&(ModelObjectQueue[i]), &Triangles);
 	}
-}
-
-void WORLD::tick() {
-	if (debug == true) { cout << "[DEBUG] function game.tick() from game.cpp" << endl; }
-	// Moving Triangles from World to Renderer
-
-
-
-
-
-
 	// Update Camera Rotation
 	simple.CameraYaw += 90.0f * (mainMouse.movex / world.ScreenWidthF) * mainMouse.sens;
 	simple.CameraPitch += 90.0f * (mainMouse.movey / world.ScreenHeightF) * mainMouse.sens;
