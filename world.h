@@ -22,9 +22,7 @@ struct Chunk{
 	vector<Voxel> CreateVoxelStorage() {
 		RGBA_int RGBA = RGBA_int(0, 0, 0, 0);
 		vector<Voxel> VoxelStorageInit;
-		if (VoxelStorageInit.empty()) {
-			VoxelStorageInit.resize(4096, Voxel(false, RGBA));
-		}
+		VoxelStorageInit.resize(4096, Voxel(false, RGBA));
 		return VoxelStorageInit;
 	}
 	void generate(int x, int y, int z) {
