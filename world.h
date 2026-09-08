@@ -18,14 +18,20 @@ struct Voxel {
 
 struct Chunk{
 	bool generated = false;
-	int x, y, z;
 	vector<Voxel> VoxelStorage;
 	vector<Voxel> CreateVoxelStorage() {
 		RGBA_int RGBA = RGBA_int(0, 0, 0, 0);
-		VoxelStorage.resize(4096, Voxel(false, RGBA));
-		return VoxelStorage;
+		vector<Voxel> VoxelStorageInit;
+		if (VoxelStorageInit.empty()) {
+			VoxelStorageInit.resize(4096, Voxel(false, RGBA));
+		}
+		return VoxelStorageInit;
 	}
-	void generate() {
+	void generate(int x, int y, int z) {
+		cout << "generating Chunk" << endl;
+		if (VoxelStorage.empty()) {
+			VoxelStorage = CreateVoxelStorage();
+		}
 		int ix, iy, iz, index, worldZ;
 		ix = iy = iz = index = 0;
 		RGBA_int StoneColor = RGBA_int(100, 100, 100, 255);
@@ -41,7 +47,7 @@ struct Chunk{
 					if (worldZ < 8) VoxelStorage[index] = Voxel(true, GrassColor);
 				}
 	}
-	Chunk(int x, int y, int z) : x(x), y(y), z(z), VoxelStorage(CreateVoxelStorage())  {}
+	Chunk() : VoxelStorage(CreateVoxelStorage())  {}
 };
 
 class WORLD {
