@@ -23,26 +23,30 @@ struct Chunk{
 		RGBA_int RGBA = RGBA_int(0, 0, 0, 0);
 		vector<Voxel> VoxelStorageInit;
 		VoxelStorageInit.resize(4096, Voxel(false, RGBA));
+		cout << "VoxelStorage Initialisation Size: " << VoxelStorageInit.size() << endl;
 		return VoxelStorageInit;
 	}
 	void generate(int x, int y, int z) {
-		cout << "generating Chunk" << endl;
+		generated = true;
+		//cout << "generating Chunk" << endl;
 		if (VoxelStorage.empty()) {
+			//cout << "Pregeneration Size: " << VoxelStorage.size();
 			VoxelStorage = CreateVoxelStorage();
+			//cout << " Postgeneration Size: " << VoxelStorage.size() << endl;
 		}
-		int ix, iy, iz, index, worldZ;
-		ix = iy = iz = index = worldZ = 0;
-		RGBA_int StoneColor = RGBA_int(0, 0, 255, 255);
-		RGBA_int DirtColor = RGBA_int(0, 255, 0, 255);
-		RGBA_int GrassColor = RGBA_int(255, 0, 0, 255);
-		for(;ix < 16; ix++)
-			for(;iy < 16; iy++)
-				for (; iz < 16; iz++) {
-					index = 16 * ix + 16 * iy + iz;
-					worldZ = 16 * z + iz;
-					if (worldZ < 5) VoxelStorage[index] = Voxel(true, StoneColor);
-					if (worldZ < 7) VoxelStorage[index] = Voxel(true, DirtColor);
-					if (worldZ < 8) VoxelStorage[index] = Voxel(true, GrassColor);
+		int index, worldY;
+		index = worldY = 0;
+		RGBA_int StoneColor = RGBA_int(100, 100, 100, 255);
+		RGBA_int DirtColor = RGBA_int(255, 0, 0, 255);
+		RGBA_int GrassColor = RGBA_int(0, 0, 255, 255);
+		for(int ix = 0;ix < 16; ix++)
+			for(int iy = 0;iy < 16; iy++)
+				for (int iz = 0; iz < 16; iz++) {
+					index = (16 * ix) + (16 * iy) + iz;
+					worldY = (16 * y) + iy;
+					if (worldY < 5) VoxelStorage[index] = Voxel(true, StoneColor);
+					if (worldY < 7) VoxelStorage[index] = Voxel(true, DirtColor);
+					if (worldY < 8) VoxelStorage[index] = Voxel(true, GrassColor);
 				}
 	}
 	Chunk() : VoxelStorage(CreateVoxelStorage())  {}

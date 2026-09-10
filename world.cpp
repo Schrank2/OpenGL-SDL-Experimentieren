@@ -71,10 +71,13 @@ void WORLD::tick() {
 	int RenderDistanceY = 1;
 	int RenderDistanceZ = 1;
 	int CurrentChunkIndex = 0;
-	for (int x = -RenderDistanceX; x <= RenderDistanceX; x++) {
-		for (int y = -RenderDistanceY; y <= RenderDistanceY; y++) {
-			for (int z = -RenderDistanceZ; z <= RenderDistanceZ; z++) {
-				CurrentChunkIndex = (x + ChunkGridCameraX) * 16 + (y + ChunkGridCameraY) * 16 + (z + ChunkGridCameraZ);
+	int ChunkGridCenter = 8;
+	for (int x = ChunkGridCenter-RenderDistanceX; x <= ChunkGridCenter + RenderDistanceX; x++) {
+		for (int y = ChunkGridCenter -RenderDistanceY; y <= ChunkGridCenter + RenderDistanceY; y++) {
+			for (int z = ChunkGridCenter -RenderDistanceZ; z <= ChunkGridCenter + RenderDistanceZ; z++) {
+				//cout << "ChunkX: " << x << " ChunkY: " << y << " ChunkZ: " << z << endl;
+				CurrentChunkIndex = 16 * (x + ChunkGridCameraX) + 16 * (y + ChunkGridCameraY) + 16 * (z + ChunkGridCameraZ);
+				//cout << "CurrentChunkindex: " << CurrentChunkIndex << endl;
 				Chunk* C = &(VoxelMap[CurrentChunkIndex]);
 				if (C->generated == false) {
 					C->generate(x,y,z);
@@ -83,6 +86,7 @@ void WORLD::tick() {
 				for (int X = 0; X < 16; X++) {
 					for (int Y = 0; Y < 16; Y++) {
 						for (int Z = 0; Z < 16; Z++) {
+							//cout << "X: " << X << " Y: " << Y << " Z: " << Z << endl;
 							int index = (X * 16) + (Y * 16) + Z;
 							Voxel* CurrentVoxel = &(C->VoxelStorage[index]);
 							if(CurrentVoxel->exists) {
