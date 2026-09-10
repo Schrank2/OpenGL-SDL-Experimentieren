@@ -74,20 +74,27 @@ void WORLD::tick() {
 	for (int x = ChunkGridCenter-RenderDistanceX; x <= ChunkGridCenter + RenderDistanceX; x++) {
 		for (int y = ChunkGridCenter-RenderDistanceY; y <= ChunkGridCenter + RenderDistanceY; y++) {
 			for (int z = ChunkGridCenter-RenderDistanceZ; z <= ChunkGridCenter + RenderDistanceZ; z++) {
-				cout << "ChunkX: " << x << " ChunkY: " << y << " ChunkZ: " << z << endl;
-				CurrentChunkIndex = 16 * (x + ChunkGridCameraX) + 16 * (y + ChunkGridCameraY) + 16 * (z + ChunkGridCameraZ);
+				int ChunkX = x + ChunkGridCameraX;
+				int ChunkY = y + ChunkGridCameraY;
+				int ChunkZ = x + ChunkGridCameraZ;
+				if (ChunkX < 0 or ChunkX >= VoxelMapSize or ChunkY < 0 or ChunkY >= VoxelMapSize or ChunkZ < 0 or ChunkZ >= VoxelMapSize) {
+					cout << "Chunk out of bounds ChunkX: " << ChunkX << " ChunkY: " << ChunkY << " ChunkZ: " << ChunkZ << endl;
+					continue;
+				}
+				
+				CurrentChunkIndex = (ChunkX*VoxelMapSize*VoxelMapSize) + (ChunkY*VoxelMapSize) + ChunkZ;
 				cout << "CurrentChunkindex: " << CurrentChunkIndex << endl;
 				Chunk* C = &(VoxelMap[CurrentChunkIndex]);
 				if (C->generated == false) {
-					C->generate(x,y,z);
+					C->generate(ChunkX,ChunkY,ChunkZ);
 				}
 				if (debug) cout << "[DEBUG] Rendering Chunk at x: " << x + ChunkGridCameraX << " y: " << y + ChunkGridCameraY << " z: " << z + ChunkGridCameraZ << endl;
 				for (int X = 0; X < 16; X++) {
 					for (int Y = 0; Y < 16; Y++) {
 						for (int Z = 0; Z < 16; Z++) {
 							//cout << "X: " << X << " Y: " << Y << " Z: " << Z << endl;
-							int index = (X * 16) + (Y * 16) + Z;
-							bool BoundsCheck = index >= 0 and index <= C->VoxelStorage.size();
+							int index = (X * 16 * 16) + (Y * 16) + Z;
+							bool BoundsCheck = index >= 0 and index < static_cast<int>(C->VoxelStorage.size());
 							if (BoundsCheck) {
 								Voxel* CurrentVoxel = &(C->VoxelStorage[index]);
 								if (CurrentVoxel->exists) {

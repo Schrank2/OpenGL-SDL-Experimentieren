@@ -42,7 +42,7 @@ struct Chunk{
 		for(int ix = 0;ix < 16; ix++)
 			for(int iy = 0;iy < 16; iy++)
 				for (int iz = 0; iz < 16; iz++) {
-					index = (16 * ix) + (16 * iy) + iz;
+					index = (16 * 16 * ix) + (16 * iy) + iz;
 					worldY = (16 * y) + iy;
 					if (worldY < 5) VoxelStorage[index] = Voxel(true, StoneColor);
 					if (worldY < 7) VoxelStorage[index] = Voxel(true, DirtColor);
