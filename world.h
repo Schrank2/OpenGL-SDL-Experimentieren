@@ -67,6 +67,7 @@ public:
 	float ScreenWidthF;
 	float ScreenHeightF;
 	vector<ModelObject> ModelObjectQueue;
+	int VoxelMapSize = 16;
 };
 // declare r1 so the R1 functions can be called elsewhere
 extern WORLD world;

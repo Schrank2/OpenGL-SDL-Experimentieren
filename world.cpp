@@ -10,7 +10,6 @@ vector<Point> Points;
 vector<Line> Lines;
 vector<SpaceTriangle> Triangles;
 vector<SpaceTriangle> VoxelModel;
-int worldSize = 20;
 // bright RGB colors
 RGBA_int bright_red(255, 0, 0, 255);
 RGBA_int bright_blue(100, 100, 200, 255);
@@ -51,7 +50,7 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	VoxelModel.push_back(SpaceTriangle(D, A, E, VoxelColor));
 	VoxelModel.push_back(SpaceTriangle(D, E, H, VoxelColor));
 
-	VoxelMap.resize(4096, Chunk());
+	VoxelMap.resize(VoxelMapSize*VoxelMapSize*VoxelMapSize, Chunk());
 }
 
 void WORLD::tick() {
@@ -71,13 +70,13 @@ void WORLD::tick() {
 	int RenderDistanceY = 1;
 	int RenderDistanceZ = 1;
 	int CurrentChunkIndex = 0;
-	int ChunkGridCenter = 8;
+	int ChunkGridCenter = VoxelMapSize / 2;
 	for (int x = ChunkGridCenter-RenderDistanceX; x <= ChunkGridCenter + RenderDistanceX; x++) {
-		for (int y = ChunkGridCenter -RenderDistanceY; y <= ChunkGridCenter + RenderDistanceY; y++) {
-			for (int z = ChunkGridCenter -RenderDistanceZ; z <= ChunkGridCenter + RenderDistanceZ; z++) {
-				//cout << "ChunkX: " << x << " ChunkY: " << y << " ChunkZ: " << z << endl;
+		for (int y = ChunkGridCenter-RenderDistanceY; y <= ChunkGridCenter + RenderDistanceY; y++) {
+			for (int z = ChunkGridCenter-RenderDistanceZ; z <= ChunkGridCenter + RenderDistanceZ; z++) {
+				cout << "ChunkX: " << x << " ChunkY: " << y << " ChunkZ: " << z << endl;
 				CurrentChunkIndex = 16 * (x + ChunkGridCameraX) + 16 * (y + ChunkGridCameraY) + 16 * (z + ChunkGridCameraZ);
-				//cout << "CurrentChunkindex: " << CurrentChunkIndex << endl;
+				cout << "CurrentChunkindex: " << CurrentChunkIndex << endl;
 				Chunk* C = &(VoxelMap[CurrentChunkIndex]);
 				if (C->generated == false) {
 					C->generate(x,y,z);
@@ -88,11 +87,14 @@ void WORLD::tick() {
 						for (int Z = 0; Z < 16; Z++) {
 							//cout << "X: " << X << " Y: " << Y << " Z: " << Z << endl;
 							int index = (X * 16) + (Y * 16) + Z;
-							Voxel* CurrentVoxel = &(C->VoxelStorage[index]);
-							if(CurrentVoxel->exists) {
-								Pos VoxelPosition = Pos(X + x, Y + y, Z + z);
-								ModelObjectQueue.push_back(ModelObject(&VoxelModel, VoxelPosition, CurrentVoxel->color));
-							}
+							bool BoundsCheck = index >= 0 and index <= C->VoxelStorage.size();
+							if (BoundsCheck) {
+								Voxel* CurrentVoxel = &(C->VoxelStorage[index]);
+								if (CurrentVoxel->exists) {
+									Pos VoxelPosition = Pos(X + x, Y + y, Z + z);
+									ModelObjectQueue.push_back(ModelObject(&VoxelModel, VoxelPosition, CurrentVoxel->color));
+								}
+							}							
 						}
 					}
 				}
@@ -101,9 +103,9 @@ void WORLD::tick() {
 	}
 
 
-
+	float Offset = -static_cast<float>(VoxelMapSize) / 2.0f;
 	for (int i = 0; i < ModelObjectQueue.size(); i++) {
-		simple.TranslateModelObject(&(ModelObjectQueue[i]), &Triangles);
+		simple.TranslateModelObject(&(ModelObjectQueue[i]), &Triangles, &Offset);
 	}
 	simple.VoxelsToTrianglesTime = SDL_GetTicks() - simple.VoxelsToTrianglesTime;
 	// Update Camera Rotation

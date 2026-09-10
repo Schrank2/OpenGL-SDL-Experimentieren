@@ -86,18 +86,18 @@ void SimpleRenderer::init(int* ScreenWidth, int* ScreenHeight, int* ThreadsAlloc
 	PerThreadTriangleTime.resize(*ThreadsAllocated, 0);
 }
 
-Pos SimpleRenderer::TranslatePosition(Pos* A, Pos* B) {
-	Pos C = Pos(A->x + B->x, A->y + B->y, A->z + B->z);
+Pos SimpleRenderer::TranslatePosition(Pos* A, Pos* B, float* Offset) {
+	Pos C = Pos(A->x + B->x + *Offset, A->y + B->y + *Offset, A->z + B->z + *Offset);
 	return C;
 }
-SpaceTriangle SimpleRenderer::TranslateTriangle(SpaceTriangle* A, Pos* B, RGBA_int* ModelColor) {
-	SpaceTriangle C = SpaceTriangle(TranslatePosition(&A->A, B), TranslatePosition(&A->B, B), TranslatePosition(&A->C, B), *ModelColor);
+SpaceTriangle SimpleRenderer::TranslateTriangle(SpaceTriangle* A, Pos* B, RGBA_int* ModelColor, float* Offset) {
+	SpaceTriangle C = SpaceTriangle(TranslatePosition(&A->A, B, Offset), TranslatePosition(&A->B, B, Offset), TranslatePosition(&A->C, B, Offset), *ModelColor);
 	return C;
 }
-void SimpleRenderer::TranslateModelObject(ModelObject* A, vector<SpaceTriangle>* ResultTriangleQueue) {
+void SimpleRenderer::TranslateModelObject(ModelObject* A, vector<SpaceTriangle>* ResultTriangleQueue,float* Offset) {
 	if (!A or !A->Model) return;
 	for(auto& Triangle : *(A->Model)) {
-		(*ResultTriangleQueue).push_back(TranslateTriangle(&Triangle, &(*A).Position, &(A->color)));
+		(*ResultTriangleQueue).push_back(TranslateTriangle(&Triangle, &(*A).Position, &(A->color), Offset));
 	}
 }
 
