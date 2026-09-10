@@ -31,10 +31,10 @@ struct Chunk{
 			VoxelStorage = CreateVoxelStorage();
 		}
 		int ix, iy, iz, index, worldZ;
-		ix = iy = iz = index = 0;
-		RGBA_int StoneColor = RGBA_int(100, 100, 100, 255);
-		RGBA_int DirtColor = RGBA_int(150, 120, 100, 255);
-		RGBA_int GrassColor = RGBA_int(120, 150, 100, 255);
+		ix = iy = iz = index = worldZ = 0;
+		RGBA_int StoneColor = RGBA_int(0, 0, 255, 255);
+		RGBA_int DirtColor = RGBA_int(0, 255, 0, 255);
+		RGBA_int GrassColor = RGBA_int(255, 0, 0, 255);
 		for(;ix < 16; ix++)
 			for(;iy < 16; iy++)
 				for (; iz < 16; iz++) {

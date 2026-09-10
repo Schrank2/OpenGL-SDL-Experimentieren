@@ -90,15 +90,14 @@ Pos SimpleRenderer::TranslatePosition(Pos* A, Pos* B) {
 	Pos C = Pos(A->x + B->x, A->y + B->y, A->z + B->z);
 	return C;
 }
-SpaceTriangle SimpleRenderer::TranslateTriangle(SpaceTriangle* A, Pos* B) {
-	SpaceTriangle C = SpaceTriangle(TranslatePosition(&A->A, B), TranslatePosition(&A->B, B), TranslatePosition(&A->C, B), A->color);
+SpaceTriangle SimpleRenderer::TranslateTriangle(SpaceTriangle* A, Pos* B, RGBA_int* ModelColor) {
+	SpaceTriangle C = SpaceTriangle(TranslatePosition(&A->A, B), TranslatePosition(&A->B, B), TranslatePosition(&A->C, B), *ModelColor);
 	return C;
 }
 void SimpleRenderer::TranslateModelObject(ModelObject* A, vector<SpaceTriangle>* ResultTriangleQueue) {
-	vector<SpaceTriangle> TranslatedTriangles;
 	if (!A or !A->Model) return;
 	for(auto& Triangle : *(A->Model)) {
-		(*ResultTriangleQueue).push_back(TranslateTriangle(&Triangle, &(*A).Position));
+		(*ResultTriangleQueue).push_back(TranslateTriangle(&Triangle, &(*A).Position, &(A->color)));
 	}
 }
 

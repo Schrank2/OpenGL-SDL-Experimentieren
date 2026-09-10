@@ -37,7 +37,7 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 	Pos G = Pos(1.0f, 1.0f, 1.0f);
 	Pos H = Pos(0.0f, 1.0f, 1.0f); 
 	Pos Center = Pos(0.5f, 0.5f, 0.5f);
-	RGBA_int VoxelColor = RGBA_int(255, 0, 0, 255);
+	RGBA_int VoxelColor = RGBA_int(0, 0, 0, 255);
 	VoxelModel.push_back(SpaceTriangle(A, B, C, VoxelColor));
 	VoxelModel.push_back(SpaceTriangle(A, C, D, VoxelColor));
 	VoxelModel.push_back(SpaceTriangle(E, F, G, VoxelColor));
@@ -55,11 +55,10 @@ void WORLD::init(int* ScreenWidth, int* ScreenHeight) {
 }
 
 void WORLD::tick() {
-	if (debug == true) { cout << "[DEBUG] function game.tick() from game.cpp" << endl; }
+	if (debug) { cout << "[DEBUG] function game.tick() from game.cpp" << endl; }
 	simple.VoxelsToTrianglesTime = SDL_GetTicks();
 	Triangles.clear();
 	ModelObjectQueue.clear();
-	vector<Chunk*> ChunkRenderQueue;
 	// generating nearby chunks
 	int GridCameraX = static_cast<int>(simple.Camera.pos.x);
 	int GridCameraY = static_cast<int>(simple.Camera.pos.y);
@@ -67,17 +66,20 @@ void WORLD::tick() {
 	int ChunkGridCameraX = static_cast<int>(floor(simple.Camera.pos.x / 16));
 	int ChunkGridCameraY = static_cast<int>(floor(simple.Camera.pos.y / 16));
 	int ChunkGridCameraZ = static_cast<int>(floor(simple.Camera.pos.z / 16));
-	int GridCameraIndex = GridCameraX * 16 + GridCameraY * 16 + GridCameraZ * 16;
+	int GridCameraIndex = (GridCameraX * 16) + (GridCameraY * 16) + (GridCameraZ * 16);
 	int RenderDistanceX = 1;
 	int RenderDistanceY = 1;
 	int RenderDistanceZ = 1;
+	int CurrentChunkIndex = 0;
 	for (int x = -RenderDistanceX; x <= RenderDistanceX; x++) {
 		for (int y = -RenderDistanceY; y <= RenderDistanceY; y++) {
 			for (int z = -RenderDistanceZ; z <= RenderDistanceZ; z++) {
-				Chunk* C = &(VoxelMap[(x + ChunkGridCameraX) * 16 + (y + ChunkGridCameraY) * 16 + (z + ChunkGridCameraZ)]);
+				CurrentChunkIndex = (x + ChunkGridCameraX) * 16 + (y + ChunkGridCameraY) * 16 + (z + ChunkGridCameraZ);
+				Chunk* C = &(VoxelMap[CurrentChunkIndex]);
 				if (C->generated == false) {
 					C->generate(x,y,z);
 				}
+				if (debug) cout << "[DEBUG] Rendering Chunk at x: " << x + ChunkGridCameraX << " y: " << y + ChunkGridCameraY << " z: " << z + ChunkGridCameraZ << endl;
 				for (int X = 0; X < 16; X++) {
 					for (int Y = 0; Y < 16; Y++) {
 						for (int Z = 0; Z < 16; Z++) {
