@@ -10,7 +10,7 @@
 #include <thread>
 #include <format> // for to_string floats to not show too many decimal numbers
 using namespace std;
-bool debug = false;
+bool debug = true;
 bool report = true;
 vector<Button> mainInput;
 Mouse mainMouse;

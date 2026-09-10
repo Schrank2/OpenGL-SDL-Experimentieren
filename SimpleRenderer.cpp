@@ -87,7 +87,7 @@ void SimpleRenderer::init(int* ScreenWidth, int* ScreenHeight, int* ThreadsAlloc
 }
 
 Pos SimpleRenderer::TranslatePosition(Pos* A, Pos* B, float* Offset) {
-	Pos C = Pos(A->x + B->x + *Offset, A->y + B->y + *Offset, A->z + B->z + *Offset);
+	Pos C = Pos(A->x + B->x + *(Offset), A->y + B->y + *(Offset), A->z + B->z + *(Offset));
 	return C;
 }
 SpaceTriangle SimpleRenderer::TranslateTriangle(SpaceTriangle* A, Pos* B, RGBA_int* ModelColor, float* Offset) {
