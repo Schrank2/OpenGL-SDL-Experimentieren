@@ -83,7 +83,7 @@ void WORLD::tick() {
 				for (int X = 0; X < 16; X++) {
 					for (int Y = 0; Y < 16; Y++) {
 						for (int Z = 0; Z < 16; Z++) {
-							int index = X * 16 + Y * 16 + Z;
+							int index = (X * 16) + (Y * 16) + Z;
 							Voxel* CurrentVoxel = &(C->VoxelStorage[index]);
 							if(CurrentVoxel->exists) {
 								Pos VoxelPosition = Pos(X + x, Y + y, Z + z);
